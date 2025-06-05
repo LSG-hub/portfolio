@@ -1,143 +1,303 @@
-export const projectsData = [
+export const skillsData = {
+  aiMl: {
+    title: "AI/ML & Data Science",
+    icon: "fas fa-brain",
+    skills: [
+      {
+        name: "Machine Learning",
+        level: 90,
+        description: "Advanced knowledge in ML algorithms, model training, and optimization"
+      },
+      {
+        name: "Deep Learning",
+        level: 85,
+        description: "Neural networks, CNNs, RNNs, and transformer architectures"
+      },
+      {
+        name: "Natural Language Processing",
+        level: 88,
+        description: "Text processing, sentiment analysis, and language models"
+      },
+      {
+        name: "Computer Vision",
+        level: 80,
+        description: "Image processing, object detection, and visual recognition"
+      },
+      {
+        name: "Generative AI",
+        level: 85,
+        description: "GPT models, RAG systems, and AI-powered applications"
+      },
+      {
+        name: "Data Analysis",
+        level: 92,
+        description: "Statistical analysis, data visualization, and insights generation"
+      }
+    ]
+  },
+  programming: {
+    title: "Programming Languages",
+    icon: "fas fa-code",
+    skills: [
+      {
+        name: "Python",
+        level: 95,
+        description: "Primary language for AI/ML development and data science"
+      },
+      {
+        name: "JavaScript",
+        level: 88,
+        description: "Full-stack development and modern ES6+ features"
+      },
+      {
+        name: "SQL",
+        level: 85,
+        description: "Database querying, optimization, and data manipulation"
+      },
+      {
+        name: "R",
+        level: 75,
+        description: "Statistical computing and data analysis"
+      },
+      {
+        name: "Java",
+        level: 70,
+        description: "Object-oriented programming and enterprise applications"
+      }
+    ]
+  },
+  frameworks: {
+    title: "Frameworks & Libraries",
+    icon: "fas fa-layer-group",
+    skills: [
+      {
+        name: "TensorFlow",
+        level: 85,
+        description: "Deep learning framework for complex neural networks"
+      },
+      {
+        name: "PyTorch",
+        level: 80,
+        description: "Dynamic neural networks and research-oriented ML"
+      },
+      {
+        name: "Scikit-learn",
+        level: 90,
+        description: "Classical machine learning algorithms and tools"
+      },
+      {
+        name: "Pandas & NumPy",
+        level: 95,
+        description: "Data manipulation and numerical computing"
+      },
+      {
+        name: "React.js",
+        level: 85,
+        description: "Modern frontend development and component architecture"
+      },
+      {
+        name: "Node.js",
+        level: 80,
+        description: "Backend development and API creation"
+      },
+      {
+        name: "LangChain",
+        level: 88,
+        description: "LLM application development and AI workflows"
+      },
+      {
+        name: "Streamlit",
+        level: 82,
+        description: "Rapid prototyping of ML applications"
+      }
+    ]
+  },
+  cloudDevops: {
+    title: "Cloud & DevOps",
+    icon: "fas fa-cloud",
+    skills: [
+      {
+        name: "Google Cloud Platform",
+        level: 85,
+        description: "Cloud infrastructure, BigQuery, and VertexAI"
+      },
+      {
+        name: "AWS",
+        level: 75,
+        description: "Cloud services and serverless architectures"
+      },
+      {
+        name: "Docker",
+        level: 80,
+        description: "Containerization and deployment automation"
+      },
+      {
+        name: "Git & GitHub",
+        level: 90,
+        description: "Version control and collaborative development"
+      },
+      {
+        name: "Vercel",
+        level: 85,
+        description: "Frontend deployment and CI/CD pipelines"
+      }
+    ]
+  },
+  databases: {
+    title: "Databases & Tools",
+    icon: "fas fa-database",
+    skills: [
+      {
+        name: "BigQuery",
+        level: 85,
+        description: "Large-scale data analytics and SQL optimization"
+      },
+      {
+        name: "PostgreSQL",
+        level: 80,
+        description: "Relational database design and optimization"
+      },
+      {
+        name: "MongoDB",
+        level: 75,
+        description: "NoSQL database and document-oriented storage"
+      },
+      {
+        name: "Vector Databases",
+        level: 82,
+        description: "Pinecone, Chroma for similarity search and RAG"
+      }
+    ]
+  },
+  automation: {
+    title: "Automation & RPA",
+    icon: "fas fa-robot",
+    skills: [
+      {
+        name: "UiPath",
+        level: 88,
+        description: "Robotic Process Automation and workflow design"
+      },
+      {
+        name: "AutoGen",
+        level: 85,
+        description: "Multi-agent conversation frameworks"
+      },
+      {
+        name: "Selenium",
+        level: 80,
+        description: "Web automation and testing frameworks"
+      },
+      {
+        name: "API Integration",
+        level: 90,
+        description: "REST APIs, webhooks, and service integration"
+      }
+    ]
+  }
+};
+
+export const softSkills = [
   {
-    id: 1,
-    title: "S.P.E.A.R",
-    subtitle: "Split Panel Engine for Automated Rendering",
-    category: "Full-Stack AI Platform",
-    description: "No-code full-stack development platform enabling users to build applications 3x faster than traditional coding. Led a team of 3 to design a platform leveraging React.js for UI/UX and Node.js for backend automation.",
-    detailedDescription: "Revolutionary no-code platform that democratizes application development through intelligent automation and AI-powered assistance.",
-    features: [
-      "AI-Powered code generation using OpenAI GPT-3.5 and LangChain",
-      "RAG architecture for contextual data retrieval with 90% accuracy",
-      "Drag-and-drop workflows with role-based access control",
-      "Autonomous task execution based on user instructions",
-      "Real-time collaboration for enterprise use cases"
-    ],
-    technologies: ["React.js", "Node.js", "OpenAI GPT-3.5", "LangChain", "RAG", "JavaScript", "REST APIs"],
-    metrics: {
-      developmentSpeed: "3x faster",
-      testingAccuracy: "90%",
-      teamSize: "3 members",
-      useCases: "5+ enterprise scenarios"
-    },
-    status: "Completed",
-    github: "https://github.com/yourusername/spear-platform",
-    demo: "https://spear-demo.vercel.app",
-    image: "/images/spear-project.jpg"
+    name: "Problem Solving",
+    icon: "fas fa-puzzle-piece",
+    description: "Analytical thinking and creative solution development for complex technical challenges"
   },
   {
-    id: 2,
-    title: "Zenith AI",
-    subtitle: "AI-Driven SaaS Platform",
-    category: "Modular AI SaaS",
-    description: "Spearheaded a team of 3 to develop a modular SaaS platform integrating MedBot (healthcare assistant), QuizCrafter (AI-generated quizzes), and a stock prediction model.",
-    detailedDescription: "Comprehensive AI-driven platform showcasing the versatility of AI applications across healthcare, education, and finance sectors.",
-    features: [
-      "MedBot for healthcare diagnostics and patient support",
-      "QuizCrafter for automated educational content generation",
-      "Stock prediction model with real-time market analysis",
-      "Automated data pipelines using UiPath and LangChain",
-      "Real-time NLP analysis and processing"
-    ],
-    technologies: ["UiPath", "LangChain", "NLP", "Python", "Machine Learning", "Stock APIs", "Healthcare APIs"],
-    metrics: {
-      manualEffortReduction: "70%",
-      moduleCount: "3 integrated modules",
-      teamSize: "3 members",
-      industries: "Healthcare, Education, Finance"
-    },
-    status: "Completed",
-    github: "https://github.com/yourusername/zenith-ai",
-    demo: "https://zenith-ai-demo.vercel.app",
-    image: "/images/zenith-project.jpg"
+    name: "Team Leadership",
+    icon: "fas fa-users",
+    description: "Leading cross-functional teams and mentoring junior developers in AI projects"
   },
   {
-    id: 3,
-    title: "MedBot",
-    subtitle: "Conversational AI for Healthcare Diagnostics",
-    category: "Healthcare AI",
-    description: "Built a GPT-3-powered assistant to analyze medical reports and match patient histories, reducing diagnosis time by 30% in prototype scenarios.",
-    detailedDescription: "HIPAA-compliant healthcare assistant that leverages advanced NLP to provide intelligent medical support and diagnostics assistance.",
-    features: [
-      "Medical report analysis and interpretation",
-      "Patient history matching and correlation",
-      "HIPAA-compliant data processing workflows",
-      "Secure API pipelines for data privacy",
-      "NLP-driven search and recommendation system"
-    ],
-    technologies: ["GPT-3", "NLP", "Healthcare APIs", "HIPAA Compliance", "Python", "Secure Architecture"],
-    metrics: {
-      diagnosisTimeReduction: "30%",
-      complianceStandard: "HIPAA",
-      accuracy: "High precision medical analysis",
-      security: "End-to-end encryption"
-    },
-    status: "Prototype",
-    github: "https://github.com/yourusername/medbot",
-    demo: "https://medbot-demo.vercel.app",
-    image: "/images/medbot-project.jpg"
+    name: "Communication",
+    icon: "fas fa-comments",
+    description: "Translating complex technical concepts to stakeholders and non-technical audiences"
   },
   {
-    id: 4,
-    title: "Mutual Fund Advisor",
-    subtitle: "UiPath-Powered RPA System",
-    category: "Financial RPA",
-    description: "Engineered an RPA solution to extract and analyze real-time mutual fund data from 15+ financial websites, automating 8 hours/week of manual work.",
-    detailedDescription: "Intelligent financial advisor system that automates data collection, analysis, and investment recommendations through advanced RPA techniques.",
-    features: [
-      "Real-time data extraction from 15+ financial websites",
-      "Automated comparative analysis dashboards",
-      "Investment recommendation engine",
-      "Portfolio testing and validation",
-      "Automated report generation"
-    ],
-    technologies: ["UiPath", "RPA", "Financial APIs", "Data Analysis", "Dashboard Creation", "Python"],
-    metrics: {
-      weeklyTimeSaved: "8 hours",
-      websitesMonitored: "15+",
-      automationLevel: "Full automation",
-      accuracy: "High precision analysis"
-    },
-    status: "Completed",
-    github: "https://github.com/yourusername/mutual-fund-advisor",
-    demo: "https://mf-advisor-demo.vercel.app",
-    image: "/images/mf-advisor-project.jpg"
+    name: "Project Management",
+    icon: "fas fa-tasks",
+    description: "Agile methodologies, sprint planning, and delivering projects on time and within scope"
   },
   {
-    id: 5,
-    title: "Jarvis AI",
-    subtitle: "Voice-Controlled Virtual Assistant",
-    category: "AI Assistant",
-    description: "Developed a Python-based assistant with 95% voice recognition accuracy, automating tasks like web searches and app control.",
-    detailedDescription: "Advanced voice-controlled virtual assistant that combines speech recognition, NLP, and automation to create a seamless user experience.",
-    features: [
-      "95% voice recognition accuracy",
-      "Web search automation",
-      "Application control and management",
-      "Secure environment variable management",
-      "NLP optimization for natural conversations"
-    ],
-    technologies: ["Python", "Speech Recognition", "NLP", "Automation", "Voice Processing", "API Integration"],
-    metrics: {
-      recognitionAccuracy: "95%",
-      taskCompletionImprovement: "50%",
-      responseTime: "Real-time processing",
-      security: "Secure credential management"
-    },
-    status: "Completed",
-    github: "https://github.com/yourusername/jarvis-ai",
-    demo: "https://jarvis-demo.vercel.app",
-    image: "/images/jarvis-project.jpg"
+    name: "Research & Learning",
+    icon: "fas fa-book-open",
+    description: "Staying updated with latest AI trends and rapidly adapting to new technologies"
+  },
+  {
+    name: "Critical Thinking",
+    icon: "fas fa-lightbulb",
+    description: "Evaluating solutions objectively and making data-driven decisions"
+  },
+  {
+    name: "Collaboration",
+    icon: "fas fa-handshake",
+    description: "Working effectively in diverse teams and fostering positive team dynamics"
+  },
+  {
+    name: "Innovation",
+    icon: "fas fa-rocket",
+    description: "Identifying opportunities for AI implementation and driving technological innovation"
   }
 ];
 
-export const projectCategories = [
-  "All",
-  "Full-Stack AI Platform",
-  "Healthcare AI",
-  "Financial RPA",
-  "AI Assistant",
-  "Modular AI SaaS"
+export const languages = [
+  {
+    name: "English",
+    level: "Fluent"
+  },
+  {
+    name: "Hindi",
+    level: "Native"
+  },
+  {
+    name: "Telugu",
+    level: "Native"
+  },
+  {
+    name: "Kannada",
+    level: "Conversational"
+  }
 ];
 
-export const featuredProjects = [1, 2, 3]; // IDs of featured projects
+export const interests = [
+  {
+    name: "Artificial Intelligence Research",
+    icon: "fas fa-brain",
+    description: "Exploring cutting-edge AI research papers and implementing novel algorithms"
+  },
+  {
+    name: "Open Source Contribution",
+    icon: "fab fa-github",
+    description: "Contributing to AI/ML open source projects and building community tools"
+  },
+  {
+    name: "Tech Blogging",
+    icon: "fas fa-pen-nib",
+    description: "Writing technical articles about AI implementations and best practices"
+  },
+  {
+    name: "Hackathons & Competitions",
+    icon: "fas fa-trophy",
+    description: "Participating in AI competitions and building innovative solutions under pressure"
+  },
+  {
+    name: "Mentoring",
+    icon: "fas fa-chalkboard-teacher",
+    description: "Mentoring students and junior developers in AI/ML career paths"
+  },
+  {
+    name: "Automation Projects",
+    icon: "fas fa-cogs",
+    description: "Building personal automation tools and exploring RPA opportunities"
+  },
+  {
+    name: "Data Visualization",
+    icon: "fas fa-chart-bar",
+    description: "Creating beautiful and insightful data visualizations and dashboards"
+  },
+  {
+    name: "Photography",
+    icon: "fas fa-camera",
+    description: "Capturing moments and exploring computational photography techniques"
+  }
+];
