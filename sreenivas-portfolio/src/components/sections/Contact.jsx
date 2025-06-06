@@ -156,32 +156,12 @@ const Contact = () => {
     }
   ];
 
-  const socialLinks = [
-    {
-      icon: 'fab fa-linkedin',
-      name: 'LinkedIn',
-      url: 'https://linkedin.com/in/yourusername',
-      color: '#0077B5'
-    },
-    {
-      icon: 'fab fa-github',
-      name: 'GitHub',
-      url: 'https://github.com/yourusername',
-      color: '#181717'
-    },
-    {
-      icon: 'fab fa-twitter',
-      name: 'Twitter',
-      url: 'https://twitter.com/yourusername',
-      color: '#1DA1F2'
-    },
-    {
-      icon: 'fas fa-blog',
-      name: 'Blog',
-      url: 'https://yourblog.com',
-      color: '#FF6B6B'
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId.replace('#', ''));
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  ];
+  };
 
   return (
     <section id="contact" ref={sectionRef} className={`section contact-section ${sectionInView ? 'active' : ''}`}>
@@ -226,19 +206,50 @@ const Contact = () => {
             <div className="social-links">
               <h3>Connect With Me</h3>
               <div className="social-grid">
-                {socialLinks.map((social, index) => (
-                  <a
-                    key={index}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="social-link"
-                    style={{ '--social-color': social.color }}
-                  >
-                    <i className={social.icon}></i>
-                    <span>{social.name}</span>
-                  </a>
-                ))}
+                {/* Hardcoded social links to ensure they work */}
+                <a
+                  href="https://linkedin.com/in/yourusername"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-link"
+                  style={{ '--social-color': '#0077B5' }}
+                >
+                  <i className="fab fa-linkedin"></i>
+                  <span className="social-text">LinkedIn</span>
+                </a>
+                
+                <a
+                  href="https://github.com/yourusername"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-link"
+                  style={{ '--social-color': '#181717' }}
+                >
+                  <i className="fab fa-github"></i>
+                  <span className="social-text">GitHub</span>
+                </a>
+                
+                <a
+                  href="https://twitter.com/yourusername"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-link"
+                  style={{ '--social-color': '#1DA1F2' }}
+                >
+                  <i className="fab fa-twitter"></i>
+                  <span className="social-text">Twitter</span>
+                </a>
+                
+                <a
+                  href="https://yourblog.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-link"
+                  style={{ '--social-color': '#FF6B6B' }}
+                >
+                  <i className="fas fa-blog"></i>
+                  <span className="social-text">Blog</span>
+                </a>
               </div>
             </div>
 
@@ -276,7 +287,14 @@ const Contact = () => {
                 <i className="fas fa-envelope"></i>
                 Start a Conversation
               </a>
-              <a href="#projects" className="btn btn-secondary">
+              <a 
+                href="#projects" 
+                className="btn btn-secondary"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection('#projects');
+                }}
+              >
                 <i className="fas fa-eye"></i>
                 View My Work
               </a>
