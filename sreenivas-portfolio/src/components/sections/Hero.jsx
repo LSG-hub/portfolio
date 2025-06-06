@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import '../../styles/components/hero.css';
 
 const Hero = () => {
@@ -6,12 +6,13 @@ const Hero = () => {
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
 
-  const titles = [
+  // Move titles array inside useMemo to prevent re-creation on every render
+  const titles = useMemo(() => [
     'AI/ML Engineer',
     'Data Science Innovator',
     'Generative AI Specialist',
     'Automation Expert'
-  ];
+  ], []);
 
   useEffect(() => {
     const currentTitle = titles[currentTextIndex];
