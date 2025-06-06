@@ -2,19 +2,19 @@
 export const PERSONAL_INFO = {
   name: 'Sreenivas Gurram',
   title: 'AI/ML Engineer & Data Science Innovator',
-  email: 'your.email@gmail.com',
+  email: 'srinu202012@gmail.com',
   phone: '+91 9019684624',
   location: 'Bangalore, India',
-  portfolio: 'https://your-portfolio-url.vercel.app',
+  portfolio: 'https://portfolio-31jx.vercel.app/',
   tagline: 'Building the future with Artificial Intelligence'
 };
 
 // Social Media Links
 export const SOCIAL_LINKS = {
-  linkedin: 'https://linkedin.com/in/yourusername',
-  github: 'https://github.com/yourusername',
-  twitter: 'https://twitter.com/yourusername',
-  email: 'mailto:your.email@gmail.com',
+  linkedin: 'https://www.linkedin.com/in/sreenivas-gurram-363528289/',
+  github: 'https://github.com/LSG-hub',
+  twitter: 'https://x.com/SreenivasGurra3',
+  email: 'mailto:srinu202012@gmail.com',
   phone: 'tel:+919019684624'
 };
 

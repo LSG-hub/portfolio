@@ -139,8 +139,8 @@ const Contact = () => {
     {
       icon: 'fas fa-envelope',
       label: 'Email',
-      value: 'your.email@gmail.com',
-      link: 'mailto:your.email@gmail.com'
+      value: 'srinu202012@gmail.com',
+      link: 'mailto:srinu202012@gmail.com'
     },
     {
       icon: 'fas fa-phone',
@@ -208,7 +208,7 @@ const Contact = () => {
               <div className="social-grid">
                 {/* Hardcoded social links to ensure they work */}
                 <a
-                  href="https://linkedin.com/in/yourusername"
+                  href="https://www.linkedin.com/in/sreenivas-gurram-363528289/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="social-link"
@@ -219,7 +219,7 @@ const Contact = () => {
                 </a>
                 
                 <a
-                  href="https://github.com/yourusername"
+                  href="https://github.com/LSG-hub"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="social-link"
@@ -230,7 +230,7 @@ const Contact = () => {
                 </a>
                 
                 <a
-                  href="https://twitter.com/yourusername"
+                  href="https://x.com/SreenivasGurra3"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="social-link"
@@ -241,7 +241,7 @@ const Contact = () => {
                 </a>
                 
                 <a
-                  href="https://yourblog.com"
+                  href="https://iotodyssey.blogspot.com/2024/11/the-iot-odyssey-from-smart-homes-to.html"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="social-link"
@@ -283,7 +283,7 @@ const Contact = () => {
               or explore the possibilities of automation, let's make it happen.
             </p>
             <div className="cta-actions">
-              <a href="mailto:your.email@gmail.com" className="btn btn-primary">
+              <a href="mailto:srinu202012@gmail.com" className="btn btn-primary">
                 <i className="fas fa-envelope"></i>
                 Start a Conversation
               </a>

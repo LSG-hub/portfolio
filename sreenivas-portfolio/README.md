@@ -52,7 +52,7 @@ sreenivas-portfolio/
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/sreenivas-portfolio.git
+git clone https://github.com/LSG-hub/portfolio.git
 cd sreenivas-portfolio
 ```
 
@@ -176,7 +176,7 @@ This project is open source and available under the [MIT License](LICENSE).
 If you encounter any issues or have questions:
 
 - Create an issue on GitHub
-- Contact: [your.email@gmail.com](mailto:your.email@gmail.com)
+- Contact: [srinu202012@gmail.com](mailto:srinu202012@gmail.com)
 
 ## 🙏 Acknowledgments
 

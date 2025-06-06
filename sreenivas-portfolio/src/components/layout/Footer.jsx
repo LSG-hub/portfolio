@@ -12,10 +12,10 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: 'fab fa-linkedin', url: 'https://linkedin.com/in/yourusername', name: 'LinkedIn' },
-    { icon: 'fab fa-github', url: 'https://github.com/yourusername', name: 'GitHub' },
-    { icon: 'fab fa-twitter', url: 'https://twitter.com/yourusername', name: 'Twitter' },
-    { icon: 'fas fa-envelope', url: 'mailto:your.email@gmail.com', name: 'Email' }
+    { icon: 'fab fa-linkedin', url: 'https://www.linkedin.com/in/sreenivas-gurram-363528289/', name: 'LinkedIn' },
+    { icon: 'fab fa-github', url: 'https://github.com/LSG-hub', name: 'GitHub' },
+    { icon: 'fab fa-twitter', url: 'https://x.com/SreenivasGurra3', name: 'Twitter' },
+    { icon: 'fas fa-envelope', url: 'mailto:srinu202012@gmail.com', name: 'Email' }
   ];
 
   const scrollToSection = (sectionId) => {
@@ -81,7 +81,7 @@ const Footer = () => {
               <div className="contact-items">
                 <div className="contact-item">
                   <i className="fas fa-envelope"></i>
-                  <a href="mailto:your.email@gmail.com">your.email@gmail.com</a>
+                  <a href="mailto:srinu202012@gmail.com">srinu202012@gmail.com</a>
                 </div>
                 <div className="contact-item">
                   <i className="fas fa-phone"></i>
