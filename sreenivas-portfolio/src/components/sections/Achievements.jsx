@@ -1,6 +1,7 @@
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
 import { achievementsData } from '../../data/experience';
+import { richText } from '../../utils/richText';
 import '../../styles/components/achievements.css';
 
 const AchievementCard = ({ achievement }) => {
@@ -29,7 +30,7 @@ const AchievementCard = ({ achievement }) => {
           <span className="achievement-date">{achievement.date}</span>
         </header>
 
-        <p className="achievement-description">{achievement.description}</p>
+        <p className="achievement-description">{richText(achievement.description)}</p>
 
         <div className="achievement-tags">
           {achievement.skills.map((skill) => (

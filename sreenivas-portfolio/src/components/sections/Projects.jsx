@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import { projectsData } from '../../data/projects';
+import { richText } from '../../utils/richText';
 import '../../styles/components/projects.css';
 
 const ProjectCard = ({ project, index }) => {
@@ -36,7 +37,7 @@ const ProjectCard = ({ project, index }) => {
         <span className="eyebrow">{project.tagline}</span>
         <h3 className="project-card-title">{project.title}</h3>
         <p className="project-card-subtitle">{project.subtitle}</p>
-        <p className="project-card-description">{project.description}</p>
+        <p className="project-card-description">{richText(project.description)}</p>
 
         <div className="project-card-stack">
           {project.technologies.slice(0, 5).map((tech) => (

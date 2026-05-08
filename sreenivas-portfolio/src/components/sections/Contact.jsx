@@ -53,7 +53,7 @@ const Contact = () => {
                 rel="noopener noreferrer"
                 className="contact-social-link"
               >
-                {social.label} <span className="arrow">&nearr;</span>
+                {social.label} <span className="arrow">↗</span>
               </a>
             ))}
           </div>

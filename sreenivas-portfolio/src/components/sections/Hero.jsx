@@ -2,15 +2,41 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../../styles/components/hero.css';
 
+const HERO_PHOTO = null;
+const HERO_PHOTO_ALT = 'Portrait of Sreenivas Gurram';
+
 const Hero = () => {
   return (
     <section id="home" className="hero">
       <div className="container">
-        <span className="eyebrow">Portfolio · 2026</span>
-        <h1 className="hero-name">Sreenivas Gurram</h1>
-        <p className="hero-role">
-          <em>AI/ML Engineer</em> &middot; Agentic Workflows, LangGraph, MCP
-        </p>
+        <span className="eyebrow">Portfolio &middot; 2026</span>
+
+        <div className="hero-top">
+          <div className="hero-top-text">
+            <h1 className="hero-name">Sreenivas Gurram</h1>
+            <p className="hero-role">
+              <em>AI/ML Engineer</em> &middot; Agentic Workflows, LangGraph, MCP
+            </p>
+          </div>
+
+          {HERO_PHOTO ? (
+            <div
+              className="hero-portrait hero-portrait-photo"
+              role="img"
+              aria-label={HERO_PHOTO_ALT}
+              style={{ backgroundImage: `url(${HERO_PHOTO})` }}
+            />
+          ) : (
+            <div
+              className="hero-portrait hero-portrait-placeholder"
+              role="img"
+              aria-label="Portrait placeholder"
+            >
+              <span className="hero-portrait-initials">SG</span>
+              <span className="hero-portrait-meta">portrait soon</span>
+            </div>
+          )}
+        </div>
 
         <div className="hero-card glass">
           <p className="hero-bio">

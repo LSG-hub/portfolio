@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { getProjectBySlug } from '../data/projects';
+import { richText } from '../utils/richText';
 import '../styles/components/project-detail.css';
 
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
@@ -55,7 +56,7 @@ const ProjectDetailPage = () => {
 
         <section className="project-detail-section glass-flat">
           <h2 className="project-detail-section-title">Overview</h2>
-          <p className="project-detail-prose">{project.detailedDescription}</p>
+          <p className="project-detail-prose">{richText(project.detailedDescription)}</p>
         </section>
 
         <section className="project-detail-section glass-flat">
@@ -64,7 +65,7 @@ const ProjectDetailPage = () => {
             {project.features.map((feature, i) => (
               <div key={i} className="numbered-item">
                 <span className="numbered-item-num">{ROMAN[i] || i + 1}</span>
-                <p className="numbered-item-text">{feature}</p>
+                <p className="numbered-item-text">{richText(feature)}</p>
               </div>
             ))}
           </div>
