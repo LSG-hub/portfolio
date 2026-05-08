@@ -1,218 +1,84 @@
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
-import { experienceData, educationData, achievementsData } from '../../data/experience';
+import { experienceData, educationData } from '../../data/experience';
 import '../../styles/components/experience.css';
 
-const ExperienceCard = ({ experience, index }) => {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true
-  });
+const ExperienceCard = ({ experience }) => {
+  const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true });
 
   return (
-    <div 
-      ref={ref}
-      className={`experience-card ${inView ? 'animate-in' : ''}`}
-      style={{ animationDelay: `${index * 0.1}s` }}
-    >
-      <div className="experience-header">
-        <div className="experience-main">
+    <article ref={ref} className={`experience-card glass fade-in ${inView ? 'is-visible' : ''}`}>
+      <header className="experience-header">
+        <div className="experience-header-main">
           <h3 className="experience-title">{experience.title}</h3>
           <div className="experience-company">
-            <i className="fas fa-building"></i>
             {experience.company}
-          </div>
-          <div className="experience-location">
-            <i className="fas fa-map-marker-alt"></i>
+            <span className="sep">&middot;</span>
             {experience.location}
           </div>
         </div>
-        <div className="experience-meta">
-          <div className="experience-duration">
-            <i className="fas fa-calendar-alt"></i>
-            {experience.duration}
-          </div>
-          <div className={`experience-type ${experience.type.toLowerCase()}`}>
-            {experience.type}
-          </div>
-        </div>
-      </div>
+        <span className="experience-duration">{experience.duration}</span>
+      </header>
 
-      <div className="experience-description">
-        <p>{experience.description}</p>
-      </div>
+      <p className="experience-description">{experience.description}</p>
 
-      <div className="experience-achievements">
-        <h4>Key Achievements</h4>
-        <ul>
-          {experience.achievements.map((achievement, i) => (
-            <li key={i}>{achievement}</li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="experience-highlights">
-        {Object.entries(experience.highlights).map(([key, value]) => (
-          <div key={key} className="highlight-item">
-            <div className="highlight-value">{value}</div>
-            <div className="highlight-label">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
-          </div>
+      <ul className="experience-achievements">
+        {experience.achievements.map((achievement, i) => (
+          <li key={i}>{achievement}</li>
         ))}
-      </div>
+      </ul>
 
-      <div className="experience-technologies">
-        <h4>Technologies Used</h4>
-        <div className="tech-tags">
-          {experience.technologies.map((tech, i) => (
-            <span key={i} className="tech-tag">{tech}</span>
+      <div className="experience-stack">
+        <span className="experience-stack-label">Stack</span>
+        <div className="experience-stack-tags">
+          {experience.technologies.map((tech) => (
+            <span key={tech} className="experience-stack-tag">{tech}</span>
           ))}
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 
 const EducationCard = ({ education }) => {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true
-  });
+  const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true });
 
   return (
-    <div ref={ref} className={`education-card ${inView ? 'animate-in' : ''}`}>
-      <div className="education-header">
-        <div className="education-icon">
-          <i className="fas fa-graduation-cap"></i>
-        </div>
-        <div className="education-details">
-          <h3 className="education-degree">{education.degree}</h3>
-          <div className="education-institution">
-            <i className="fas fa-university"></i>
-            {education.institution}
-          </div>
-          <div className="education-location">
-            <i className="fas fa-map-marker-alt"></i>
-            {education.location}
-          </div>
-        </div>
-        <div className="education-meta">
-          <div className="education-duration">{education.duration}</div>
-          <div className="education-cgpa">CGPA: {education.cgpa}</div>
-          <div className="education-status">{education.status}</div>
-        </div>
+    <article ref={ref} className={`education-card glass-flat fade-in ${inView ? 'is-visible' : ''}`}>
+      <h3 className="education-degree">{education.degree}</h3>
+      <div className="education-institution">
+        {education.institution} <span className="sep">&middot;</span> {education.location}
       </div>
-
-      <div className="education-courses">
-        <h4>Relevant Coursework</h4>
-        <div className="course-tags">
-          {education.relevantCourses.map((course, i) => (
-            <span key={i} className="course-tag">{course}</span>
-          ))}
-        </div>
+      <div className="education-meta">
+        <span>{education.duration}</span>
+        <span>CGPA {education.cgpa}</span>
+        <span>{education.status}</span>
       </div>
-    </div>
-  );
-};
-
-const AchievementCard = ({ achievement, index }) => {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true
-  });
-
-  return (
-    <div
-      ref={ref}
-      className={`certification-card ${inView ? 'animate-in' : ''}`}
-      style={{ animationDelay: `${index * 0.1}s` }}
-    >
-      <div className="certification-header">
-        <div className="certification-icon">
-          <i className="fas fa-trophy"></i>
-        </div>
-        <div className="certification-details">
-          <h4 className="certification-title">{achievement.title}</h4>
-          <div className="certification-issuer">{achievement.issuer}</div>
-          <div className="certification-date">{achievement.date}</div>
-        </div>
-      </div>
-
-      <div className="certification-description">
-        <p>{achievement.description}</p>
-      </div>
-
-      <div className="certification-skills">
-        <div className="skill-tags">
-          {achievement.skills.map((skill, i) => (
-            <span key={i} className="skill-tag">{skill}</span>
-          ))}
-        </div>
-      </div>
-    </div>
+    </article>
   );
 };
 
 const Experience = () => {
-  const { ref: sectionRef, inView: sectionInView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true
-  });
-
   return (
-    <section id="experience" ref={sectionRef} className={`section experience-section ${sectionInView ? 'active' : ''}`}>
+    <section id="experience" className="section experience-section">
       <div className="container">
-        <h2 className="section-title">
-          <i className="fas fa-briefcase"></i>
-          Professional Journey
-        </h2>
+        <div className="section-header">
+          <span className="section-header-num">02 / Career</span>
+        </div>
 
-        <div className="experience-content">
-          {/* Work Experience */}
-          <div className="experience-subsection">
-            <h3 className="subsection-title">
-              <i className="fas fa-laptop-code"></i>
-              Work Experience
-            </h3>
-            <div className="experience-timeline">
-              {experienceData.map((experience, index) => (
-                <ExperienceCard 
-                  key={experience.id} 
-                  experience={experience} 
-                  index={index}
-                />
-              ))}
-            </div>
-          </div>
+        <h2 className="section-title">Experience</h2>
 
-          {/* Education */}
-          <div className="experience-subsection">
-            <h3 className="subsection-title">
-              <i className="fas fa-graduation-cap"></i>
-              Education
-            </h3>
-            <div className="education-grid">
-              {educationData.map((education) => (
-                <EducationCard key={education.id} education={education} />
-              ))}
-            </div>
-          </div>
+        <div className="experience-list">
+          {experienceData.map((experience) => (
+            <ExperienceCard key={experience.id} experience={experience} />
+          ))}
+        </div>
 
-          {/* Achievements */}
-          <div className="experience-subsection">
-            <h3 className="subsection-title">
-              <i className="fas fa-trophy"></i>
-              Achievements
-            </h3>
-            <div className="certifications-grid">
-              {achievementsData.map((achievement, index) => (
-                <AchievementCard
-                  key={achievement.id}
-                  achievement={achievement}
-                  index={index}
-                />
-              ))}
-            </div>
-          </div>
+        <h3 className="experience-subsection-title">Education</h3>
+        <div className="education-list">
+          {educationData.map((education) => (
+            <EducationCard key={education.id} education={education} />
+          ))}
         </div>
       </div>
     </section>

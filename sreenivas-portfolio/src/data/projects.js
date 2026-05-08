@@ -1,9 +1,11 @@
 export const projectsData = [
   {
     id: 1,
+    slug: "juno",
     title: "Juno",
     subtitle: "Voice-Native Financial Operating System",
     category: "Voice-Native AI",
+    tagline: "2nd Runner-Up — Google Cloud Agentic AI Day 2025",
     description: "Multi-agent voice-first financial advisor built for Google Cloud Agentic AI Day 2025. A Coordinator MCP orchestrates Gemini-powered specialist agents; users ask plain-language questions in multiple Indian languages and receive grounded financial reasoning.",
     detailedDescription: "Multi-agent advisory system where a Coordinator MCP orchestrates specialized Gemini-powered agents (Growth, Security, Context, Feedback). Built in 30 hours and awarded 2nd Runner-Up among 1,941 developers across 700+ teams at the Guinness World Record-certified Google Cloud Agentic AI Day 2025.",
     features: [
@@ -23,13 +25,17 @@ export const projectsData = [
     status: "Completed",
     github: null,
     demo: "https://drive.google.com/file/d/12SFmxkaDG8kcLFpLTg6fAuKgeOlFq4Y8/view?usp=sharing",
-    image: "/images/juno-project.jpg"
+    embed: "https://drive.google.com/file/d/12SFmxkaDG8kcLFpLTg6fAuKgeOlFq4Y8/preview",
+    accent: "#A8451F",
+    gradient: "linear-gradient(135deg, #F4D5C2 0%, #F0DFB8 50%, #E8C5A0 100%)"
   },
   {
     id: 2,
+    slug: "spear",
     title: "SPEAR",
     subtitle: "Split Panel Engine for Automated Rendering",
     category: "Code Generation",
+    tagline: "Capstone Project — Published at NCAIT-2025",
     description: "An autonomous AI software development team built with LangGraph — Developer, Reviewer, and QA personas collaborate to generate enterprise-scale applications. Co-authored research paper presented at NCAIT-2025.",
     detailedDescription: "Agentic IDE architecture demonstrating context-optimized code generation. Multi-persona agents coordinate via LangGraph to overcome LLM context window limits while maintaining design pattern consistency across enterprise codebases.",
     features: [
@@ -49,14 +55,18 @@ export const projectsData = [
     status: "Completed",
     github: null,
     demo: null,
-    image: "/images/spear-project.jpg"
+    embed: null,
+    accent: "#3F4A2A",
+    gradient: "linear-gradient(135deg, #DDE5C5 0%, #C9D5A8 50%, #A8B987 100%)"
   },
   {
     id: 3,
+    slug: "skooc",
     title: "Skooc",
     subtitle: "Multi-Persona Therapeutic AI Suite",
     category: "Healthcare AI",
-    description: "A three-persona therapeutic AI suite serving Educators, Parents, and Children — 300+ clinical scenarios across 20 psychological themes, with crisis intervention routing and culturally-tuned RAG for Indian contexts. Consulting engagement, 2025.",
+    tagline: "Consulting Engagement — 2025",
+    description: "A three-persona therapeutic AI suite serving Educators, Parents, and Children — 300+ clinical scenarios across 20 psychological themes, with crisis intervention routing and culturally-tuned RAG for Indian contexts.",
     detailedDescription: "LangGraph-orchestrated three-persona chatbot architecture with neurodivergent-aware routing and Severity-C crisis classification. Adaptive Quick Help / Deep Dive workflows scaling 5–30 minutes per session, backed by a Cultural-Context RAG pipeline of evidence-based strategies tuned for Indian parenting and education contexts.",
     features: [
       "Three persona-specialized agents (Educator, Parent, Child) with cross-persona context aggregation",
@@ -75,7 +85,9 @@ export const projectsData = [
     status: "Completed",
     github: null,
     demo: null,
-    image: "/images/skooc-project.jpg"
+    embed: null,
+    accent: "#7C2D5F",
+    gradient: "linear-gradient(135deg, #F0D4DD 0%, #E0B8C8 50%, #C595A8 100%)"
   }
 ];
 
@@ -87,3 +99,6 @@ export const projectCategories = [
 ];
 
 export const featuredProjects = [1, 2, 3];
+
+export const getProjectBySlug = (slug) =>
+  projectsData.find((project) => project.slug === slug);
