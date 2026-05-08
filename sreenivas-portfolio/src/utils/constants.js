@@ -1,7 +1,7 @@
 // Personal Information
 export const PERSONAL_INFO = {
   name: 'Sreenivas Gurram',
-  title: 'AI/ML Engineer & Data Science Innovator',
+  title: 'AI/ML Engineer — Agentic Workflows & LLM Systems',
   email: 'srinu202012@gmail.com',
   phone: '+91 9019684624',
   location: 'Bangalore, India',

@@ -16,7 +16,45 @@
   padding: 5rem 0;
   opacity: 0;
   transform: translateY(50px);
-  transition: all 0.8s ease;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.section-fallback {
+  min-height: 60vh;
+}
+
+.scroll-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 255, 150, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scroll-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.scroll-to-top:hover {
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 6px 25px rgba(0, 255, 150, 0.4);
 }
 
 .section.active {

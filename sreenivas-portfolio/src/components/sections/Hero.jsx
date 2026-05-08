@@ -1,46 +1,16 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
+import { useTypingEffect } from '../../hooks/useTypingEffect';
 import '../../styles/components/hero.css';
 
 const Hero = () => {
-  const [displayText, setDisplayText] = useState('');
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const [isTyping, setIsTyping] = useState(true);
-
-  // Move titles array inside useMemo to prevent re-creation on every render
   const titles = useMemo(() => [
     'AI/ML Engineer',
-    'Data Science Innovator',
-    'Generative AI Specialist',
-    'Automation Expert'
+    'Agentic AI Architect',
+    'LangGraph Specialist',
+    'LLM Systems Builder'
   ], []);
 
-  useEffect(() => {
-    const currentTitle = titles[currentTextIndex];
-    
-    if (isTyping) {
-      if (displayText.length < currentTitle.length) {
-        const timer = setTimeout(() => {
-          setDisplayText(currentTitle.slice(0, displayText.length + 1));
-        }, 100);
-        return () => clearTimeout(timer);
-      } else {
-        const timer = setTimeout(() => {
-          setIsTyping(false);
-        }, 2000);
-        return () => clearTimeout(timer);
-      }
-    } else {
-      if (displayText.length > 0) {
-        const timer = setTimeout(() => {
-          setDisplayText(displayText.slice(0, -1));
-        }, 50);
-        return () => clearTimeout(timer);
-      } else {
-        setCurrentTextIndex((prev) => (prev + 1) % titles.length);
-        setIsTyping(true);
-      }
-    }
-  }, [displayText, currentTextIndex, isTyping, titles]);
+  const displayText = useTypingEffect(titles);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -77,23 +47,23 @@ const Hero = () => {
           </div>
           
           <p className="hero-description">
-            Passionate about developing <strong>cutting-edge AI solutions</strong> that solve real-world challenges. 
-            Specialized in <strong>Generative AI</strong>, <strong>NLP</strong>, and <strong>Agentic Workflows</strong> with hands-on experience 
-            in reducing processing times by up to <strong>80%</strong> through intelligent automation.
+            AI/ML Engineer specializing in <strong>Agentic Workflows</strong>, <strong>LangGraph orchestration</strong>, and <strong>LLM optimization</strong>.
+            I architect enterprise <strong>MCP gateways</strong> managing <strong>100K+ daily requests</strong> and build cost-efficient
+            autonomous systems that solve complex, unstructured problems at scale.
           </p>
-          
+
           <div className="hero-stats">
             <div className="stat-item">
-              <div className="stat-number">80%</div>
-              <div className="stat-label">Time Reduction</div>
+              <div className="stat-number">100K+</div>
+              <div className="stat-label">Daily Requests</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">85%</div>
-              <div className="stat-label">Process Improvement</div>
+              <div className="stat-number">70%</div>
+              <div className="stat-label">Context Reduction</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">5+</div>
-              <div className="stat-label">AI Projects</div>
+              <div className="stat-number">Top 3</div>
+              <div className="stat-label">Google Cloud Agentic AI Day</div>
             </div>
           </div>
           

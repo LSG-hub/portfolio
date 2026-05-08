@@ -1,0 +1,136 @@
+\documentclass{resume} % Use the custom resume.cls style
+
+\usepackage[left=0.4 in,top=0.4in,right=0.4 in,bottom=0.4in]{geometry} % Document margins
+\newcommand{\tab}[1]{\hspace{.2667\textwidth}\rlap{#1}} 
+\newcommand{\itab}[1]{\hspace{0em}\rlap{#1}}
+\name{Sreenivas Gurram} % Your name
+\address{+91 9019684624 \\ Bangalore, India} 
+\address{\href{mailto:srinu202012@gmail.com}{Gmail} \\ 
+\href{https://portfolio-31jx.vercel.app/}{Portfolio} \\
+\href{https://linkedin.com/in/sreenivas-gurram-363528289}{LinkedIn} \\ \href{https://github.com/LSG-hub}{GitHub}}
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	SUMMARY
+%----------------------------------------------------------------------------------------
+
+\begin{rSection}{SUMMARY}
+
+AI/ML Engineer specializing in \textbf{Agentic Workflows}, \textbf{LangGraph orchestration}, and \textbf{LLM optimization}, with full-stack capability across React, FastAPI, Flutter, and cloud-native infrastructure. Architected enterprise \textbf{MCP Gateways} managing \textbf{10,000+ daily requests}, earned \textbf{Second Runner-Up at the Guinness World Record-certified Google Cloud Agentic AI Day 2025}, and co-authored a research paper at \textbf{NCAIT-2025}. Focused on building cost-efficient autonomous systems that move beyond standard API integrations to solve complex, unstructured problems at scale.
+
+\end{rSection}
+
+%----------------------------------------------------------------------------------------
+%	WORK EXPERIENCE SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{rSection}{EXPERIENCE}
+
+\textbf{Associate Technical Specialist, AI/ML} \hfill Oct 2025 - Present\\
+DigitalAPI.ai \hfill \textit{Bangalore, India}
+ \begin{itemize}
+    \itemsep -3pt {} 
+     \item \textbf{Architected ``DAC Studio'' Agentic Suite:} Led system design of a multi-model (\textit{Gemini, Claude, OpenAI}) enterprise AI assistant for holistic API discovery and workflow generation; engineered a dynamic \textbf{RBAC} architecture that contextually routes \textbf{7+ custom MCP tools} including server-side secure cURL execution and live web search, with live reasoning streaming for an on-demand AI experience.
+     \item \textbf{Engineered Optimized RAG \& Vector Infrastructure:} Designed a cost-efficient pipeline using \textbf{PostgreSQL + PGVector} to process \textbf{thousands of APIs} via method/path summary embeddings without exceeding LLM context limits; deployed vector-search MCP tools enabling autonomous catalog queries — reducing token consumption by \textbf{60\%} while maintaining high retrieval accuracy.
+     \item \textbf{Developed Real-Time Collaborative Workspace:} Built a full-stack drag-and-drop workflow builder with \textbf{React Flow} and \textbf{WebSockets} for multi-user real-time collaboration; engineered an MCP tool that translates natural language into structured graph nodes, enabling the AI to autonomously design, sandbox-execute, and visually render functional applications directly in the UI.
+     \item \textbf{Engineered Core Features for Custom AI Gateway:} Co-built a proprietary multi-model routing infrastructure to overcome the limitations of \textit{LiteLLM} and \textit{Apache APISIX}; developed backend support for \textbf{thinking tokens}, strict response schemas, and live reasoning streaming, plus rate-limiting and telemetry integrations — managing \textbf{10,000+} daily API requests with zero downtime.
+     \item \textbf{Architected Enterprise MCP Gateway:} Designed high-throughput, centralized infrastructure transforming traditional API marketplaces into \textbf{``Agent-Ready''} ecosystems. Built a custom parsing algorithm that dynamically converts OpenAPI specs into \textbf{JSON-RPC HTTP MCP Servers} with \textbf{zero-downtime} auto-deploys to \textbf{GCP Cloud Run}. Routing layer features centralized authentication, \textbf{multi-tier rate limiting} (server \& tool level), dynamic tool-filtering, comprehensive telemetry, and direct \textbf{tool monetization} — managing \textbf{100,000+} daily requests while reducing LLM context bloat by \textbf{70\%}.
+ \end{itemize}
+ 
+\textbf{Engineering Intern, AI/ML} \hfill April 2025 - Sept 2025\\
+DigitalAPI.ai \hfill \textit{Bangalore, India}
+ \begin{itemize}
+    \itemsep -3pt {} 
+     \item \textbf{Engineered ``Analytics on Demand'' Platform:} Designed a natural language-to-analytics agent using \textbf{Gemini 2.0} and \textbf{Model Context Protocol (MCP)}; built \textbf{5+ custom MCP tools} for autonomous cross-database querying (\textbf{PostgreSQL, MongoDB}) across \textbf{millions of data rows}, deriving complex reasoning and generating dynamic visual dashboards in \textbf{under 3 seconds} per query — eliminating \textbf{15+ hours/week} of manual reporting at \textbf{100\% retrieval accuracy}.
+     \item \textbf{Engineered Scalable OpenAPI Processing Pipeline:} Built an autonomous \textbf{LangGraph + Gemini} agentic workflow to process enterprise OpenAPI specifications exceeding \textbf{1.3M+ input tokens}; implemented advanced \textit{reference resolution algorithms} for circular dependencies and path-by-path intelligent chunking with parallel async processing — reducing inference costs by \textbf{45\%}, accelerating generation by \textbf{85\%}, with \textbf{99.9\% structural accuracy}.
+     \item \textbf{Developed Custom Documentation Rendering Engine:} Built a high-performance proprietary \textbf{React} library that dynamically renders AI-enhanced API specs — enriched descriptions, complex schemas, and multi-language code snippets (\textit{Python, C, Java}) — into a customized Redoc-style UI with a \textbf{100\% automated} generation-to-download pipeline, doubling downstream developer satisfaction scores.
+ \end{itemize}
+
+\textbf{AI Engineer, Contract} \hfill January 2025 - March 2025\\
+RightSense \hfill \textit{Bangalore, India}
+ \begin{itemize}
+    \itemsep -3pt {} 
+     \item \textbf{Architected Enterprise SmartRFP Platform:} Led end-to-end design of an automated RFP/RFQ processing system in \textbf{Django + React}, reducing proposal preparation time by \textbf{70\%} and processing \textbf{50+} concurrent RFP documents at \textbf{95\%} accuracy.
+     \item \textbf{Engineered Multi-Tenant Collaboration Infrastructure:} Built scalable enterprise architecture with role-based access control (SuperAdmin/Admin/User), supporting \textbf{100+} concurrent users across multiple organizations with real-time collaboration, integrated chat, calendar scheduling, and JIRA-style task management.
+    \item \textbf{Developed Universal RFP Parser \& Knowledge Base System:} Created intelligent document-parsing agents powered by \textbf{Llama} (deployed via \textbf{Ollama}) capable of converting diverse RFP formats into a standardized structure; coupled with a dynamic knowledge base of past RFP-response pairs, lifting automated draft generation accuracy by \textbf{85\%}.
+    \item \textbf{Implemented Full-Stack Production Environment:} Deployed containerized application via \textbf{Docker + Jenkins CI/CD} on \textbf{GCP VMs} with a hybrid \textbf{BigQuery + MongoDB} database architecture — achieving \textbf{99.5\%} uptime and supporting enterprise-level scalability for \textbf{500+} document processing workflows.
+ \end{itemize}
+
+\end{rSection}
+
+%----------------------------------------------------------------------------------------
+%	PROJECTS SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{rSection}{FEATURED PROJECTS}
+\vspace{-1.25em}
+
+\item \textbf{Juno — Voice-Native Financial Operating System} | \textit{Google Cloud Agentic AI Day 2025} \\
+\textit{Tech Stack: Flutter, Vertex AI (Gemini 2.5 Flash Lite), Firebase, Firestore, Cloud Run, Cloud Speech-to-Text, MCP}
+\begin{itemize}
+    \item \textbf{Multi-Agent Financial Reasoning:} Built a multi-agent advisory system in which a \textbf{Coordinator MCP} orchestrates specialized Gemini-powered agents (\textit{Growth, Security, Context, Feedback}); integrated with the \textbf{Fi Money MCP Server} to securely stream a user's normalized assets, liabilities, cash-flow, and risk metrics into agent context.
+    \item \textbf{Voice-First Multilingual UX:} Engineered a \textbf{Flutter} mobile app with Cloud Speech-to-Text + TTS, enabling plain-language queries in multiple Indian languages — converting natural questions like \textit{``Could I retire at 50 if my SIP grows 12\%?''} into Monte-Carlo simulations and Search-grounded financial projections.
+    \item \textbf{Production Cloud Backend:} Deployed serverless MCP micro-agents on \textbf{Cloud Run} with \textbf{Firebase Auth} (Phone-OTP, passkey), \textbf{Firestore} for per-user agent memory and life-event store (e.g., \textit{``wedding in Feb 2026 → high liquidity need''}), and \textbf{Google Search Grounding} for real-time market and regulatory data.
+    \item \href{https://drive.google.com/file/d/12SFmxkaDG8kcLFpLTg6fAuKgeOlFq4Y8/view?usp=sharing}{\textit{Demo video}}
+\end{itemize}
+
+\vspace{0.5em}
+
+\item \textbf{SPEAR (Split Panel Engine for Automated Rendering)} | \textit{Capstone Project + Published Paper} \\
+\textit{Tech Stack: Python, FastAPI, React, LangGraph, Docker, Gemini, MongoDB}
+\begin{itemize}
+    \item \textbf{Agentic IDE Architecture:} Developed an autonomous AI software team using \textbf{LangGraph} to coordinate distinct personas (Developer, Reviewer, QA), achieving \textbf{95\%} accuracy in code compilation and functionality tests.
+    \item \textbf{Context-Optimized Generation:} Engineered a file-based coding algorithm to overcome LLM context window limitations, enabling generation of enterprise-scale applications while maintaining consistent design patterns.
+    \item \textbf{Published Research:} Co-authored \textit{``SPEAR: An Innovative AI-Powered Web Development Assistant''} presented at the \textbf{11th National Conference on Advancements in Information Technology (NCAIT-2025)}, JSS Academy of Technical Education, Bengaluru — May 2025.
+\end{itemize}
+
+\vspace{0.5em}
+
+\item \textbf{Skooc — Multi-Persona Therapeutic AI Suite} | \textit{Consulting Engagement (2025)} \\
+\textit{Tech Stack: Python, LangGraph, RAG}
+\begin{itemize}
+    \item \textbf{Three-Persona Chatbot Architecture:} Architected a suite of three persona-specialized agents — \textit{Educator} (for teachers), \textit{Parent}, and \textit{Child} — that internally aggregate cross-persona context, purely orchestrated in \textbf{LangGraph}; handles \textbf{300+ clinical scenarios} across \textbf{20 psychological themes} with adaptive ``Quick Help'' vs ``Deep Dive'' workflows scaling 5 to 30 minutes per session.
+    \item \textbf{Crisis Intervention \& Counsellor Override Layer:} Implemented \textbf{Severity-C} binary classification for zero-tolerance safety, instantly routing high-risk inputs (self-harm/abuse) to human counsellors; integrated automated therapeutic screenings to flag patterns requiring professional intervention — \textbf{100\% safety compliance}.
+    \item \textbf{Neurodivergent-Aware Routing \& Cultural-Context RAG:} Engineered dedicated LangGraph paths for children with ND concerns ($\sim$50 unique interaction states with ``Confidence Check'' and ``Pattern Recognition'' nodes), backed by a Cultural-Context RAG pipeline of \textbf{50+ evidence-based strategies} tuned to Indian parenting and education contexts.
+\end{itemize}
+
+\end{rSection}
+
+%----------------------------------------------------------------------------------------
+%	ACHIEVEMENTS
+%----------------------------------------------------------------------------------------
+
+\begin{rSection}{ACHIEVEMENTS} 
+\begin{itemize}
+    \item \textbf{Second Runner-Up — Google Cloud Agentic AI Day 2025:} Awarded \textbf{INR 1 Lakh} prize at the \textbf{Guinness World Record-certified} 30-hour innovation sprint by Google Cloud $\times$ Hack2Skill — the \textit{largest agentic-AI hackathon ever held}, with \textbf{1,941 adjudicated developers across 700+ teams}. Built \textit{Juno} (see Featured Projects) for the ``Let AI Speak to Your Money'' challenge. \href{https://drive.google.com/drive/folders/1IPTQvzsI8YVqeHt31QAsgNWxUqD66qVd?usp=sharing}{\textit{View submission}}
+\end{itemize}
+\end{rSection}
+
+%----------------------------------------------------------------------------------------
+%	EDUCATION SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{rSection}{Education}
+
+{\bf Bachelors in Artificial Intelligence and Machine Learning} \hfill {2021 - 2025} \\
+BMS College of Engineering \hfill {CGPA - 8.6} \\
+Bangalore, India
+
+\end{rSection}
+
+%----------------------------------------------------------------------------------------
+% TECHNICAL SKILLS	
+%----------------------------------------------------------------------------------------
+\begin{rSection}{TECHNICAL SKILLS}
+
+\textbf{Languages}: Python, C, C++, JavaScript / TypeScript, Dart, SQL \\
+\textbf{AI / ML \& Agentic}: LangChain, LangGraph, MCP (Model Context Protocol), RAG, Vector Search, TensorFlow, PyTorch, NumPy, Pandas, Matplotlib \\
+\textbf{Web \& Mobile}: React, React Flow, FastAPI, Django, Flutter, WebSockets, REST, JSON-RPC \\
+\textbf{Databases}: PostgreSQL, PGVector, MongoDB, MySQL, BigQuery, Firestore \\
+\textbf{Cloud \& DevOps}: GCP (Cloud Run, Vertex AI, Firebase, VMs), AWS, Docker, Jenkins, Git, RabbitMQ, MinIO, UiPath \\
+\textbf{Spoken Languages}: English, Hindi, Kannada, Telugu \\
+
+\end{rSection}
+
+\end{document}

@@ -1,40 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useScrollSpy } from '../../hooks/useScrollSpy';
+import { useScrollPosition } from '../../hooks/useScrollPosition';
 import '../../styles/components/navbar.css';
 
+const NAV_ITEMS = [
+  { id: 'home', label: 'Home', icon: 'fas fa-home' },
+  { id: 'experience', label: 'Experience', icon: 'fas fa-briefcase' },
+  { id: 'projects', label: 'Projects', icon: 'fas fa-code' },
+  { id: 'skills', label: 'Skills', icon: 'fas fa-brain' },
+  { id: 'contact', label: 'Contact', icon: 'fas fa-envelope' }
+];
+
+const SECTION_IDS = NAV_ITEMS.map((item) => item.id);
+
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.pageYOffset;
-      setIsScrolled(scrollTop > 50);
-
-      // Update active section based on scroll position
-      const sections = ['home', 'experience', 'projects', 'skills', 'contact'];
-      const sectionElements = sections.map(id => document.getElementById(id));
-      
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = sectionElements[i];
-        if (section && scrollTop >= section.offsetTop - 100) {
-          setActiveSection(sections[i]);
-          break;
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navItems = [
-    { id: 'home', label: 'Home', icon: 'fas fa-home' },
-    { id: 'experience', label: 'Experience', icon: 'fas fa-briefcase' },
-    { id: 'projects', label: 'Projects', icon: 'fas fa-code' },
-    { id: 'skills', label: 'Skills', icon: 'fas fa-brain' },
-    { id: 'contact', label: 'Contact', icon: 'fas fa-envelope' }
-  ];
+  const isScrolled = useScrollPosition(50);
+  const activeSection = useScrollSpy(SECTION_IDS);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -55,7 +37,7 @@ const Navbar = () => {
         </div>
 
         <ul className={`nav-menu ${isMobileMenuOpen ? 'active' : ''}`}>
-          {navItems.map((item) => (
+          {NAV_ITEMS.map((item) => (
             <li key={item.id} className="nav-item">
               <a
                 href={`#${item.id}`}

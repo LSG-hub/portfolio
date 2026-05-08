@@ -1,36 +1,36 @@
 import React from 'react';
+import '../../styles/components/footer.css';
+
+const QUICK_LINKS = [
+  { name: 'Home', href: '#home' },
+  { name: 'Experience', href: '#experience' },
+  { name: 'Projects', href: '#projects' },
+  { name: 'Skills', href: '#skills' },
+  { name: 'Contact', href: '#contact' }
+];
+
+const SOCIAL_LINKS = [
+  { icon: 'fab fa-linkedin', url: 'https://www.linkedin.com/in/sreenivas-gurram-363528289/', name: 'LinkedIn' },
+  { icon: 'fab fa-github', url: 'https://github.com/LSG-hub', name: 'GitHub' },
+  { icon: 'fab fa-twitter', url: 'https://x.com/SreenivasGurra3', name: 'Twitter' },
+  { icon: 'fas fa-envelope', url: 'mailto:srinu202012@gmail.com', name: 'Email' }
+];
+
+const scrollToSection = (href) => {
+  const element = document.getElementById(href.replace('#', ''));
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+};
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-
-  const quickLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'Experience', href: '#experience' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'Skills', href: '#skills' },
-    { name: 'Contact', href: '#contact' }
-  ];
-
-  const socialLinks = [
-    { icon: 'fab fa-linkedin', url: 'https://www.linkedin.com/in/sreenivas-gurram-363528289/', name: 'LinkedIn' },
-    { icon: 'fab fa-github', url: 'https://github.com/LSG-hub', name: 'GitHub' },
-    { icon: 'fab fa-twitter', url: 'https://x.com/SreenivasGurra3', name: 'Twitter' },
-    { icon: 'fas fa-envelope', url: 'mailto:srinu202012@gmail.com', name: 'Email' }
-  ];
-
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId.replace('#', ''));
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
 
   return (
     <footer className="footer">
       <div className="footer-content">
         <div className="container">
           <div className="footer-grid">
-            {/* Brand Section */}
             <div className="footer-brand">
               <div className="footer-logo">
                 <span className="logo-text">SG</span>
@@ -40,9 +40,9 @@ const Footer = () => {
                 Building the future with Artificial Intelligence
               </p>
               <div className="footer-social">
-                {socialLinks.map((social, index) => (
+                {SOCIAL_LINKS.map((social) => (
                   <a
-                    key={index}
+                    key={social.name}
                     href={social.url}
                     target={social.url.startsWith('mailto:') ? '_self' : '_blank'}
                     rel={social.url.startsWith('mailto:') ? '' : 'noopener noreferrer'}
@@ -55,13 +55,12 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* Quick Links */}
             <div className="footer-links">
               <h4>Quick Links</h4>
               <ul>
-                {quickLinks.map((link, index) => (
-                  <li key={index}>
-                    <a 
+                {QUICK_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <a
                       href={link.href}
                       onClick={(e) => {
                         e.preventDefault();
@@ -75,7 +74,6 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Contact Info */}
             <div className="footer-contact">
               <h4>Get In Touch</h4>
               <div className="contact-items">
@@ -94,17 +92,20 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* Newsletter/CTA */}
             <div className="footer-cta">
               <h4>Let's Connect</h4>
               <p>
-                Interested in AI/ML collaboration or have a project in mind? 
+                Interested in AI/ML collaboration or have a project in mind?
                 Let's build something amazing together!
               </p>
-              <a href="#contact" className="footer-cta-btn" onClick={(e) => {
-                e.preventDefault();
-                scrollToSection('#contact');
-              }}>
+              <a
+                href="#contact"
+                className="footer-cta-btn"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection('#contact');
+                }}
+              >
                 <i className="fas fa-paper-plane"></i>
                 Start a Project
               </a>
@@ -128,213 +129,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        .footer {
-          background: linear-gradient(135deg, var(--darker-bg) 0%, var(--darkest-bg) 100%);
-          color: var(--text-secondary);
-          border-top: 1px solid var(--border-color);
-          margin-top: 2rem;
-        }
-
-        .footer-content {
-          padding: 3rem 0 2rem;
-        }
-
-        .footer-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 2rem;
-        }
-
-        .footer-brand .footer-logo {
-          display: flex;
-          align-items: center;
-          font-size: 1.5rem;
-          font-weight: 700;
-          margin-bottom: 1rem;
-        }
-
-        .logo-text {
-          color: var(--text-primary);
-        }
-
-        .logo-accent {
-          color: var(--primary-color);
-          margin-left: 2px;
-        }
-
-        .footer-tagline {
-          margin-bottom: 1.5rem;
-          color: var(--text-muted);
-          font-style: italic;
-        }
-
-        .footer-social {
-          display: flex;
-          gap: 1rem;
-        }
-
-        .social-link {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 40px;
-          height: 40px;
-          background: rgba(0, 255, 150, 0.1);
-          border: 1px solid var(--border-color);
-          border-radius: 8px;
-          color: var(--primary-color);
-          transition: all 0.3s ease;
-        }
-
-        .social-link:hover {
-          background: var(--primary-color);
-          color: var(--dark-bg);
-          transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(0, 255, 150, 0.3);
-        }
-
-        .footer-links h4,
-        .footer-contact h4,
-        .footer-cta h4 {
-          color: var(--text-primary);
-          margin-bottom: 1rem;
-          font-size: 1.1rem;
-        }
-
-        .footer-links ul {
-          list-style: none;
-          padding: 0;
-        }
-
-        .footer-links li {
-          margin-bottom: 0.5rem;
-        }
-
-        .footer-links a {
-          color: var(--text-secondary);
-          text-decoration: none;
-          transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
-          color: var(--primary-color);
-        }
-
-        .contact-items {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-
-        .contact-item {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .contact-item i {
-          color: var(--primary-color);
-          width: 16px;
-        }
-
-        .contact-item a,
-        .contact-item span {
-          color: var(--text-secondary);
-          text-decoration: none;
-          transition: color 0.3s ease;
-        }
-
-        .contact-item a:hover {
-          color: var(--primary-color);
-        }
-
-        .footer-cta p {
-          margin-bottom: 1.5rem;
-          line-height: 1.6;
-        }
-
-        .footer-cta-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-          padding: 0.75rem 1.5rem;
-          background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-          color: white;
-          text-decoration: none;
-          border-radius: 8px;
-          font-weight: 500;
-          transition: all 0.3s ease;
-        }
-
-        .footer-cta-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(0, 255, 150, 0.3);
-        }
-
-        .footer-bottom {
-          padding: 1.5rem 0;
-          border-top: 1px solid var(--border-color);
-          background: rgba(0, 0, 0, 0.2);
-        }
-
-        .footer-bottom-content {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          flex-wrap: wrap;
-          gap: 1rem;
-        }
-
-        .copyright p {
-          margin: 0;
-          color: var(--text-muted);
-          font-size: 0.9rem;
-        }
-
-        .footer-tech {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          color: var(--text-muted);
-          font-size: 0.9rem;
-        }
-
-        .footer-tech i {
-          color: var(--primary-color);
-        }
-
-        .footer-tech .fa-react {
-          color: #61DAFB;
-        }
-
-        .footer-tech .fa-heart {
-          color: #e74c3c;
-          animation: heartbeat 2s ease-in-out infinite;
-        }
-
-        @keyframes heartbeat {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.1); }
-        }
-
-        @media (max-width: 768px) {
-          .footer-grid {
-            grid-template-columns: 1fr;
-            text-align: center;
-          }
-
-          .footer-bottom-content {
-            flex-direction: column;
-            text-align: center;
-          }
-
-          .footer-social {
-            justify-content: center;
-          }
-        }
-      `}</style>
     </footer>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
-import { experienceData, educationData, certificationsData } from '../../data/experience';
+import { experienceData, educationData, achievementsData } from '../../data/experience';
 import '../../styles/components/experience.css';
 
 const ExperienceCard = ({ experience, index }) => {
@@ -114,36 +114,36 @@ const EducationCard = ({ education }) => {
   );
 };
 
-const CertificationCard = ({ certification, index }) => {
+const AchievementCard = ({ achievement, index }) => {
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true
   });
 
   return (
-    <div 
+    <div
       ref={ref}
       className={`certification-card ${inView ? 'animate-in' : ''}`}
       style={{ animationDelay: `${index * 0.1}s` }}
     >
       <div className="certification-header">
         <div className="certification-icon">
-          <i className="fas fa-certificate"></i>
+          <i className="fas fa-trophy"></i>
         </div>
         <div className="certification-details">
-          <h4 className="certification-title">{certification.title}</h4>
-          <div className="certification-issuer">{certification.issuer}</div>
-          <div className="certification-date">{certification.date}</div>
+          <h4 className="certification-title">{achievement.title}</h4>
+          <div className="certification-issuer">{achievement.issuer}</div>
+          <div className="certification-date">{achievement.date}</div>
         </div>
       </div>
 
       <div className="certification-description">
-        <p>{certification.description}</p>
+        <p>{achievement.description}</p>
       </div>
 
       <div className="certification-skills">
         <div className="skill-tags">
-          {certification.skills.map((skill, i) => (
+          {achievement.skills.map((skill, i) => (
             <span key={i} className="skill-tag">{skill}</span>
           ))}
         </div>
@@ -197,17 +197,17 @@ const Experience = () => {
             </div>
           </div>
 
-          {/* Certifications */}
+          {/* Achievements */}
           <div className="experience-subsection">
             <h3 className="subsection-title">
-              <i className="fas fa-award"></i>
-              Workshops & Certifications
+              <i className="fas fa-trophy"></i>
+              Achievements
             </h3>
             <div className="certifications-grid">
-              {certificationsData.map((certification, index) => (
-                <CertificationCard 
-                  key={certification.id} 
-                  certification={certification}
+              {achievementsData.map((achievement, index) => (
+                <AchievementCard
+                  key={achievement.id}
+                  achievement={achievement}
                   index={index}
                 />
               ))}

@@ -1,143 +1,89 @@
 export const projectsData = [
   {
     id: 1,
-    title: "S.P.E.A.R",
-    subtitle: "Split Panel Engine for Automated Rendering",
-    category: "Full-Stack AI Platform",
-    description: "No-code full-stack development platform enabling users to build applications 3x faster than traditional coding. Led a team of 3 to design a platform leveraging React.js for UI/UX and Node.js for backend automation.",
-    detailedDescription: "Revolutionary no-code platform that democratizes application development through intelligent automation and AI-powered assistance.",
+    title: "Juno",
+    subtitle: "Voice-Native Financial Operating System",
+    category: "Voice-Native AI",
+    description: "Multi-agent voice-first financial advisor built for Google Cloud Agentic AI Day 2025. A Coordinator MCP orchestrates Gemini-powered specialist agents; users ask plain-language questions in multiple Indian languages and receive grounded financial reasoning.",
+    detailedDescription: "Multi-agent advisory system where a Coordinator MCP orchestrates specialized Gemini-powered agents (Growth, Security, Context, Feedback). Built in 30 hours and awarded 2nd Runner-Up among 1,941 developers across 700+ teams at the Guinness World Record-certified Google Cloud Agentic AI Day 2025.",
     features: [
-      "AI-Powered code generation using OpenAI GPT-3.5 and LangChain",
-      "RAG architecture for contextual data retrieval with 90% accuracy",
-      "Drag-and-drop workflows with role-based access control",
-      "Autonomous task execution based on user instructions",
-      "Real-time collaboration for enterprise use cases"
+      "Multi-agent reasoning: Coordinator MCP orchestrates Growth, Security, Context, and Feedback agents",
+      "Fi Money MCP integration streams normalized assets, liabilities, cash-flow, and risk metrics into agent context",
+      "Voice-first multilingual UX in multiple Indian languages via Cloud Speech-to-Text + TTS",
+      "Monte-Carlo retirement and goal simulations grounded with real-time market and regulatory data via Search Grounding",
+      "Serverless backend: Cloud Run micro-agents, Firebase Auth (Phone-OTP, passkey), Firestore for per-user agent memory and life-event store"
     ],
-    technologies: ["React.js", "Node.js", "OpenAI GPT-3.5", "LangChain", "RAG", "JavaScript", "REST APIs"],
+    technologies: ["Flutter", "Vertex AI (Gemini 2.5 Flash Lite)", "Firebase", "Firestore", "Cloud Run", "Cloud Speech-to-Text", "MCP"],
     metrics: {
-      developmentSpeed: "3x faster",
-      testingAccuracy: "90%",
-      teamSize: "3 members",
-      useCases: "5+ enterprise scenarios"
+      recognition: "2nd Runner-Up — Google Cloud Agentic AI Day 2025",
+      cohort: "1,941 developers / 700+ teams",
+      prize: "INR 1 Lakh",
+      stack: "Flutter + GCP serverless"
     },
     status: "Completed",
-    github: "https://github.com/yourusername/spear-platform",
-    demo: "https://spear-demo.vercel.app",
-    image: "/images/spear-project.jpg"
+    github: null,
+    demo: "https://drive.google.com/file/d/12SFmxkaDG8kcLFpLTg6fAuKgeOlFq4Y8/view?usp=sharing",
+    image: "/images/juno-project.jpg"
   },
   {
     id: 2,
-    title: "Zenith AI",
-    subtitle: "AI-Driven SaaS Platform",
-    category: "Modular AI SaaS",
-    description: "Spearheaded a team of 3 to develop a modular SaaS platform integrating MedBot (healthcare assistant), QuizCrafter (AI-generated quizzes), and a stock prediction model.",
-    detailedDescription: "Comprehensive AI-driven platform showcasing the versatility of AI applications across healthcare, education, and finance sectors.",
+    title: "SPEAR",
+    subtitle: "Split Panel Engine for Automated Rendering",
+    category: "Code Generation",
+    description: "An autonomous AI software development team built with LangGraph — Developer, Reviewer, and QA personas collaborate to generate enterprise-scale applications. Co-authored research paper presented at NCAIT-2025.",
+    detailedDescription: "Agentic IDE architecture demonstrating context-optimized code generation. Multi-persona agents coordinate via LangGraph to overcome LLM context window limits while maintaining design pattern consistency across enterprise codebases.",
     features: [
-      "MedBot for healthcare diagnostics and patient support",
-      "QuizCrafter for automated educational content generation",
-      "Stock prediction model with real-time market analysis",
-      "Automated data pipelines using UiPath and LangChain",
-      "Real-time NLP analysis and processing"
+      "LangGraph-orchestrated multi-persona agents (Developer / Reviewer / QA)",
+      "95% accuracy in code compilation and functionality tests",
+      "File-based coding algorithm overcomes LLM context window limits",
+      "Maintains consistent design patterns at enterprise scale",
+      "Research published at NCAIT-2025, JSS Academy of Technical Education, Bengaluru — May 2025"
     ],
-    technologies: ["UiPath", "LangChain", "NLP", "Python", "Machine Learning", "Stock APIs", "Healthcare APIs"],
+    technologies: ["Python", "FastAPI", "React", "LangGraph", "Docker", "Gemini", "MongoDB"],
     metrics: {
-      manualEffortReduction: "70%",
-      moduleCount: "3 integrated modules",
-      teamSize: "3 members",
-      industries: "Healthcare, Education, Finance"
+      accuracy: "95% code compilation",
+      publication: "NCAIT-2025",
+      personas: "Developer / Reviewer / QA",
+      focus: "Enterprise-scale generation"
     },
     status: "Completed",
-    github: "https://github.com/yourusername/zenith-ai",
-    demo: "https://zenith-ai-demo.vercel.app",
-    image: "/images/zenith-project.jpg"
+    github: null,
+    demo: null,
+    image: "/images/spear-project.jpg"
   },
   {
     id: 3,
-    title: "MedBot",
-    subtitle: "Conversational AI for Healthcare Diagnostics",
+    title: "Skooc",
+    subtitle: "Multi-Persona Therapeutic AI Suite",
     category: "Healthcare AI",
-    description: "Built a GPT-3-powered assistant to analyze medical reports and match patient histories, reducing diagnosis time by 30% in prototype scenarios.",
-    detailedDescription: "HIPAA-compliant healthcare assistant that leverages advanced NLP to provide intelligent medical support and diagnostics assistance.",
+    description: "A three-persona therapeutic AI suite serving Educators, Parents, and Children — 300+ clinical scenarios across 20 psychological themes, with crisis intervention routing and culturally-tuned RAG for Indian contexts. Consulting engagement, 2025.",
+    detailedDescription: "LangGraph-orchestrated three-persona chatbot architecture with neurodivergent-aware routing and Severity-C crisis classification. Adaptive Quick Help / Deep Dive workflows scaling 5–30 minutes per session, backed by a Cultural-Context RAG pipeline of evidence-based strategies tuned for Indian parenting and education contexts.",
     features: [
-      "Medical report analysis and interpretation",
-      "Patient history matching and correlation",
-      "HIPAA-compliant data processing workflows",
-      "Secure API pipelines for data privacy",
-      "NLP-driven search and recommendation system"
+      "Three persona-specialized agents (Educator, Parent, Child) with cross-persona context aggregation",
+      "300+ clinical scenarios spanning 20 psychological themes",
+      "Severity-C binary classification routes high-risk inputs (self-harm/abuse) to human counsellors — 100% safety compliance",
+      "Neurodivergent-aware routing with ~50 unique interaction states (Confidence Check, Pattern Recognition)",
+      "Cultural-Context RAG: 50+ evidence-based strategies tuned for Indian parenting and education"
     ],
-    technologies: ["GPT-3", "NLP", "Healthcare APIs", "HIPAA Compliance", "Python", "Secure Architecture"],
+    technologies: ["Python", "LangGraph", "RAG", "Vector Search"],
     metrics: {
-      diagnosisTimeReduction: "30%",
-      complianceStandard: "HIPAA",
-      accuracy: "High precision medical analysis",
-      security: "End-to-end encryption"
-    },
-    status: "Prototype",
-    github: "https://github.com/yourusername/medbot",
-    demo: "https://medbot-demo.vercel.app",
-    image: "/images/medbot-project.jpg"
-  },
-  {
-    id: 4,
-    title: "Mutual Fund Advisor",
-    subtitle: "UiPath-Powered RPA System",
-    category: "Financial RPA",
-    description: "Engineered an RPA solution to extract and analyze real-time mutual fund data from 15+ financial websites, automating 8 hours/week of manual work.",
-    detailedDescription: "Intelligent financial advisor system that automates data collection, analysis, and investment recommendations through advanced RPA techniques.",
-    features: [
-      "Real-time data extraction from 15+ financial websites",
-      "Automated comparative analysis dashboards",
-      "Investment recommendation engine",
-      "Portfolio testing and validation",
-      "Automated report generation"
-    ],
-    technologies: ["UiPath", "RPA", "Financial APIs", "Data Analysis", "Dashboard Creation", "Python"],
-    metrics: {
-      weeklyTimeSaved: "8 hours",
-      websitesMonitored: "15+",
-      automationLevel: "Full automation",
-      accuracy: "High precision analysis"
+      scenarios: "300+ clinical scenarios",
+      themes: "20 psychological themes",
+      personas: "3 (Educator / Parent / Child)",
+      safety: "100% Severity-C compliance"
     },
     status: "Completed",
-    github: "https://github.com/yourusername/mutual-fund-advisor",
-    demo: "https://mf-advisor-demo.vercel.app",
-    image: "/images/mf-advisor-project.jpg"
-  },
-  {
-    id: 5,
-    title: "Jarvis AI",
-    subtitle: "Voice-Controlled Virtual Assistant",
-    category: "AI Assistant",
-    description: "Developed a Python-based assistant with 95% voice recognition accuracy, automating tasks like web searches and app control.",
-    detailedDescription: "Advanced voice-controlled virtual assistant that combines speech recognition, NLP, and automation to create a seamless user experience.",
-    features: [
-      "95% voice recognition accuracy",
-      "Web search automation",
-      "Application control and management",
-      "Secure environment variable management",
-      "NLP optimization for natural conversations"
-    ],
-    technologies: ["Python", "Speech Recognition", "NLP", "Automation", "Voice Processing", "API Integration"],
-    metrics: {
-      recognitionAccuracy: "95%",
-      taskCompletionImprovement: "50%",
-      responseTime: "Real-time processing",
-      security: "Secure credential management"
-    },
-    status: "Completed",
-    github: "https://github.com/yourusername/jarvis-ai",
-    demo: "https://jarvis-demo.vercel.app",
-    image: "/images/jarvis-project.jpg"
+    github: null,
+    demo: null,
+    image: "/images/skooc-project.jpg"
   }
 ];
 
 export const projectCategories = [
   "All",
-  "Full-Stack AI Platform",
-  "Healthcare AI",
-  "Financial RPA",
-  "AI Assistant",
-  "Modular AI SaaS"
+  "Voice-Native AI",
+  "Code Generation",
+  "Healthcare AI"
 ];
 
-export const featuredProjects = [1, 2, 3]; // IDs of featured projects
+export const featuredProjects = [1, 2, 3];

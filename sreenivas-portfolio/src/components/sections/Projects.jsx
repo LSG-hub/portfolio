@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { projectsData, projectCategories } from '../../data/projects';
 import '../../styles/components/projects.css';
@@ -104,9 +104,12 @@ const Projects = () => {
     triggerOnce: true
   });
 
-  const filteredProjects = activeCategory === 'All' 
-    ? projectsData 
-    : projectsData.filter(project => project.category === activeCategory);
+  const filteredProjects = useMemo(
+    () => (activeCategory === 'All'
+      ? projectsData
+      : projectsData.filter((project) => project.category === activeCategory)),
+    [activeCategory]
+  );
 
   return (
     <section id="projects" ref={sectionRef} className={`section projects-section ${sectionInView ? 'active' : ''}`}>
