@@ -17,8 +17,8 @@ const Hero = () => {
             I architect enterprise agentic AI infrastructure &mdash; multi-model
             orchestration, <strong>MCP</strong> gateways, and real-time collaborative
             workflow builders. Currently <strong>Associate Technical Specialist at
-            DigitalAPI.ai</strong>, where I lead architecture for systems managing
-            <strong> 100K+ daily requests</strong>.
+            DigitalAPI.ai</strong>, where I lead architecture for systems handling
+            <strong> 10K+ daily requests</strong>.
           </p>
 
           <div className="hero-meta">
@@ -37,7 +37,7 @@ const Hero = () => {
             <div className="hero-meta-row">
               <span className="hero-meta-label">Location</span>
               <span className="hero-meta-value">
-                Bangalore, India &mdash; open to senior AI/ML roles
+                Bangalore, India &mdash; open to AI/ML engineering roles
               </span>
             </div>
           </div>

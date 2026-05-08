@@ -7,6 +7,7 @@ import '../../styles/components/projects.css';
 const ProjectCard = ({ project, index }) => {
   const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true });
   const num = String(index + 1).padStart(2, '0');
+  const hasImage = Boolean(project.image);
 
   return (
     <Link
@@ -15,12 +16,20 @@ const ProjectCard = ({ project, index }) => {
       className={`project-card glass fade-in ${inView ? 'is-visible' : ''}`}
     >
       <div
-        className="project-card-image"
-        style={{ background: project.gradient }}
-        aria-hidden="true"
+        className={`project-card-image ${hasImage ? 'project-card-image-photo' : 'project-card-image-gradient'}`}
+        style={hasImage ? { backgroundImage: `url(${project.image})` } : { background: project.gradient }}
+        role={hasImage ? 'img' : undefined}
+        aria-label={hasImage ? project.imageAlt : undefined}
+        aria-hidden={hasImage ? undefined : true}
       >
-        <span className="project-card-num">{num}</span>
-        <span className="project-card-watermark">{project.title}</span>
+        {hasImage ? (
+          <span className="project-card-num project-card-num-overlay">{num}</span>
+        ) : (
+          <>
+            <span className="project-card-num">{num}</span>
+            <span className="project-card-watermark">{project.title}</span>
+          </>
+        )}
       </div>
 
       <div className="project-card-body">
@@ -53,7 +62,7 @@ const Projects = () => {
     <section id="projects" className="section projects-section">
       <div className="container">
         <div className="section-header">
-          <span className="section-header-num">01 / Selected Work</span>
+          <span className="section-header-num">02 / Selected Work</span>
         </div>
 
         <h2 className="section-title">Projects</h2>

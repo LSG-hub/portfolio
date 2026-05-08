@@ -6,17 +6,17 @@ export const experienceData = [
     location: "Bangalore, India",
     duration: "Oct 2025 - Present",
     type: "Full-Time",
-    description: "Architecting enterprise agentic AI infrastructure — multi-model assistants, MCP gateways managing 100K+ daily requests, and real-time collaborative workflow builders.",
+    description: "Architecting enterprise agentic AI infrastructure — multi-model assistants, MCP gateways managing 10K+ daily requests, and real-time collaborative workflow builders.",
     achievements: [
       "Architected 'DAC Studio' Agentic Suite — multi-model (Gemini, Claude, OpenAI) enterprise AI assistant with dynamic RBAC routing across 7+ custom MCP tools, including server-side secure cURL execution and live web search with reasoning streaming",
       "Engineered cost-efficient RAG pipeline using PostgreSQL + PGVector to embed thousands of API method/path summaries — reduced token consumption by 60% while maintaining high retrieval accuracy",
       "Built full-stack drag-and-drop workflow builder with React Flow + WebSockets for multi-user real-time collaboration; AI translates natural language into structured graph nodes that sandbox-execute and render in the UI",
       "Co-built proprietary multi-model AI Gateway routing infrastructure overcoming LiteLLM/APISIX limits — supports thinking tokens, strict response schemas, live reasoning streaming, rate limiting, and telemetry across 10K+ daily API requests with zero downtime",
-      "Architected enterprise MCP Gateway transforming API marketplaces into 'Agent-Ready' ecosystems — custom OpenAPI → JSON-RPC HTTP MCP Server parser with zero-downtime auto-deploys to GCP Cloud Run, multi-tier rate limiting, telemetry, and tool monetization. Manages 100K+ daily requests, reduces LLM context bloat by 70%"
+      "Architected enterprise MCP Gateway transforming API marketplaces into 'Agent-Ready' ecosystems — custom OpenAPI → JSON-RPC HTTP MCP Server parser with zero-downtime auto-deploys to GCP Cloud Run, multi-tier rate limiting, telemetry, and tool monetization. Manages 10K+ daily requests, reduces LLM context bloat by 70%"
     ],
     technologies: ["LangGraph", "MCP", "Gemini", "Claude", "OpenAI", "PostgreSQL", "PGVector", "React Flow", "WebSockets", "GCP Cloud Run", "FastAPI"],
     highlights: {
-      dailyRequests: "100K+",
+      dailyRequests: "10K+",
       contextReduction: "70%",
       tokenSavings: "60%",
       focus: "Enterprise Agentic AI"
@@ -95,7 +95,9 @@ export const achievementsData = [
     issuer: "Google Cloud × Hack2Skill",
     date: "2025",
     description: "Awarded INR 1 Lakh prize at the Guinness World Record-certified 30-hour innovation sprint — the largest agentic-AI hackathon ever held, with 1,941 adjudicated developers across 700+ teams. Built Juno (see Projects) for the 'Let AI Speak to Your Money' challenge.",
-    skills: ["Agentic AI", "Multi-Agent Systems", "Vertex AI", "Flutter", "MCP", "Cloud Run"]
+    skills: ["Agentic AI", "Multi-Agent Systems", "Vertex AI", "Flutter", "MCP", "Cloud Run"],
+    image: "/images/agentic-ai-day-podium.jpg",
+    imageAlt: "Top 3 winning teams on stage during Google Cloud Agentic AI Day 2025 closing ceremony, gold confetti falling"
   },
   {
     id: 2,

@@ -18,11 +18,11 @@ const Contact = () => {
 
         <h2 className="section-title">Contact</h2>
 
-        <div className="contact-card glass">
+        <div className="contact-card glass-flat">
           <p className="contact-intro">
-            Open to senior <em>AI/ML engineering</em> roles, agentic-systems consulting,
-            and research collaboration. Email is the fastest way to reach me &mdash;
-            I respond within a day.
+            Open to <em>AI/ML engineering</em> roles, agentic-systems work, and research
+            collaboration. Email is the fastest way to reach me &mdash; I respond within
+            a day.
           </p>
 
           <div className="contact-list">

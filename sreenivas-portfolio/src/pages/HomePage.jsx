@@ -24,8 +24,8 @@ const HomePage = () => {
   return (
     <>
       <Hero />
-      <Projects />
       <Experience />
+      <Projects />
       <Achievements />
       <Skills />
       <Contact />

@@ -12,6 +12,34 @@
   padding: 2rem;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+.achievement-card-with-image {
+  padding: 0;
+}
+
+.achievement-image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.achievement-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.08) 100%);
+  pointer-events: none;
+}
+
+.achievement-card-with-image .achievement-body {
+  padding: 1.75rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .achievement-header {

@@ -3,6 +3,8 @@ import { useParams, Navigate, Link } from 'react-router-dom';
 import { getProjectBySlug } from '../data/projects';
 import '../styles/components/project-detail.css';
 
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+
 const formatLabel = (key) =>
   key
     .replace(/([A-Z])/g, ' $1')
@@ -16,6 +18,8 @@ const ProjectDetailPage = () => {
   if (!project) {
     return <Navigate to="/" replace />;
   }
+
+  const hasImage = Boolean(project.image);
 
   return (
     <article className="project-detail">
@@ -31,18 +35,14 @@ const ProjectDetailPage = () => {
         </header>
 
         <div
-          className="project-detail-hero glass"
-          style={{ backgroundImage: project.gradient }}
+          className={`project-detail-hero ${hasImage ? 'project-detail-hero-photo' : ''}`}
+          style={hasImage
+            ? { backgroundImage: `url(${project.image})` }
+            : { backgroundImage: project.gradient }}
+          role={hasImage ? 'img' : undefined}
+          aria-label={hasImage ? project.imageAlt : undefined}
         >
-          {project.embed ? (
-            <iframe
-              src={project.embed}
-              title={`${project.title} demo`}
-              allow="autoplay; fullscreen"
-              allowFullScreen
-              className="project-detail-embed"
-            />
-          ) : (
+          {!hasImage && (
             <div className="project-detail-placeholder">
               <span className="project-detail-placeholder-num">
                 {String(project.id).padStart(2, '0')}
@@ -60,11 +60,14 @@ const ProjectDetailPage = () => {
 
         <section className="project-detail-section glass-flat">
           <h2 className="project-detail-section-title">What I built</h2>
-          <ul className="project-detail-features">
+          <div className="numbered-list">
             {project.features.map((feature, i) => (
-              <li key={i}>{feature}</li>
+              <div key={i} className="numbered-item">
+                <span className="numbered-item-num">{ROMAN[i] || i + 1}</span>
+                <p className="numbered-item-text">{feature}</p>
+              </div>
             ))}
-          </ul>
+          </div>
         </section>
 
         <section className="project-detail-section glass-flat">
@@ -78,6 +81,26 @@ const ProjectDetailPage = () => {
             ))}
           </dl>
         </section>
+
+        {project.gallery && project.gallery.length > 0 && (
+          <section className="project-detail-gallery">
+            {project.gallery.map((item, i) => (
+              <figure key={i} className="project-detail-gallery-item">
+                <div
+                  className="project-detail-gallery-image"
+                  role="img"
+                  aria-label={item.alt}
+                  style={{ backgroundImage: `url(${item.src})` }}
+                />
+                {item.caption && (
+                  <figcaption className="project-detail-gallery-caption">
+                    {item.caption}
+                  </figcaption>
+                )}
+              </figure>
+            ))}
+          </section>
+        )}
 
         <section className="project-detail-section glass-flat">
           <h2 className="project-detail-section-title">Stack</h2>
@@ -97,7 +120,7 @@ const ProjectDetailPage = () => {
                 rel="noopener noreferrer"
                 className="glass-link primary"
               >
-                View demo <span className="arrow">&rarr;</span>
+                Watch demo <span className="arrow">&rarr;</span>
               </a>
             )}
             {project.github && (

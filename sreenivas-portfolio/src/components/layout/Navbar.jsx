@@ -5,8 +5,8 @@ import { useScrollSpy } from '../../hooks/useScrollSpy';
 import '../../styles/components/navbar.css';
 
 const NAV_ITEMS = [
-  { id: 'projects', label: 'Work' },
   { id: 'experience', label: 'Experience' },
+  { id: 'projects', label: 'Work' },
   { id: 'achievements', label: 'Recognition' },
   { id: 'skills', label: 'Skills' },
   { id: 'contact', label: 'Contact' }

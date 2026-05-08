@@ -3,11 +3,13 @@ import { useInView } from 'react-intersection-observer';
 import { experienceData, educationData } from '../../data/experience';
 import '../../styles/components/experience.css';
 
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+
 const ExperienceCard = ({ experience }) => {
   const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true });
 
   return (
-    <article ref={ref} className={`experience-card glass fade-in ${inView ? 'is-visible' : ''}`}>
+    <article ref={ref} className={`experience-card glass-flat fade-in ${inView ? 'is-visible' : ''}`}>
       <header className="experience-header">
         <div className="experience-header-main">
           <h3 className="experience-title">{experience.title}</h3>
@@ -22,11 +24,14 @@ const ExperienceCard = ({ experience }) => {
 
       <p className="experience-description">{experience.description}</p>
 
-      <ul className="experience-achievements">
+      <div className="numbered-list">
         {experience.achievements.map((achievement, i) => (
-          <li key={i}>{achievement}</li>
+          <div key={i} className="numbered-item">
+            <span className="numbered-item-num">{ROMAN[i] || i + 1}</span>
+            <p className="numbered-item-text">{achievement}</p>
+          </div>
         ))}
-      </ul>
+      </div>
 
       <div className="experience-stack">
         <span className="experience-stack-label">Stack</span>
@@ -63,7 +68,7 @@ const Experience = () => {
     <section id="experience" className="section experience-section">
       <div className="container">
         <div className="section-header">
-          <span className="section-header-num">02 / Career</span>
+          <span className="section-header-num">01 / Career</span>
         </div>
 
         <h2 className="section-title">Experience</h2>

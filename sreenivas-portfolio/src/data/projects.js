@@ -27,7 +27,16 @@ export const projectsData = [
     demo: "https://drive.google.com/file/d/12SFmxkaDG8kcLFpLTg6fAuKgeOlFq4Y8/view?usp=sharing",
     embed: "https://drive.google.com/file/d/12SFmxkaDG8kcLFpLTg6fAuKgeOlFq4Y8/preview",
     accent: "#A8451F",
-    gradient: "linear-gradient(135deg, #F4D5C2 0%, #F0DFB8 50%, #E8C5A0 100%)"
+    gradient: "linear-gradient(135deg, #F4D5C2 0%, #F0DFB8 50%, #E8C5A0 100%)",
+    image: "/images/agentic-ai-day-team.jpg",
+    imageAlt: "Our team accepting the 2nd Runner-Up check at Google Cloud Agentic AI Day 2025",
+    gallery: [
+      {
+        src: "/images/agentic-ai-day-podium.jpg",
+        alt: "Top 3 teams on stage during the closing ceremony, gold confetti falling",
+        caption: "Closing ceremony — Top 3 winners on stage"
+      }
+    ]
   },
   {
     id: 2,
