@@ -151,11 +151,13 @@
   .hero-portrait {
     width: 200px;
     height: 200px;
-    justify-self: start;
+    justify-self: center;
+    margin: 0 auto;
   }
 
   .hero-portrait-initials {
     font-size: 3.5rem;
+    transform: translateX(-0.04em);
   }
 }
 
