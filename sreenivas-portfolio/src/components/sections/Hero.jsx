@@ -40,18 +40,24 @@ const Hero = () => {
 
         <div className="hero-card glass">
           <p className="hero-bio">
-            I architect enterprise agentic AI infrastructure &mdash; multi-model
-            orchestration, <strong>MCP</strong> gateways, and real-time collaborative
-            workflow builders. Currently <strong>Associate Technical Specialist at
-            DigitalAPI.ai</strong>, where I lead architecture for systems handling
-            <strong> 10K+ daily requests</strong>.
+            AI/ML Engineer specializing in <strong>Agentic Workflows</strong>,
+            <strong> LangGraph orchestration</strong>, and <strong>LLM optimization</strong>,
+            with full-stack capability across <strong>React</strong>,
+            <strong> FastAPI</strong>, <strong>Flutter</strong>, and cloud-native
+            infrastructure. Currently <strong>Associate Technical Specialist at
+            DigitalAPI.ai</strong>, where I architect enterprise <strong>MCP Gateways</strong>
+            handling <strong>10K+ daily requests</strong> &mdash; and earned
+            <strong> 2nd Runner-Up</strong> at the <strong>Guinness World
+            Record-certified</strong> Google Cloud Agentic AI Day 2025. Focused on
+            building cost-efficient autonomous systems that move beyond standard API
+            integrations &mdash; solving complex, unstructured problems at scale.
           </p>
 
           <div className="hero-meta">
             <div className="hero-meta-row">
               <span className="hero-meta-label">Recognition</span>
               <span className="hero-meta-value">
-                2nd Runner-Up, Google Cloud Agentic AI Day 2025 (1,941 developers, 700+ teams)
+                1,941 developers &middot; 700+ teams &middot; INR 1 Lakh prize
               </span>
             </div>
             <div className="hero-meta-row">
