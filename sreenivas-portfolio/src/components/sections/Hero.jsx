@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../../styles/components/hero.css';
 
-const HERO_PHOTO = null;
-const HERO_PHOTO_ALT = 'Portrait of Sreenivas Gurram';
+const HERO_PHOTO = '/images/sreenivas-portrait.jpg';
+const HERO_PHOTO_ALT = 'Sreenivas Gurram at Google Cloud Agentic AI Day 2025';
 
 const Hero = () => {
   return (
