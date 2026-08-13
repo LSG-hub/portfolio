@@ -8,6 +8,12 @@ on:
   push:
     branches:
       - main
+    # This is a monorepo: avatar-api/ lives alongside the frontend. Without a
+    # path filter, a backend-only commit would rebuild and redeploy the site
+    # for no reason.
+    paths:
+      - 'sreenivas-portfolio/**'
+      - '.github/workflows/firebase-deploy.yml'
 
 permissions:
   contents: read

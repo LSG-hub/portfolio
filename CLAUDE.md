@@ -4,7 +4,20 @@ Personal portfolio site for Sreenivas Gurram (AI/ML engineer), deployed on Verce
 
 ## Layout
 
-The repo root holds source material only — `Resume.tex`, hackathon photos. **The app lives in `sreenivas-portfolio/`**; run all npm/git-relative commands from there.
+This is a **monorepo with two deployable halves**, both public:
+
+| Path | What | Deploys to |
+|---|---|---|
+| `sreenivas-portfolio/` | React frontend | Firebase Hosting (project `sreenivas-portfolio`, Spark) |
+| `avatar-api/` | AI avatar backend — not yet implemented | Cloud Run (its own GCP project, Blaze) |
+
+The repo root also holds source material: `Resume.tex`, hackathon photos.
+
+Run all npm commands from `sreenivas-portfolio/`. The directory is **not** named `frontend/` because that path is baked into `firebase.json`, `.firebaserc`, both workflows (`working-directory`, `entryPoint`, `cache-dependency-path`), and Vercel's dashboard root setting — renaming it is a multi-file breaking change with no functional benefit.
+
+**One repo, two GCP projects.** Repo layout and cloud project structure are separate decisions here: the frontend project stays on Spark with no billing account so the live site cannot incur charges, while the backend needs Blaze for Cloud Run and Vertex AI. Spend risk is isolated to the one project that requires it.
+
+Both workflows carry `paths:` filters scoped to `sreenivas-portfolio/**` — without them a backend-only commit would rebuild and redeploy the frontend. A PR touching only `avatar-api/` shows the preview check as *skipped*, which would block the PR if that check is ever made required.
 
 ## Commands
 

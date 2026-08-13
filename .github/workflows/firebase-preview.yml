@@ -7,6 +7,12 @@ on:
   pull_request:
     branches:
       - main
+    # Monorepo path filter — see firebase-deploy.yml. Note that a PR touching
+    # only avatar-api/ will show this check as "skipped"; if this workflow is
+    # ever made a required status check, that will block the PR.
+    paths:
+      - 'sreenivas-portfolio/**'
+      - '.github/workflows/firebase-preview.yml'
 
 permissions:
   contents: read

@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Environment / secrets
+# Service-account keys must never be committed. On Cloud Run the service
+# authenticates as its own identity, so no key file should exist at all —
+# if one appears here, something is wrong with the auth setup.
+.env
+.env.*
+!.env.example
+*-key.json
+*-credentials.json
+service-account*.json
+application_default_credentials.json
+
+# Testing / tooling
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
