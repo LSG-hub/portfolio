@@ -1,0 +1,52 @@
+name: Preview deploy on PR
+
+# Builds the PR and publishes it to a temporary Firebase Hosting preview
+# channel, then comments the URL on the pull request.
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+concurrency:
+  group: firebase-hosting-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-preview:
+    # Repository secrets are not exposed to pull requests opened from forks,
+    # so skip cleanly instead of failing with a confusing auth error.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: sreenivas-portfolio/package-lock.json
+
+      - name: Install dependencies
+        working-directory: sreenivas-portfolio
+        run: npm ci
+
+      - name: Build
+        working-directory: sreenivas-portfolio
+        run: npm run build
+
+      - name: Deploy preview channel
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SREENIVAS_PORTFOLIO }}
+          projectId: sreenivas-portfolio
+          entryPoint: sreenivas-portfolio
+          expires: 7d

@@ -126,6 +126,11 @@ Thumbs.db
 # Vercel
 .vercel
 
+# Firebase (local deploy cache — firebase.json and .firebaserc ARE committed)
+.firebase/
+*-debug.log
+.firebase-debug.log
+
 # Local environment variables
 .env*.local
 

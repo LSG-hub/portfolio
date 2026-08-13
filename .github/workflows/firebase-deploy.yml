@@ -1,0 +1,53 @@
+name: Deploy to Firebase Hosting (live)
+
+# The app lives in the sreenivas-portfolio/ subdirectory, so every npm step
+# sets working-directory, and the deploy action uses entryPoint to find
+# firebase.json.
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+# A newer push to main supersedes an in-flight deploy.
+concurrency:
+  group: firebase-hosting-live
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: sreenivas-portfolio/package-lock.json
+
+      - name: Install dependencies
+        working-directory: sreenivas-portfolio
+        run: npm ci
+
+      # Note: GitHub Actions sets CI=true, which makes react-scripts treat lint
+      # warnings as errors. The build is currently warning-free, so this is left
+      # on deliberately. If a stray warning ever breaks the deploy, fix the
+      # warning rather than setting CI=false.
+      - name: Build
+        working-directory: sreenivas-portfolio
+        run: npm run build
+
+      - name: Deploy to live channel
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SREENIVAS_PORTFOLIO }}
+          projectId: sreenivas-portfolio
+          channelId: live
+          entryPoint: sreenivas-portfolio
