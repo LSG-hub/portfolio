@@ -71,7 +71,13 @@ CI/CD via GitHub Actions at the repo root:
 - `npm test` is deliberately not in the pipeline — `src/App.test.js` is still the stock CRA test and fails.
 - `CI=true` (set by Actions) makes react-scripts treat lint warnings as build errors. The build is currently warning-free, so this is left on intentionally.
 
-**Legacy: Vercel** still auto-deploys from `main` in parallel at `https://portfolio-31jx.vercel.app/`, kept as a fallback during migration. `vercel.json` remains in the repo. Disconnecting requires a dashboard action.
+**Live domain: `https://sreenivasgurram.com`** (apex, canonical), with `www` redirecting to it. DNS is at GoDaddy: a single `A` record on `@` → `199.36.158.100`, a `TXT` on `@` → `hosting-site=sreenivas-portfolio`, and the `www` `CNAME` → `sreenivas-portfolio.web.app`.
+
+⚠️ **The same domain's DNS also runs Zoho Mail for `me@sreenivasgurram.com`.** Three `MX` records (`mx.zoho.in`, `mx2`, `mx3`), the SPF `TXT` (`v=spf1 include:zoho.in ~all`), `zmail._domainkey` (DKIM), and `_dmarc` are all load-bearing. Never replace a `TXT` record on `@` — multiple TXT records coexist, and overwriting the SPF one silently breaks mail. Always add.
+
+**Vercel is now redirect-only.** `sreenivas-portfolio/vercel.json` holds a single permanent redirect of `/(.*)` → `https://sreenivasgurram.com/$1`, deliberately *not* deleted: `Resume.tex` previously linked to `https://portfolio-31jx.vercel.app/`, and résumé PDFs already sent to employers still carry that URL. The Vercel project must stay alive for those links to resolve. Vercel still auto-deploys from `main`, which is harmless — it serves only the redirect.
+
+Because the SPA rewrite is a catch-all, **any missing file under the site root returns 200 with `index.html` rather than 404.** That silently masks broken asset references — `og-image.jpg` and `twitter-image.jpg` are referenced in `index.html` but do not exist, so social link previews receive HTML and render blank. `public/sitemap.xml` was created for the same reason. When adding any absolute asset reference, verify with `curl -sI` that the response is the expected content type, not `text/html`.
 
 ## Machine setup (identities)
 
