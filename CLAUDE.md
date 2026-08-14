@@ -56,6 +56,17 @@ Editing content means editing these files. Section headers carry hardcoded numbe
 
 Images go in `public/images/` and are referenced by absolute path (`/images/foo.jpg`). Photos render as CSS `background-image` on a `role="img"` div with `aria-label`, not as `<img>` — follow that pattern for consistent cropping, and always supply the alt text.
 
+## Licensing — this repo is public to read, not to reuse
+
+Two licenses, deliberately. **Do not add an open-source license or a permissive one** without the owner saying so; the restriction is intentional.
+
+- `LICENSE` — **PolyForm Strict 1.0.0** for source code. Permits noncommercial personal use; **explicitly excludes redistribution and derivative works.**
+- `LICENSE-CONTENT` — **CC BY-NC-ND 4.0** for the character, story, dialogue, artwork, and world data.
+
+Copyright is automatic and already owned — a license only gives rights away, so "no license" would have been the most restrictive state, not the least. The one thing that can't be opted out of: GitHub's ToS grants every user the right to view and fork any public repo regardless of its license. Everything beyond viewing and forking is reserved.
+
+New content files (world data, dialogue, sprite definitions) fall under `LICENSE-CONTENT`, not `LICENSE`.
+
 ## The avatar (Tuk)
 
 **Read `docs/avatar-spec.md` before touching anything under `src/components/avatar/`.** It records why the character is shaped the way it is, and one rule that will silently break if violated.
