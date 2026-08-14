@@ -39,6 +39,8 @@ const APEX_CLEARANCE = 22;   // clear the target's edge by this much
 const EDGE_PAD = 16;         // stay this far from a platform's ends
 const REST_MIN = 750;        // ms between hops
 const REST_MAX = 2600;
+const GOAL_TOLERANCE = 9;    // px — close enough to call it arrived
+const GOAL_REST = 140;       // ms between hops on a directed journey — brisk
 const NOTICE_RADIUS = 170;   // px — cursor proximity that makes him look up
 const GREET_MS = 2600;       // how long a hello lasts
 const GREET_DEBOUNCE = 300;  // ignore cursor jitter at the boundary
@@ -53,7 +55,21 @@ export function useAvatarLife({
    * The default clears 62px, which is right in an open world and far too big
    * inside a 100px-tall ribbon — pass a gentler value there.
    */
-  hopVy = HOP_VY
+  hopVy = HOP_VY,
+  /**
+   * Directed movement. The caller posts `{ x, instant }` and the loop hops there,
+   * then bumps `arrivals`. A ref rather than a callback so the loop reads it
+   * without re-running this effect, and arrival is a counter rather than a
+   * boolean because a boolean can't distinguish "not moving yet" from "done".
+   */
+  goalRef = null,
+  /**
+   * Idle drifting. Off automatically whenever someone is directing him: once he
+   * arrives his goal clears, and ambient hops would then carry him away from the
+   * kettle he walked over to use. Standing still through a chore is correct —
+   * breathing, blinking and the gesture's own animation carry the life.
+   */
+  wander = !goalRef
 }) {
   const [phase, setPhase] = useState('grounded');
   const [noticing, setNoticing] = useState(false);
@@ -64,12 +80,15 @@ export function useAvatarLife({
    */
   const [greeting, setGreeting] = useState(0);
   const [platformCount, setPlatformCount] = useState(0);
+  /** Increments once each time a directed move completes. */
+  const [arrivals, setArrivals] = useState(0);
 
   const sim = useRef({
     x: 0, y: 0, vx: 0, vy: 0,
     grounded: true, facing: 1, squash: 1,
     restTimer: 1000, platforms: [], bounds: { w: 0, h: 0 },
-    cursor: { x: -9999, y: -9999 }, started: false, lastGreet: 0
+    cursor: { x: -9999, y: -9999 }, started: false, lastGreet: 0,
+    goal: null, adopted: null
   });
 
   const phaseRef = useRef('grounded');
@@ -220,6 +239,65 @@ export function useAvatarLife({
       return { vx, vy };
     };
 
+    /** The surface he is standing on, if any. */
+    const platformHere = () => s.platforms.find(
+      (p) => Math.abs(p.top - s.y) < 2 && s.x >= p.left && s.x <= p.right
+    );
+
+    /**
+     * Take on a directed destination. `instant` teleports — used for the very
+     * first placement, so a visitor never watches him cross the room before his
+     * day starts.
+     */
+    const adoptGoal = (req) => {
+      s.adopted = req;
+      const here = platformHere() || s.platforms[0];
+      if (!here) return;
+      const x = Math.min(Math.max(req.x, here.left + EDGE_PAD), here.right - EDGE_PAD);
+
+      s.goalFacing = req.facing || 1;
+
+      if (req.instant) {
+        s.x = x;
+        s.y = here.top;
+        s.vx = 0; s.vy = 0;
+        s.grounded = true;
+        s.goal = null;
+        s.facing = s.goalFacing;
+        setArrivals((n) => n + 1);
+        return;
+      }
+      s.goal = x;
+      if (s.grounded) s.restTimer = Math.min(s.restTimer, GOAL_REST);
+    };
+
+    /** One hop of a directed journey, or arrival. */
+    const hopToGoal = () => {
+      const here = platformHere();
+      const dx = s.goal - s.x;
+      if (!here || Math.abs(dx) <= GOAL_TOLERANCE) {
+        s.goal = null;
+        // Turn to whatever he came here to use. Cursor proximity still overrides
+        // this — he looks at you before he looks at the kettle.
+        s.facing = s.goalFacing || 1;
+        s.restTimer = REST_MIN;
+        setArrivals((n) => n + 1);
+        return;
+      }
+      const reach = Math.min(Math.abs(dx), hopReach * 0.92);
+      const tx = Math.min(
+        Math.max(s.x + Math.sign(dx) * reach, here.left + EDGE_PAD),
+        here.right - EDGE_PAD
+      );
+      const { vx, vy } = launchToward(tx, here.top);
+      s.vx = vx;
+      s.vy = vy;
+      if (Math.abs(vx) > 8) s.facing = Math.sign(vx);
+      s.grounded = false;
+      s.squash = 1.14;
+      setPhaseOnce('airborne');
+    };
+
     const chooseHop = () => {
       const here = s.platforms.find(
         (p) => Math.abs(p.top - s.y) < 2 && s.x >= p.left && s.x <= p.right
@@ -270,12 +348,22 @@ export function useAvatarLife({
       reMeasure += dt;
       if (reMeasure > 0.5) { reMeasure = 0; measure(); }
 
+      // A destination posted by the caller outranks ambient wandering.
+      const req = goalRef && goalRef.current;
+      if (req && req !== s.adopted) adoptGoal(req);
+
       if (s.grounded) {
         s.restTimer -= dt * 1000;
         s.squash += (1 - s.squash) * Math.min(dt * 12, 1);
         if (s.restTimer <= 0) {
-          s.restTimer = REST_MIN + Math.random() * (REST_MAX - REST_MIN);
-          chooseHop();
+          if (s.goal !== null) {
+            hopToGoal();
+          } else if (wander) {
+            s.restTimer = REST_MIN + Math.random() * (REST_MAX - REST_MIN);
+            chooseHop();
+          } else {
+            s.restTimer = GOAL_REST; // check again shortly for a new destination
+          }
         }
       } else {
         const prevY = s.y;
@@ -299,7 +387,10 @@ export function useAvatarLife({
             s.vy = 0; s.vx = 0;
             s.grounded = true;
             s.squash = 0.74; // impact
-            s.restTimer = REST_MIN + Math.random() * (REST_MAX - REST_MIN);
+            // Mid-journey he barely pauses; idling he takes his time.
+            s.restTimer = s.goal !== null
+              ? GOAL_REST
+              : REST_MIN + Math.random() * (REST_MAX - REST_MIN);
             setPhaseOnce('landing');
             timers.push(window.setTimeout(() => setPhaseOnce('grounded'), 160));
           }
@@ -350,9 +441,9 @@ export function useAvatarLife({
       window.removeEventListener('resize', measure);
       window.removeEventListener('pointermove', onPointer);
     };
-  }, [containerRef, actorRef, bodyRef, footprint, hopVy]);
+  }, [containerRef, actorRef, bodyRef, footprint, hopVy, goalRef, wander]);
 
-  return { phase, noticing, greeting, platformCount, greetMs: GREET_MS };
+  return { phase, noticing, greeting, platformCount, arrivals, greetMs: GREET_MS };
 }
 
 export default useAvatarLife;

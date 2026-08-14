@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import TukAvatar from './TukAvatar';
 import SpeechBubble from './SpeechBubble';
 import useAvatarLife from './useAvatarLife';
+import useRoutine from './useRoutine';
 import RoomFurniture from './RoomFurniture';
 import { GREETINGS, createShuffleBag } from './dialogue';
 import '../../styles/components/tuk-ribbon.css';
@@ -44,13 +45,37 @@ const TukRibbon = () => {
   const [line, setLine] = useState('');
   const [saying, setSaying] = useState(false);
 
-  const { phase, noticing, greeting, greetMs } = useAvatarLife({
+  /** Where the routine wants him. Written by useRoutine, read by the physics loop. */
+  const goalRef = useRef(null);
+
+  const { phase, noticing, greeting, greetMs, arrivals } = useAvatarLife({
     containerRef: stageRef,
     actorRef,
     bodyRef,
     footprint: FOOTPRINT,
-    hopVy: HOP_VY
+    hopVy: HOP_VY,
+    goalRef
   });
+
+  /**
+   * Zone positions come from the real DOM, the same way standable surfaces do —
+   * so moving a piece of furniture in CSS moves where he stands to use it, with
+   * no second copy of the layout to keep in sync. Zone SVGs are drawn 1:1, so
+   * the beat's `at` offset is directly in their own coordinates.
+   *
+   * Returns null for a zone hidden at this breakpoint, which the routine skips.
+   */
+  const zoneX = useCallback((zone, at) => {
+    const stage = stageRef.current;
+    if (!stage) return null;
+    const el = stage.querySelector(`[data-tuk-zone="${zone}"]`);
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    if (r.width === 0) return null;
+    return r.left - stage.getBoundingClientRect().left + at;
+  }, []);
+
+  const { beat } = useRoutine({ goalRef, arrivals, zoneX });
 
   /** Reserve the space the strip occupies, and give it back on unmount. */
   useEffect(() => {
@@ -70,19 +95,25 @@ const TukRibbon = () => {
   }, [greeting, greetMs]);
 
   /**
-   * Ambient composition, same priority as the lab: a greeting interrupts
-   * everything, then the locomotion phase, then mere proximity.
+   * Composition priority: a greeting interrupts everything — including sleep,
+   * which is what makes a 3am visitor the one who gets to wake him — then
+   * locomotion, then mere proximity, then whatever his day says he's doing.
    */
   const pose = useMemo(() => {
     if (saying) return { gesture: 'wave', face: 'happy', head: 'nod' };
     if (phase === 'airborne') return { gesture: 'reach', face: 'surprise', head: 'still' };
-    if (phase === 'landing') return { gesture: 'rest', face: 'happy', head: 'still' };
     if (noticing) return { gesture: 'rest', face: 'happy', head: 'lean' };
-    return { gesture: 'rest', face: 'neutral', head: 'still' };
-  }, [phase, noticing, saying]);
+    return { gesture: beat.gesture, face: beat.face, head: beat.head };
+  }, [phase, noticing, saying, beat]);
+
+  /**
+   * The prop survives hops and proximity — he carries his mug to the kitchen —
+   * but not a greeting, where he sets it down to wave.
+   */
+  const prop = saying ? null : beat.prop || null;
 
   return (
-    <div className="tuk-ribbon" aria-hidden="true">
+    <div className={`tuk-ribbon is-${beat.light}`} aria-hidden="true">
       <div className="tuk-ribbon-surface" />
       <div className="tuk-ribbon-stage" ref={stageRef}>
         <div className="tuk-ribbon-floor" data-avatar-platform />
@@ -96,6 +127,7 @@ const TukRibbon = () => {
               face={pose.face}
               gesture={pose.gesture}
               head={pose.head}
+              prop={prop}
               size={FOOTPRINT}
             />
           </div>

@@ -27,9 +27,9 @@ import '../../styles/components/tuk-room.css';
  *    `LoungeBack` paints below, and he sits between them. Built now because
  *    retrofitting it later means redrawing the sofa.
  *
- * Sizes are load-bearing: total width is 626px, which is what lets all five
- * zones sit on a 720px strip without touching. Changing one means re-checking
- * the breakpoints in tuk-room.css.
+ * Sizes are load-bearing: total width is 666px, and the three zones that survive
+ * every breakpoint total 448px, which is what lets them sit on a 480px strip
+ * without touching. Changing one means re-checking tuk-room.css.
  */
 
 /** Kitchen — counter, kettle on the boil, a shelf of mugs. */
@@ -111,7 +111,12 @@ const LoungeBack = () => (
     <rect className="rp-paper" x="138" y="52" width="36" height="8" rx="2" />
     <path className="rp-ink" d="M156 46 L156 52" />
     <rect className="rp-paper" x="126" y="17" width="60" height="29" rx="4" />
-    <rect className="rp-screen" x="130" y="21" width="52" height="21" rx="2" />
+    {/* The flicker animates the GROUP's opacity, and the light state sets the
+        screen's own. Both on one element and the animation wins outright, so the
+        TV would never brighten as the room goes dark. Multiplying instead. */}
+    <g className="rp-tv-flicker">
+      <rect className="rp-screen" x="130" y="21" width="52" height="21" rx="2" />
+    </g>
   </svg>
 );
 
@@ -170,21 +175,28 @@ const DeskNook = () => (
  * what makes "compound" a later extension rather than a decision now.
  */
 const DockDoor = () => (
-  <svg className="rp" width="96" height="68" viewBox="0 0 96 68" aria-hidden="true">
-    <rect className="rp-paper" x="48" y="1" width="44" height="67" rx="2" />
-    <rect className="rp-thin" x="57" y="7" width="29" height="44" rx="1.5" />
-    <circle className="rp-knob" cx="53" cy="40" r="2" />
+  <svg className="rp" width="136" height="68" viewBox="0 0 136 68" aria-hidden="true">
+    <rect className="rp-paper" x="92" y="1" width="44" height="67" rx="2" />
+    <rect className="rp-thin" x="101" y="7" width="29" height="44" rx="1.5" />
+    <circle className="rp-knob" cx="97" cy="40" r="2" />
 
     {/* wall socket, and the cable running to the dock */}
-    <rect className="rp-paper" x="38" y="44" width="7" height="9" rx="1.5" />
-    <circle className="rp-knob" cx="40.2" cy="48" r="0.8" />
-    <circle className="rp-knob" cx="42.8" cy="48" r="0.8" />
-    <path className="rp-thin" d="M33 62 Q40 60 41 53" />
+    <rect className="rp-paper" x="80" y="44" width="7" height="9" rx="1.5" />
+    <circle className="rp-knob" cx="82.2" cy="48" r="0.8" />
+    <circle className="rp-knob" cx="84.8" cy="48" r="0.8" />
+    <path className="rp-thin" d="M76 65 Q82 63 83 53" />
 
-    {/* dock */}
-    <path className="rp-paper" d="M5 68 L9 57 L33 57 L37 68 Z" />
-    <rect className="rp-paper" x="15" y="39" width="12" height="18" rx="2.5" />
-    <circle className="rp-led" cx="21" cy="44" r="2" />
+    {/**
+     * A charging MAT he stands on, not a pod he stands in front of. He is 52px
+     * wide and the first draft's dock was 32, so during the longest beat of the
+     * day — 26 seconds asleep — he occluded the entire thing and the scene read
+     * as a robot loitering by a door. A pad wider than he is cannot be hidden,
+     * and the post carrying the indicator sits clear of his shoulder.
+     */}
+    <rect className="rp-paper" x="2" y="61" width="74" height="7" rx="2.5" />
+    <path className="rp-thin" d="M10 64.6 L68 64.6" />
+    <rect className="rp-paper" x="2" y="38" width="8" height="23" rx="2.5" />
+    <circle className="rp-led" cx="6" cy="42" r="2" />
   </svg>
 );
 
@@ -199,14 +211,14 @@ const DockDoor = () => (
  */
 const RoomFurniture = () => (
   <div className="rp-room">
-    <div className="rp-zone rp-kitchen"><KitchenNook /></div>
-    <div className="rp-zone rp-window"><WindowPlant /></div>
-    <div className="rp-zone rp-lounge">
+    <div className="rp-zone rp-kitchen" data-tuk-zone="kitchen"><KitchenNook /></div>
+    <div className="rp-zone rp-window" data-tuk-zone="window"><WindowPlant /></div>
+    <div className="rp-zone rp-lounge" data-tuk-zone="lounge">
       <LoungeBack />
       <div className="rp-front"><LoungeFront /></div>
     </div>
-    <div className="rp-zone rp-desk"><DeskNook /></div>
-    <div className="rp-zone rp-dock"><DockDoor /></div>
+    <div className="rp-zone rp-desk" data-tuk-zone="desk"><DeskNook /></div>
+    <div className="rp-zone rp-dock" data-tuk-zone="dock"><DockDoor /></div>
   </div>
 );
 

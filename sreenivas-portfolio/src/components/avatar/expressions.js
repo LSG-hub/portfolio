@@ -57,8 +57,18 @@ export const GESTURES = {
   chin:   { l: [12, 48], r: [36, 41], wag: false, armed: false },
   cheer:  { l: [11, 17], r: [49, 17], wag: false, armed: false },
   reach:  { l: [9, 30],  r: [51, 30], wag: false, armed: false },
+  // Low and wagging, so anything held in that hand sweeps the floor.
+  sweep:  { l: [13, 48], r: [45, 45], wag: true,  armed: false },
   sword:  { l: [15, 51], r: [47, 33], wag: false, armed: true  }
 };
+
+/**
+ * Things he can hold, drawn in the right hand's local coordinates and BEHIND the
+ * hand so it reads as a grip. Same slot the sword uses, so the same rule applies:
+ * a prop lives inside `.tuk-hand-spin`, which animates — never on the outer
+ * group, which positions.
+ */
+export const PROPS = ['mug', 'can', 'broom', 'book'];
 
 export const HEADS = ['still', 'nod', 'shake', 'tilt', 'lean', 'perk'];
 

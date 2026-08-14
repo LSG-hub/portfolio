@@ -109,6 +109,33 @@
   50%      { transform: rotate(20deg); }
 }
 
+/* ── held props ──
+   Lighter than his body line (1.6 vs 2.1) so a mug doesn't read as heavy as he
+   does. They live inside .tuk-hand-spin, so they inherit the wag: the broom
+   sweeps because the hand does. */
+.tuk-prop {
+  fill: var(--bg);
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.tuk-prop-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+/* Ink, not accent: terracotta droplets read as sparks or rust rather than water,
+   and the palette has no blue to reach for. */
+.tuk-drop { fill: var(--text-subtle); stroke: none; opacity: 0; }
+.tuk-drop-a { animation: tuk-drip 1500ms ease-in infinite; }
+.tuk-drop-b { animation: tuk-drip 1500ms ease-in 750ms infinite; }
+@keyframes tuk-drip {
+  0%   { opacity: 0; transform: translateY(0); }
+  25%  { opacity: 0.7; }
+  100% { opacity: 0; transform: translateY(13px); }
+}
+
 /* ── head ── */
 .tuk-head {
   transform-box: fill-box;
@@ -265,6 +292,7 @@
   .tuk-antenna,
   .tuk-idle,
   .tuk-blink,
+  .tuk-drop-a, .tuk-drop-b,
   .tuk-dot-1, .tuk-dot-2, .tuk-dot-3,
   .tuk-bars rect,
   .tuk-spinner {

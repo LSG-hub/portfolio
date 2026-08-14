@@ -53,11 +53,13 @@
   stroke: none;
   opacity: 0.2;
 }
-.rp-screen { animation: rp-flicker 4600ms ease-in-out infinite; }
+/* A multiplier on the screen's own opacity, not a replacement for it — see the
+   comment in RoomFurniture.jsx. */
+.rp-tv-flicker { animation: rp-flicker 4600ms ease-in-out infinite; }
 @keyframes rp-flicker {
-  0%, 100% { opacity: 0.2; }
-  38%      { opacity: 0.3; }
-  62%      { opacity: 0.16; }
+  0%, 100% { opacity: 1; }
+  38%      { opacity: 0.86; }
+  62%      { opacity: 1; }
 }
 
 .rp-led {
@@ -120,7 +122,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rp-screen,
+  .rp-tv-flicker,
   .rp-led,
   .rp-steam path {
     animation: none !important;

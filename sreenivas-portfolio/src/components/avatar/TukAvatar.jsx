@@ -137,10 +137,61 @@ const Face = ({ name }) => {
   }
 };
 
+/**
+ * Held objects, in the right hand's local coordinates: (0,0) is the hand's
+ * centre. Drawn before the hand circle so the hand overlaps them and reads as a
+ * grip. The broom's bristles reach y≈17, which is floor level when the hand is
+ * in the low `sweep` pose — that pose wags, so the broom sweeps for free.
+ */
+const Prop = ({ name }) => {
+  switch (name) {
+    case 'mug':
+      return (
+        <g>
+          <path className="tuk-prop-line" d="M8 -8 Q12.5 -5.5 8 -3" />
+          <rect className="tuk-prop" x="-4" y="-11.5" width="12" height="10" rx="1.8" />
+          <path className="tuk-prop-line" d="M-4 -8.6 L8 -8.6" />
+        </g>
+      );
+    case 'can':
+      return (
+        <g>
+          <path className="tuk-prop-line" d="M-5 -10 Q0.5 -17 6 -10" />
+          <path className="tuk-prop" d="M5.5 -9 L15 -13 L15.5 -9.5 L5.5 -5 Z" />
+          <rect className="tuk-prop" x="-7" y="-10.5" width="14" height="11.5" rx="2.4" />
+          <g className="tuk-drip">
+            <circle className="tuk-drop tuk-drop-a" cx="15" cy="-6" r="1.3" />
+            <circle className="tuk-drop tuk-drop-b" cx="15" cy="-6" r="1.1" />
+          </g>
+        </g>
+      );
+    case 'broom':
+      return (
+        <g>
+          <path className="tuk-prop-line" d="M-2 -11 L3 12" />
+          <path className="tuk-prop" d="M-2 12 L8.5 12 L11 19 L-5 19 Z" />
+          <path className="tuk-prop-line" d="M0.5 13.5 L-0.5 18 M3.5 13.5 L3.5 18 M6.5 13.5 L7.5 18" />
+        </g>
+      );
+    case 'book':
+      return (
+        <g>
+          <rect className="tuk-prop" x="-6" y="-9.5" width="17" height="13" rx="1.2" />
+          <path className="tuk-prop-line" d="M2.5 -9.5 L2.5 3.5" />
+          <path className="tuk-prop-line" d="M5.5 -6 L8.5 -6 M5.5 -2.5 L8.5 -2.5" />
+        </g>
+      );
+    default:
+      return null;
+  }
+};
+
 const TukAvatar = ({
   face = 'neutral',
   gesture = 'rest',
   head = 'still',
+  /** something held in the right hand — see PROPS in expressions.js */
+  prop = null,
   /** 1 = facing right, -1 = facing left */
   facing = 1,
   /** vertical squash: 1 = neutral, <1 = squashed, >1 = stretched */
@@ -203,6 +254,7 @@ const TukAvatar = ({
                   <path className="tuk-ch" d="M-2.6 -3.4 L-2.6 3.4" strokeWidth="2.4" transform="rotate(-46)" />
                 </g>
               )}
+              {prop && <Prop name={prop} />}
               <circle className="tuk-hand" cx="0" cy="0" r="4.4" />
             </g>
           </g>
