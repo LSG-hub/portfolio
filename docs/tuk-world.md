@@ -208,6 +208,10 @@ Rails, smoke, machines. The forest recedes visibly.
 Spires, and **other robots**. Who break down.
 **Beat:** he meets his own kind and outlives them too. The cruelest note available; spend it here.
 
+**The dog.** Somewhere late — era 6 or early 7 — a stray dog attaches itself to him and stays. It is the **only companion he has ever kept for himself**, after six eras of burying other people's families. It lives a normal dog's life. Then it dies, and **it gets a grave** — the only non-human stone in the yard.
+
+Placing it this late is the whole point: he spent the entire history not allowing himself one, and the moment he does, the rule applies to that too. It should also be the shortest relationship in the game and the one the dialogue returns to most.
+
 ### Collapse — ~18h
 **Self-inflicted.** After an industrial and technological era, a meteor is arbitrary; a collapse the civilisation caused is thematically inevitable. It converts the reset from a mechanic into the thesis: *they always destroy themselves, he always rebuilds.*
 
@@ -240,9 +244,34 @@ Each is an animation, a duration (10–25s), and a resource delta. Data-driven p
 
 Each villager has a **name, birth, lifespan, role, and relationship to Tuk**. They perform actions too, so the village visibly works rather than merely existing.
 
-At ~12px you cannot show ageing, so don't try. They're present, then they're gone, and a stone appears.
+### 8.1 · Ageing is the thesis, rendered
 
-**The graveyard is the emotional ledger of the entire game, and it is cheap — it's a list.** On `/tuk`, hovering a stone shows who they were, when they lived, what they did, and what Tuk remembers about them. This single feature will do more work than any building.
+**Visible ageing is the single most efficient way to show immortality**, and it beats every dialogue line we could write. Three silhouette tiers:
+
+| Tier | Silhouette |
+|---|---|
+| **child** | ~60% height, rounder, faster movement |
+| **adult** | full height |
+| **elder** | ~90% height, slightly stooped, slower, sometimes a stick |
+
+A visitor watches a child grow, work, stoop, and vanish into a stone — while **Tuk's silhouette is pixel-identical the entire time.** Nothing needs to be said. That contrast is the whole premise delivered visually, for the cost of three sprite variants.
+
+### 8.2 · Distinctness without faces
+
+At ~12px you cannot show expression, so don't try. What *is* readable at that size: height, silhouette shape, and one colour accent. So each NPC derives from their `id` (deterministically — §2.1):
+
+- height jitter, ±8%
+- one garment element in one of ~8 muted colours drawn from the era palette
+- a silhouette variant: hat / headscarf / bare / tied hair
+- gait speed jitter
+
+That's ~200 visually distinguishable villagers from four parameters. Enough that a regular gets recognised across a session, which is what makes their death land.
+
+### 8.3 · The graveyard
+
+**The emotional ledger of the entire game, and it is cheap — it's a list.** On `/tuk`, hovering a stone shows who they were, when they lived, what they did, and what Tuk remembers about them.
+
+Every stone is someone Tuk knew. Nothing else goes in the yard — no animals, no monuments — because the power comes from that being true without exception. The dog (§5, era 7) is the deliberate single violation, and it works *because* it's the only one.
 
 `tuk.buried` accumulates across every cycle and never resets. When it reads 211, the premise is doing its own arguing.
 
@@ -263,6 +292,59 @@ State-driven templates, not a static pool. Keyed to what he's doing and what jus
 The last kind is where the premise pays off, and it's free — the sim already knows the number.
 
 Selection uses a shuffle bag per category (see `dialogue.js`) so nothing repeats before the pool is exhausted. **This is where most of the content volume lives**, it's cheap to author, and it's the highest-impact content in the design.
+
+### 9.1 · Conversations — two bubbles, not one
+
+A single bubble is a monologue. **Two characters exchanging lines is a relationship**, and relationships are what make the deaths cost anything. So NPCs get bubbles too, anchored to them, reusing `SpeechBubble`.
+
+A conversation is **staged**, not ambient chatter:
+
+1. Two characters path toward each other and stop
+2. They exchange 2–4 alternating lines, one bubble visible at a time
+3. They part and resume their actions
+
+`state.conversation` holds the active exchange — participants, script, line index, timing — so it is deterministic and replays identically.
+
+**The ribbon constraint is real.** A 140px strip can't hold two stacked bubbles, and letting them overflow upward would float text over the portfolio content — exactly the distraction problem the ribbon exists to avoid. So:
+
+| View | Conversations |
+|---|---|
+| **Ribbon** | one short bubble at a time, kept inside the strip bounds |
+| **Expanded / `/tuk`** | full staged exchanges, longer lines, both speakers |
+
+Nothing is missed either way, because **every conversation writes a line to the chronicle** (§10).
+
+---
+
+## 9.5 · Scenes
+
+Authored cinematic moments. Tuk on the mountain edge at dusk, looking at the sky, doing nothing for forty seconds. These are the emotional punctuation, and **per unit of work they are the most memorable content in the project** — a dozen well-chosen scenes will outperform fifty structures.
+
+A scene is data:
+
+```jsonc
+{
+  "id": "after-first-burial",
+  "trigger": { "afterEvent": "grave:1", "delay": 900, "timeOfDay": "dusk" },
+  "stage": { "position": "ridge-east", "pose": "sit", "facing": -1, "camera": "wide-slow" },
+  "duration": 40,
+  "line": null,           // sometimes silence is the line
+  "chronicle": "Tuk sat on the eastern ridge until the light went."
+}
+```
+
+Design notes:
+
+- **Scenes interrupt ambient behaviour.** `state.scene` takes priority over the action loop, same priority rule as directed-over-ambient.
+- **Silence is allowed and often better.** `"line": null` is a valid scene.
+- **They earn a camera move** — the one place the camera should do something other than follow.
+- Trigger off *events*, not timestamps, so they still fire correctly in cycle 2 when the pacing differs.
+
+Two consequences of the world being global and deterministic that make scenes unusually valuable here:
+
+**They happen at knowable times.** Since the world is a function of the clock, "Tuk sits on the ridge after the wanderer's burial" occurs at a specific real-world moment. People can be told to tune in.
+
+**They are the channel footage.** Every scene is a shot. This is the content pipeline for YouTube and X, generated by the thing already running.
 
 ---
 
@@ -332,8 +414,15 @@ Which is why §2.4 exists. Adding an era must be authoring a table, not writing 
 - **Mobile.** Ribbon height, whether the expanded view exists at all, touch instead of hover for graves.
 - **Sound.** Almost certainly off by default. Probably not v1.
 - **Other robots in era 7.** How many, and do they get names and graves? (If they get graves, that's the strongest single beat in the game.)
-- **Animals.** Wild in early eras, domesticated later. Do they die and get remembered? Probably not — dilutes the graveyard.
-- **The dynamic/agent mode.** Deliberately deferred until ambient is done. When it arrives, Tuk leaves the world to act on the page and returns; the world pauses rather than continuing without him, because he is not two places at once.
+
+### Decided
+
+- **Animals get no graves.** Wild early, domesticated later, but they are scenery. The yard is only people Tuk knew — with the era-7 dog (§5) as the single deliberate exception, which works precisely because it is the only one.
+- **Cursor interaction is deferred.** `useAvatarLife` already implements proximity-notice and the greeting bubble, and it works — it simply won't be wired into the ribbon for v1, so ambient gets full focus. Re-enabling is a flag, not a rewrite; **don't delete that code.**
+
+  One argument on the other side, recorded so the decision can be revisited: without any reaction to the visitor, the ribbon is strictly a screensaver, and proximity-notice is the cheapest possible signal that he is *aware* of being watched. Worth reconsidering once the world exists.
+
+- **The dynamic/agent mode is deferred until ambient is done.** When it arrives, Tuk leaves the world to act on the page and returns; the world pauses rather than continuing without him, because he is not two places at once. No mode-separation refactor until there are two modes to separate.
 
 ---
 
