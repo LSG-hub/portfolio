@@ -177,17 +177,10 @@
   z-index: 44;
 }
 
-/* Drop zones from the least essential inward as the strip narrows. The sofa,
-   TV and dock are the ones the routine cannot do without. */
-@media (max-width: 940px) {
-  .rp-window { display: none; }
-}
-@media (max-width: 780px) {
-  .rp-desk { display: none; }
-}
-@media (max-width: 580px) {
-  .rp-kitchen { display: none; }
-}
+/* No zone is ever hidden. Dropping them on narrow screens also dropped their
+   BEATS — useRoutine skips a beat whose zone has no width — so a phone lost the
+   kettle, the plant, the desk and all their dialogue. The room is a fixed-width
+   world now and the camera pans across it instead; see tuk-ribbon.css. */
 
 @media (prefers-reduced-motion: reduce) {
   .rp-tv-flicker,

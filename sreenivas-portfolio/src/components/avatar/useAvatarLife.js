@@ -78,6 +78,20 @@ const FLY_BOB = 3.2;         // px of idle hover
  * dove 20px through the floor and rose again every time the cursor moved down,
  * which reads exactly like hopping on and off the ground while hovering.
  */
+/**
+ * ── The camera ──────────────────────────────────────────────────────────
+ * The room is a fixed-width world, so on a narrow screen it is wider than the
+ * viewport and has to be panned, dino-game style, to keep him in view. This is
+ * what lets a phone see the whole house — and every beat and every line — instead
+ * of the three zones that used to survive the breakpoints.
+ *
+ * He is kept out of the outer fifth of the screen rather than pinned to the
+ * centre: centring means the room slides under every hop, which reads as the
+ * world lurching rather than a camera following him.
+ */
+const CAM_DEAD_ZONE = 0.2;   // fraction of the viewport kept clear at each edge
+const CAM_EASE = 3.4;        // lerp rate; slower than he moves, so it trails
+
 const FLY_CLEARANCE = 14;
 const FLY_HEADROOM = 10;     // keep his head inside the viewport too
 
@@ -148,6 +162,7 @@ export function useAvatarLife({
     cursor: { x: -9999, y: -9999 }, started: false, lastGreet: 0,
     goal: null, adopted: null, goalFacing: 1, lastMove: 0, rearm: true,
     viewTop: 0, floorTop: 0, flyStart: 0, caughtAt: 0,
+    cam: 0, viewW: 0,
     /**
      * Height above his standing surface, eased. Render-only: the simulation still
      * has him on the floor.
@@ -226,6 +241,9 @@ export function useAvatarLife({
       platforms.sort((a, b) => a.top - b.top);
       s.platforms = platforms;
       s.bounds = { w: cRect.width, h: cRect.height };
+      // The world's width is cRect; the WINDOW onto it is the parent's. The camera
+      // needs both, and they differ only on screens narrower than the room.
+      s.viewW = host.parentElement ? host.parentElement.clientWidth : cRect.width;
       // Flight limits, in the same container-relative space as everything else:
       // the top of the window, and the lowest surface he could stand on.
       s.viewTop = -cRect.top;
@@ -275,6 +293,12 @@ export function useAvatarLife({
       const actorNow = actorRef.current;
       const bodyNow = bodyRef.current;
       if (!actorNow || !bodyNow) return;
+
+      // The camera goes on the container, which is why the rest of the simulation
+      // needs no changes: every coordinate here is measured relative to this same
+      // element, so the pan cancels out of all of them.
+      const host = containerRef.current;
+      if (host) host.style.transform = `translateX(${(-s.cam).toFixed(2)}px)`;
 
       actorNow.style.transform =
         `translate(${(s.x - halfW).toFixed(2)}px, ${(s.y - bodyH - s.lift + s.bobY).toFixed(2)}px)`;
@@ -500,6 +524,24 @@ export function useAvatarLife({
 
       // Sitting down and standing up, eased so it reads as a movement.
       s.lift += (s.targetLift - s.lift) * Math.min(dt * 7, 1);
+
+      /**
+       * Pan to keep him on screen. Nothing to do when the room fits, which is why
+       * desktop is untouched: `span` is zero there and the camera stays at rest.
+       */
+      const span = s.bounds.w - s.viewW;
+      if (span > 1) {
+        const dead = s.viewW * CAM_DEAD_ZONE;
+        const onScreen = s.x - s.cam;
+        let want = s.cam;
+        if (onScreen < dead) want = s.x - dead;
+        else if (onScreen > s.viewW - dead) want = s.x - (s.viewW - dead);
+        want = Math.min(Math.max(want, 0), span);
+        s.cam += (want - s.cam) * Math.min(dt * CAM_EASE, 1);
+      } else if (s.cam !== 0) {
+        s.cam += (0 - s.cam) * Math.min(dt * CAM_EASE, 1);
+        if (Math.abs(s.cam) < 0.5) s.cam = 0;
+      }
 
       /**
        * Cursor proximity, resolved BEFORE anything moves — takeoff, catching and

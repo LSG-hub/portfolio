@@ -12,6 +12,17 @@
 :root {
   --tuk-ribbon-h: 104px;
   --tuk-ribbon-floor-h: 22px;
+  /**
+   * The room is a WORLD, not a layout. It keeps this width whatever the screen is,
+   * and a camera pans across it — so a phone sees the same house a desktop does,
+   * a window at a time.
+   *
+   * Hiding zones at breakpoints was the old answer and it was worse than it
+   * looked: the routine skips beats whose zone is missing, so a mobile visitor
+   * lost the kettle, the plant, the desk and every line attached to them. Most of
+   * the content, gone, on most of the traffic.
+   */
+  --tuk-world-min: 900px;
 }
 
 .tuk-ribbon {
@@ -61,6 +72,30 @@
    specificity, and resolving that by stylesheet import order is not a thing to
    depend on. */
 
+/**
+ * The world. Wider than the viewport on a narrow screen, and panned by the
+ * physics loop, which writes translateX here.
+ *
+ * That the camera can live on this element is not a coincidence — every
+ * coordinate in useAvatarLife is measured as `something - containerRect.left`, so
+ * a transform on the container cancels out of all of them and the simulation
+ * carries on in world coordinates. It also makes the cursor conversion correct
+ * for free: screen minus panned origin IS the world position.
+ *
+ * No overflow rule needed. `.tuk-ribbon` is fixed, and a fixed element's overflow
+ * does not contribute to the document's scrollable area, so the off-screen half
+ * of the house creates no horizontal scrollbar. Clipping it would also clip his
+ * speech bubble, which has to hang above the strip.
+ */
+.tuk-ribbon-stage {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: max(100%, var(--tuk-world-min));
+  will-change: transform;
+}
+
 /* the standable surface. Its top edge is the floor line he walks on, harvested
    by useAvatarLife through the data attribute. */
 .tuk-ribbon-floor {
@@ -85,20 +120,13 @@ body.has-tuk-ribbon {
 }
 
 @media (max-width: 720px) {
-  :root {
-    --tuk-ribbon-h: 94px;
-    --tuk-ribbon-floor-h: 20px;
-  }
-  /* stepped down with the rest of the site's glass, to keep mobile paint flat */
+  /* No height reduction: the room is full size on every screen now, so the strip
+     has to clear the tallest piece of furniture on a phone as well. Stepped-down
+     blur, though, to keep mobile paint cost flat. */
   .tuk-ribbon-surface {
     backdrop-filter: blur(6px) saturate(115%);
     -webkit-backdrop-filter: blur(6px) saturate(115%);
   }
 }
 
-@media (max-width: 480px) {
-  :root {
-    --tuk-ribbon-h: 86px;
-    --tuk-ribbon-floor-h: 18px;
-  }
-}
+
