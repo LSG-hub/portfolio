@@ -13,9 +13,19 @@ import '../../styles/components/avatar.css';
  * A CSS animation overrides a presentation attribute, so putting both on one
  * element makes the hand snap to the SVG origin the moment it waves. Any prop
  * or limb added later follows the same split.
+ *
+ * ── Ambient life ────────────────────────────────────────────────────────
+ * `.tuk-idle` (breathing) and `.tuk-face` (blink) exist ONLY to carry those
+ * animations. They get their own groups for the same reason the hands do:
+ * `.tuk-squash` already carries an inline transform from the physics loop, and
+ * animating it would blow that away. Without these two layers he stands
+ * perfectly still between hops and reads as a static illustration.
  */
 
 const VIEW = { w: 60, h: 67 };
+
+/** Faces whose eyes are already shut, drawn, or spinning — blinking them looks wrong. */
+const NO_BLINK = new Set(['sleepy', 'loading', 'error']);
 
 const Face = ({ name }) => {
   switch (name) {
@@ -135,12 +145,15 @@ const TukAvatar = ({
   facing = 1,
   /** vertical squash: 1 = neutral, <1 = squashed, >1 = stretched */
   squash = 1,
+  /** ambient breathing + blinking. Off only for a static specimen render. */
+  idle = true,
   size = 64,
   className = '',
   title
 }) => {
   const pose = GESTURES[gesture] || GESTURES.rest;
   const height = Math.round((size * VIEW.h) / VIEW.w);
+  const blink = idle && !NO_BLINK.has(face);
 
   return (
     <svg
@@ -157,6 +170,8 @@ const TukAvatar = ({
           className="tuk-squash"
           style={{ transform: `scaleY(${squash}) scaleX(${2 - squash})` }}
         >
+          {/* breathing lives on its own group — see the layer rule above */}
+          <g className={idle ? 'tuk-idle' : undefined}>
           {/* torso */}
           <line className="tuk-ch" x1="24" y1="56" x2="23" y2="63" />
           <line className="tuk-ch" x1="36" y1="56" x2="37" y2="63" />
@@ -168,7 +183,10 @@ const TukAvatar = ({
             <line className="tuk-ch" x1="30" y1="16" x2="30" y2="10" />
             <circle className="tuk-fill tuk-antenna" cx="30" cy="8.4" r="2.4" />
             <rect className="tuk-paper" x="11" y="16" width="38" height="26" rx="9" />
-            <Face name={face} />
+            {/* blink layer — animation only, never a presentation transform */}
+            <g className={blink ? 'tuk-face tuk-blink' : 'tuk-face'}>
+              <Face name={face} />
+            </g>
           </g>
 
           {/* hands — position layer wraps motion layer */}
@@ -187,6 +205,7 @@ const TukAvatar = ({
               )}
               <circle className="tuk-hand" cx="0" cy="0" r="4.4" />
             </g>
+          </g>
           </g>
         </g>
       </g>

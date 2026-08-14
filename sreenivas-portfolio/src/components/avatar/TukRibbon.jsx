@@ -1,0 +1,108 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import TukAvatar from './TukAvatar';
+import SpeechBubble from './SpeechBubble';
+import useAvatarLife from './useAvatarLife';
+import RoomFurniture from './RoomFurniture';
+import { GREETINGS, createShuffleBag } from './dialogue';
+import '../../styles/components/tuk-ribbon.css';
+
+/**
+ * TukRibbon — the strip along the bottom of every page. This is Tuk's home.
+ *
+ * The room is furnished (see RoomFurniture) but he doesn't use it yet: he
+ * potters along the floor and says hello when the cursor comes near. The
+ * routine — a 5-minute day of chores at each zone — is the next slice, then the
+ * hovercraft that lets him leave the strip.
+ *
+ * Three things about the geometry:
+ *
+ * 1. IT DOES NOT CLIP. Overflow stays visible on purpose — his speech bubble
+ *    hangs above his head and his hop apex clears the roofline. The blur sits
+ *    on a separate inset surface div rather than the strip itself, because
+ *    backdrop-filter establishes a backdrop root that can crop children.
+ *
+ * 2. IT NEVER EATS A CLICK. A fixed 100px band across the bottom of every page
+ *    would otherwise swallow the footer links, so the whole thing is
+ *    pointer-events: none. He is watched, not touched — until dynamic mode.
+ *
+ * 3. THE HOP IS GENTLE. The open-world default clears 62px, which doesn't fit
+ *    under a 100px ceiling; a shallower launch also reads as domestic
+ *    pottering rather than bouncing off the walls.
+ *
+ * Layout compensation lives in CSS on `body.has-tuk-ribbon`, keyed off a class
+ * this component owns — so the padding can never outlive the strip.
+ */
+
+const FOOTPRINT = 52;
+const HOP_VY = -250; // clears ~21px
+
+const TukRibbon = () => {
+  const stageRef = useRef(null);
+  const actorRef = useRef(null);
+  const bodyRef = useRef(null);
+
+  const [line, setLine] = useState('');
+  const [saying, setSaying] = useState(false);
+
+  const { phase, noticing, greeting, greetMs } = useAvatarLife({
+    containerRef: stageRef,
+    actorRef,
+    bodyRef,
+    footprint: FOOTPRINT,
+    hopVy: HOP_VY
+  });
+
+  /** Reserve the space the strip occupies, and give it back on unmount. */
+  useEffect(() => {
+    document.body.classList.add('has-tuk-ribbon');
+    return () => document.body.classList.remove('has-tuk-ribbon');
+  }, []);
+
+  /** Shuffle bag rather than Math.random — every line before any repeat. */
+  const bag = useRef(createShuffleBag(GREETINGS));
+
+  useEffect(() => {
+    if (!greeting) return undefined;
+    setLine(bag.current.draw());
+    setSaying(true);
+    const t = window.setTimeout(() => setSaying(false), greetMs);
+    return () => window.clearTimeout(t);
+  }, [greeting, greetMs]);
+
+  /**
+   * Ambient composition, same priority as the lab: a greeting interrupts
+   * everything, then the locomotion phase, then mere proximity.
+   */
+  const pose = useMemo(() => {
+    if (saying) return { gesture: 'wave', face: 'happy', head: 'nod' };
+    if (phase === 'airborne') return { gesture: 'reach', face: 'surprise', head: 'still' };
+    if (phase === 'landing') return { gesture: 'rest', face: 'happy', head: 'still' };
+    if (noticing) return { gesture: 'rest', face: 'happy', head: 'lean' };
+    return { gesture: 'rest', face: 'neutral', head: 'still' };
+  }, [phase, noticing, saying]);
+
+  return (
+    <div className="tuk-ribbon" aria-hidden="true">
+      <div className="tuk-ribbon-surface" />
+      <div className="tuk-ribbon-stage" ref={stageRef}>
+        <div className="tuk-ribbon-floor" data-avatar-platform />
+        <RoomFurniture />
+        {/* actorRef carries translation only; bodyRef carries scale, so the
+            bubble is neither squashed nor mirrored when he turns. */}
+        <div className="tuk-actor" ref={actorRef}>
+          <SpeechBubble text={line} visible={saying} />
+          <div className="tuk-actor-body" ref={bodyRef}>
+            <TukAvatar
+              face={pose.face}
+              gesture={pose.gesture}
+              head={pose.head}
+              size={FOOTPRINT}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TukRibbon;

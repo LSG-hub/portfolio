@@ -61,6 +61,37 @@
   transition: transform 90ms linear;
 }
 
+/* ── ambient life ───────────────────────────────────────────────────────
+   Two dedicated layers, for the same reason the hands have two: `.tuk-squash`
+   carries an inline transform written by the physics loop, so an animation
+   there would erase it. Without these he is motionless between hops.
+
+   Breathing scales rather than translates — a bob would lift his feet off the
+   floor he is standing on. Origin is his soles, so only his head rises.
+   ──────────────────────────────────────────────────────────────────────── */
+.tuk-idle {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: tuk-breathe 3400ms ease-in-out infinite;
+}
+@keyframes tuk-breathe {
+  0%, 100% { transform: scaleY(1) scaleX(1); }
+  50%      { transform: scaleY(1.015) scaleX(0.992); }
+}
+
+/* Blink. A screen face has no eyelids, so the whole display dips — reads as a
+   CRT flicker, which is more in character than an eyelid would be. */
+.tuk-face {
+  transform-box: fill-box;
+  transform-origin: 50% 32%;
+}
+.tuk-blink { animation: tuk-blink 5200ms ease-in-out infinite; }
+@keyframes tuk-blink {
+  0%, 93%, 100% { transform: scaleY(1); }
+  95.5%         { transform: scaleY(0.08); }
+  98%           { transform: scaleY(1); }
+}
+
 /* ── hands ── */
 /* POSITION layer: transitions only. Never give this an animation. */
 .tuk-hand-pos {
@@ -147,6 +178,12 @@
   pointer-events: none;
   will-change: transform;
 }
+/* scale only — the facing flip and squash live here, so they never reach the
+   bubble hanging off the actor above. */
+.tuk-actor-body {
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
 
 /* ── speech bubble ──────────────────────────────────────────────────────
    Lives on the actor's UNSCALED wrapper. Parent it to the body and it
@@ -226,6 +263,8 @@
   .tuk-head-shake,
   .tuk-head-perk,
   .tuk-antenna,
+  .tuk-idle,
+  .tuk-blink,
   .tuk-dot-1, .tuk-dot-2, .tuk-dot-3,
   .tuk-bars rect,
   .tuk-spinner {

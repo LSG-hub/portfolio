@@ -1,0 +1,101 @@
+/* ── Tuk's ribbon ───────────────────────────────────────────────────────
+   A fixed strip along the bottom of every page — his home. Bare floor for
+   now; furniture lands on it next.
+
+   Deliberately NOT built on .glass: those surfaces set `contain: layout paint`
+   and a backdrop-filter, and either one can crop a child that reaches outside
+   the box — which his speech bubble and his hop apex both do. The wash here is
+   a plain gradient that fades to nothing at the top, so there is no seam to
+   hide and no blur cost on mobile.
+   ──────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --tuk-ribbon-h: 104px;
+  --tuk-ribbon-floor-h: 22px;
+}
+
+.tuk-ribbon {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--tuk-ribbon-h);
+  z-index: 45;
+  /* A band this size across every page would otherwise swallow the footer
+     links. He is watched, not clicked — until dynamic mode. */
+  pointer-events: none;
+}
+
+/**
+ * The room's back plane. It has to be near-opaque: at 0.28 the page's own
+ * paragraphs slid through the furniture at floor level and the room read as a
+ * pile of line art rather than a space.
+ *
+ * The blur is safe here even though the strip must not clip — backdrop-filter
+ * only crops an element's own children, and this div has none; the actor and his
+ * bubble live in a sibling. The mask is what makes the blur usable: without it
+ * a filtered rect ends in a hard seam across the page, and fading the plane out
+ * over the top quarter hides it.
+ */
+.tuk-ribbon-surface {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.78) 55%,
+    rgba(255, 255, 255, 0.92) 100%
+  );
+  backdrop-filter: blur(9px) saturate(120%);
+  -webkit-backdrop-filter: blur(9px) saturate(120%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 26%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 26%);
+}
+
+/* the coordinate space the physics loop measures against */
+.tuk-ribbon-stage {
+  position: absolute;
+  inset: 0;
+}
+
+/* the standable surface. Its top edge is the floor line he walks on, harvested
+   by useAvatarLife through the data attribute. */
+.tuk-ribbon-floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--tuk-ribbon-floor-h);
+  background: rgba(255, 255, 255, 0.42);
+  border-top: 1px solid var(--paper-line);
+}
+
+/* lift the back-to-top button clear of the strip */
+body.has-tuk-ribbon .scroll-to-top {
+  bottom: calc(var(--tuk-ribbon-h) + 1rem);
+}
+
+/* Reserve the space, so the footer is never hidden behind him. Keyed off a
+   class TukRibbon owns, so the padding cannot outlive the strip. */
+body.has-tuk-ribbon {
+  padding-bottom: var(--tuk-ribbon-h);
+}
+
+@media (max-width: 720px) {
+  :root {
+    --tuk-ribbon-h: 94px;
+    --tuk-ribbon-floor-h: 20px;
+  }
+  /* stepped down with the rest of the site's glass, to keep mobile paint flat */
+  .tuk-ribbon-surface {
+    backdrop-filter: blur(6px) saturate(115%);
+    -webkit-backdrop-filter: blur(6px) saturate(115%);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --tuk-ribbon-h: 86px;
+    --tuk-ribbon-floor-h: 18px;
+  }
+}

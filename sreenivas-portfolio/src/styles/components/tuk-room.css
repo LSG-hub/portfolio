@@ -1,0 +1,130 @@
+/* ── Tuk's room ─────────────────────────────────────────────────────────
+   Every stroke and fill in RoomFurniture.jsx comes from this block, so the
+   whole room restyles from one place. Line weight is 1.7 against the
+   character's effective 1.8 — the room is meant to recede.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.rp {
+  display: block;
+  overflow: visible;
+}
+
+.rp-ink {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.rp-thin {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.75;
+}
+.rp-paper {
+  fill: var(--bg);
+  stroke: var(--ink);
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+}
+.rp-soft { fill: var(--accent-soft); stroke: none; }
+.rp-rug { fill: rgba(26, 24, 20, 0.055); stroke: none; }
+.rp-knob { fill: var(--accent); stroke: none; }
+.rp-leaf {
+  fill: var(--accent-soft);
+  stroke: var(--ink);
+  stroke-width: 1.3;
+  stroke-linejoin: round;
+}
+.rp-book {
+  fill: var(--accent-soft);
+  stroke: var(--ink);
+  stroke-width: 1;
+}
+
+/* light sources — where the accent is allowed to be loud */
+.rp-glow { fill: var(--accent); opacity: 0.14; stroke: none; }
+.rp-screen,
+.rp-screen-sm {
+  fill: var(--accent);
+  stroke: none;
+  opacity: 0.2;
+}
+.rp-screen { animation: rp-flicker 4600ms ease-in-out infinite; }
+@keyframes rp-flicker {
+  0%, 100% { opacity: 0.2; }
+  38%      { opacity: 0.3; }
+  62%      { opacity: 0.16; }
+}
+
+.rp-led {
+  fill: var(--accent);
+  stroke: none;
+  animation: rp-led 2400ms ease-in-out infinite;
+}
+@keyframes rp-led {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+
+/* the kettle is always just off the boil */
+.rp-steam path {
+  opacity: 0;
+  animation: rp-steam 3200ms ease-in-out infinite;
+}
+.rp-steam-b { animation-delay: 700ms; }
+.rp-steam-c { animation-delay: 1500ms; }
+@keyframes rp-steam {
+  0%   { opacity: 0; transform: translateY(2px); }
+  35%  { opacity: 0.55; }
+  100% { opacity: 0; transform: translateY(-9px); }
+}
+
+/* ── layout ─────────────────────────────────────────────────────────────
+   Zones sit on the floor line and spread across the strip. Neither this row
+   nor a zone may take a z-index: both would open a stacking context and trap
+   .rp-front below the actor, which is the one thing that has to paint above him.
+   ──────────────────────────────────────────────────────────────────────── */
+.rp-room {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 2.5% var(--tuk-ribbon-floor-h);
+  pointer-events: none;
+}
+
+.rp-zone { position: relative; }
+
+/* the only piece that occludes him — the near armrest and the seat */
+.rp-front {
+  position: absolute;
+  inset: 0;
+  z-index: 44;
+}
+
+/* Drop zones from the least essential inward as the strip narrows. The sofa,
+   TV and dock are the ones the routine cannot do without. */
+@media (max-width: 940px) {
+  .rp-window { display: none; }
+}
+@media (max-width: 780px) {
+  .rp-desk { display: none; }
+}
+@media (max-width: 580px) {
+  .rp-kitchen { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rp-screen,
+  .rp-led,
+  .rp-steam path {
+    animation: none !important;
+  }
+  /* the kettle still steams, it just holds still */
+  .rp-steam path { opacity: 0.4; }
+}

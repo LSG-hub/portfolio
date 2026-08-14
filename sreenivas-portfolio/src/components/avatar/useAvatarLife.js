@@ -43,7 +43,18 @@ const NOTICE_RADIUS = 170;   // px — cursor proximity that makes him look up
 const GREET_MS = 2600;       // how long a hello lasts
 const GREET_DEBOUNCE = 300;  // ignore cursor jitter at the boundary
 
-export function useAvatarLife({ containerRef, actorRef, bodyRef, footprint = 64 }) {
+export function useAvatarLife({
+  containerRef,
+  actorRef,
+  bodyRef,
+  footprint = 64,
+  /**
+   * Launch speed for level hops, and so the hop's height: rise is vy²/2g.
+   * The default clears 62px, which is right in an open world and far too big
+   * inside a 100px-tall ribbon — pass a gentler value there.
+   */
+  hopVy = HOP_VY
+}) {
   const [phase, setPhase] = useState('grounded');
   const [noticing, setNoticing] = useState(false);
   /**
@@ -73,7 +84,20 @@ export function useAvatarLife({ containerRef, actorRef, bodyRef, footprint = 64 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const s = sim.current;
     const halfW = footprint / 2;
-    const bodyH = Math.round((footprint * 67) / 60);
+    /**
+     * Distance from the top of his SVG to his FEET — not to the bottom of the
+     * viewBox. His leg strokes end at y=63 of 67 and a round cap adds ~1, so
+     * treating the viewBox bottom as his soles left him hovering ~3px above every
+     * surface: not obviously broken, just subtly untethered.
+     */
+    const bodyH = Math.round((footprint * (67 - 3)) / 60);
+    /**
+     * How far a level hop can actually carry him: flight time × top speed.
+     * Derived rather than hardcoded, because asking for a longer step than this
+     * only clamps vx and undershoots — the two numbers have to agree, and they
+     * silently disagreed once hop height became configurable.
+     */
+    const hopReach = ((-2 * hopVy) / GRAVITY) * MAX_VX;
     const timers = [];
 
     const setPhaseOnce = (p) => {
@@ -82,9 +106,11 @@ export function useAvatarLife({ containerRef, actorRef, bodyRef, footprint = 64 
 
     /** Harvest standable surfaces from the real DOM. */
     const measure = () => {
-      const cRect = container.getBoundingClientRect();
+      const host = containerRef.current;
+      if (!host) return;
+      const cRect = host.getBoundingClientRect();
       const platforms = [];
-      container.querySelectorAll('[data-avatar-platform]').forEach((el) => {
+      host.querySelectorAll('[data-avatar-platform]').forEach((el) => {
         const r = el.getBoundingClientRect();
         if (r.width < footprint) return; // too narrow to stand on
         platforms.push({
@@ -104,18 +130,50 @@ export function useAvatarLife({ containerRef, actorRef, bodyRef, footprint = 64 
         s.y = p.top;
         s.grounded = true;
         s.started = true;
+        return;
+      }
+
+      /**
+       * Re-seat a standing character on the surface he is actually on. `s.y` was
+       * previously derived only at first measure, so a window resize or a
+       * responsive breakpoint moved the floor while he kept standing at the old
+       * height — in mid-air until his next hop happened to correct it.
+       *
+       * Matched on the smallest change in height, not on x, so a character
+       * standing on an upper shelf stays on that shelf instead of teleporting.
+       */
+      if (s.started && s.grounded && platforms.length) {
+        const seat = platforms.reduce(
+          (best, p) => (Math.abs(p.top - s.y) < Math.abs(best.top - s.y) ? p : best),
+          platforms[0]
+        );
+        s.y = seat.top;
+        s.x = Math.min(Math.max(s.x, seat.left + EDGE_PAD), seat.right - EDGE_PAD);
       }
     };
 
+    /**
+     * Reads the refs every frame rather than closing over the nodes captured at
+     * mount. That matters: a structural edit to the JSX can make React reuse the
+     * old actor element for a different sibling and hand the ref a brand new
+     * node, while this effect — whose deps haven't changed — keeps writing
+     * transforms into the element it captured. The character then sits
+     * unpositioned while something else silently carries his coordinates.
+     * Re-reading is free and makes the loop self-healing.
+     */
     const render = () => {
-      actor.style.transform =
+      const actorNow = actorRef.current;
+      const bodyNow = bodyRef.current;
+      if (!actorNow || !bodyNow) return;
+
+      actorNow.style.transform =
         `translate(${(s.x - halfW).toFixed(2)}px, ${(s.y - bodyH).toFixed(2)}px)`;
-      body.style.transform =
+      bodyNow.style.transform =
         `scaleX(${s.facing}) scaleY(${s.squash.toFixed(3)})`;
       // Published as an attribute rather than React state so the speech bubble
       // can flip sides in CSS without a re-render on every direction change.
       const f = s.facing < 0 ? '-1' : '1';
-      if (actor.dataset.facing !== f) actor.dataset.facing = f;
+      if (actorNow.dataset.facing !== f) actorNow.dataset.facing = f;
     };
 
     measure();
@@ -127,7 +185,9 @@ export function useAvatarLife({ containerRef, actorRef, bodyRef, footprint = 64 
     }
 
     const onPointer = (e) => {
-      const cRect = container.getBoundingClientRect();
+      const host = containerRef.current;
+      if (!host) return;
+      const cRect = host.getBoundingClientRect();
       s.cursor = { x: e.clientX - cRect.left, y: e.clientY - cRect.top };
     };
 
@@ -149,7 +209,7 @@ export function useAvatarLife({ containerRef, actorRef, bodyRef, footprint = 64 
         const dropToTarget = Math.max(actualRise - dy, 0);
         flight = toApex + Math.sqrt((2 * dropToTarget) / GRAVITY);
       } else {
-        vy = HOP_VY;
+        vy = hopVy;
         // y + vy t + ½gt² = ty  →  positive root
         const drop = -dy; // how far below us the target is
         const disc = vy * vy + 2 * GRAVITY * drop;
@@ -181,13 +241,13 @@ export function useAvatarLife({ containerRef, actorRef, bodyRef, footprint = 64 
         const dir = Math.min(room.l, room.r) > 90
           ? (Math.random() < 0.5 ? -1 : 1)
           : (room.r > room.l ? 1 : -1);
-        const step = 60 + Math.random() * 90;
+        const step = hopReach * (0.42 + Math.random() * 0.5);
         target = {
           x: Math.min(Math.max(s.x + dir * step, here.left + EDGE_PAD), here.right - EDGE_PAD),
           y: here.top
         };
       } else {
-        target = { x: s.x + (Math.random() < 0.5 ? -80 : 80), y: s.y };
+        target = { x: s.x + (Math.random() < 0.5 ? -1 : 1) * hopReach * 0.6, y: s.y };
       }
 
       const { vx, vy } = launchToward(target.x, target.y);
@@ -290,7 +350,7 @@ export function useAvatarLife({ containerRef, actorRef, bodyRef, footprint = 64 
       window.removeEventListener('resize', measure);
       window.removeEventListener('pointermove', onPointer);
     };
-  }, [containerRef, actorRef, bodyRef, footprint]);
+  }, [containerRef, actorRef, bodyRef, footprint, hopVy]);
 
   return { phase, noticing, greeting, platformCount, greetMs: GREET_MS };
 }
