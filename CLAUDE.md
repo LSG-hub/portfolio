@@ -56,6 +56,19 @@ Editing content means editing these files. Section headers carry hardcoded numbe
 
 Images go in `public/images/` and are referenced by absolute path (`/images/foo.jpg`). Photos render as CSS `background-image` on a `role="img"` div with `aria-label`, not as `<img>` — follow that pattern for consistent cropping, and always supply the alt text.
 
+## The avatar (Tuk)
+
+**Read `docs/avatar-spec.md` before touching anything under `src/components/avatar/`.** It records why the character is shaped the way it is, and one rule that will silently break if violated.
+
+- `expressions.js` — the vocabulary: 12 faces × 9 hand poses × 6 head motions, composed rather than enumerated, plus `SCENES`. **`SCENES` is the contract the backend drives** — the agent calls semantic states (`thinking`, `unsure`), never individual axes.
+- `TukAvatar.jsx` — purely presentational; renders whatever face/gesture/head it's handed.
+- `useAvatarLife.js` — ambient locomotion. Harvests `[data-avatar-platform]` top edges via `getBoundingClientRect()` so he stands on real cards. Writes `transform` straight to the DOM; only `phase` and `noticing` go through `setState`, because a 60fps `setState` re-renders the subtree every frame.
+- `/avatar-lab` — physics bench, unlinked and `Disallow`ed in `robots.txt`. Code-split, so it costs the main bundle ~48 B.
+
+⚠️ **The layer rule:** position transitions, local motion animates, and the two never share an element. A CSS animation overrides a presentation attribute, so a hand carrying both `translate` (position) and `rotate` (wave) loses its position and pivots around the SVG origin. Outer group transitions, inner group animates — for every prop and limb added later.
+
+He hops rather than walks: stub legs and detached hands make a gait look wrong, and hopping delivers squash-and-stretch for free.
+
 ## Styling
 
 Warm "paper + glass" aesthetic. Cream `#FAF6EE` ground with four radial tints painted on `body::before`; EB Garamond serif with italic headings, JetBrains Mono for eyebrows and labels; terracotta `#A8451F` accent.

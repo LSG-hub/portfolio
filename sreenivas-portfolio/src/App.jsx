@@ -9,6 +9,9 @@ import ScrollToTop from './components/common/ScrollToTop';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
+// Development bench for the avatar's physics. Reachable but unlinked, and
+// disallowed in robots.txt so it stays out of search results.
+const AvatarLab = lazy(() => import('./pages/AvatarLab'));
 
 const SectionFallback = () => <div className="section-fallback" aria-hidden />;
 
@@ -33,6 +36,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+              <Route path="/avatar-lab" element={<AvatarLab />} />
             </Routes>
           </Suspense>
         </main>

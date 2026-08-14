@@ -1,0 +1,241 @@
+/* ── Tuk ───────────────────────────────────────────────────────────────
+   THE LAYER RULE: position transitions, local motion animates, and the two
+   never share an element. A CSS animation overrides a presentation attribute,
+   so a hand carrying both `translate` (position) and `rotate` (wave) loses its
+   position and pivots around the SVG origin. Outer group = transition only.
+   Inner group = animation only.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.tuk {
+  overflow: visible;
+  /* never let the character eat a click */
+  pointer-events: none;
+}
+
+.tuk-ch {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tuk-thin {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.tuk-fill { fill: var(--accent); stroke: none; }
+.tuk-soft { fill: var(--accent-soft); stroke: none; }
+.tuk-paper {
+  fill: var(--bg);
+  stroke: var(--ink);
+  stroke-width: 2.1;
+  stroke-linejoin: round;
+}
+.tuk-glyph { fill: var(--ink); stroke: none; }
+.tuk-glyph-accent { fill: var(--accent); stroke: none; }
+.tuk-glyph-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+.tuk-hand {
+  fill: var(--bg);
+  stroke: var(--ink);
+  stroke-width: 2.1;
+  stroke-linejoin: round;
+}
+.tuk-blade {
+  fill: #FCFAF5;
+  stroke: var(--ink);
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+}
+
+/* squash / stretch — driven by physics, so transition is short */
+.tuk-squash {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition: transform 90ms linear;
+}
+
+/* ── hands ── */
+/* POSITION layer: transitions only. Never give this an animation. */
+.tuk-hand-pos {
+  transform-box: view-box;
+  transition: transform 420ms cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+/* LOCAL layer: animations only. Never give this a transition. */
+.tuk-hand-spin {
+  transform-box: fill-box;
+  transform-origin: 50% 85%;
+}
+.tuk-hand-spin.tuk-wag { animation: tuk-wag 500ms ease-in-out infinite; }
+@keyframes tuk-wag {
+  0%, 100% { transform: rotate(-20deg); }
+  50%      { transform: rotate(20deg); }
+}
+
+/* ── head ── */
+.tuk-head {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition: transform 400ms cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+.tuk-head-nod   { animation: tuk-nod 950ms ease-in-out infinite; }
+.tuk-head-shake { animation: tuk-shake 800ms ease-in-out infinite; }
+.tuk-head-perk  { animation: tuk-perk 1600ms ease-in-out infinite; }
+.tuk-head-tilt  { transform: rotate(11deg); }
+.tuk-head-lean  { transform: translateY(2.5px) rotate(-4deg); }
+
+@keyframes tuk-nod {
+  0%, 100% { transform: rotate(0) translateY(0); }
+  50%      { transform: rotate(7deg) translateY(1.6px); }
+}
+@keyframes tuk-shake {
+  0%, 100% { transform: rotate(-7deg); }
+  50%      { transform: rotate(7deg); }
+}
+@keyframes tuk-perk {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-2.4px); }
+}
+
+/* ── antenna + face micro-animation ── */
+.tuk-antenna { animation: tuk-pulse 2600ms ease-in-out infinite; }
+@keyframes tuk-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+
+.tuk-dot-1, .tuk-dot-2, .tuk-dot-3 { animation: tuk-dots 1400ms ease-in-out infinite; }
+.tuk-dot-2 { animation-delay: 180ms; }
+.tuk-dot-3 { animation-delay: 360ms; }
+@keyframes tuk-dots {
+  0%, 100% { opacity: 0.25; }
+  50%      { opacity: 1; }
+}
+
+.tuk-bars rect {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: tuk-eq 700ms ease-in-out infinite;
+}
+.tuk-bars rect:nth-child(2) { animation-delay: 120ms; }
+.tuk-bars rect:nth-child(3) { animation-delay: 240ms; }
+@keyframes tuk-eq {
+  0%, 100% { transform: scaleY(0.45); }
+  50%      { transform: scaleY(1); }
+}
+
+.tuk-spinner {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: tuk-spin 1100ms linear infinite;
+}
+.tuk-spin-stroke { stroke: var(--accent); }
+@keyframes tuk-spin { to { transform: rotate(360deg); } }
+
+/* ── the character as a positioned actor on the page ── */
+.tuk-actor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* ── speech bubble ──────────────────────────────────────────────────────
+   Lives on the actor's UNSCALED wrapper. Parent it to the body and it
+   inherits scaleX(-1) when he turns left, rendering the text mirrored.
+   ──────────────────────────────────────────────────────────────────────── */
+.tuk-bubble {
+  position: absolute;
+  bottom: calc(100% - 6px);
+  left: 50%;
+  z-index: 2;
+  padding: 0.42rem 0.7rem 0.46rem;
+  max-width: 190px;
+  width: max-content;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1.5px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 2px 2px 0 rgba(26, 24, 20, 0.14);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 6px) scale(0.88);
+  transform-origin: 50% 100%;
+  transition: opacity 180ms ease, transform 260ms cubic-bezier(0.34, 1.5, 0.5, 1);
+}
+.tuk-bubble.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+.tuk-bubble-right { margin-left: 26px; }
+.tuk-bubble-left { margin-left: -26px; }
+
+.tuk-bubble-text {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 0.86rem;
+  line-height: 1.3;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* the tail — two stacked triangles so the 1.5px outline reads on both edges */
+.tuk-bubble-tail {
+  position: absolute;
+  top: 100%;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 9px solid var(--ink);
+}
+.tuk-bubble-tail::after {
+  content: '';
+  position: absolute;
+  top: -9.5px;
+  left: -5px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid rgba(255, 255, 255, 0.94);
+}
+.tuk-bubble-right .tuk-bubble-tail { left: 18px; }
+.tuk-bubble-left .tuk-bubble-tail { right: 18px; }
+
+/* When he turns to face left, flip the bubble so it doesn't run off the edge.
+   Driven by a data attribute the physics loop writes — no re-render needed. */
+[data-facing='-1'] .tuk-bubble-right { margin-left: -26px; }
+[data-facing='-1'] .tuk-bubble-right .tuk-bubble-tail { left: auto; right: 18px; }
+
+@media (max-width: 640px) {
+  .tuk-bubble { max-width: 150px; }
+  .tuk-bubble-text { font-size: 0.8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tuk-hand-spin.tuk-wag,
+  .tuk-head-nod,
+  .tuk-head-shake,
+  .tuk-head-perk,
+  .tuk-antenna,
+  .tuk-dot-1, .tuk-dot-2, .tuk-dot-3,
+  .tuk-bars rect,
+  .tuk-spinner {
+    animation: none !important;
+  }
+  .tuk-hand-pos,
+  .tuk-head,
+  .tuk-squash {
+    transition: none !important;
+  }
+  /* the bubble still appears, it just doesn't spring in */
+  .tuk-bubble { transition: opacity 180ms ease !important; transform: translate(-50%, 0) !important; }
+}
