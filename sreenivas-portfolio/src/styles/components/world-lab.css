@@ -1,0 +1,266 @@
+/* ── /world-lab ─────────────────────────────────────────────────────────
+   An instrument panel. Dense, monospaced, utilitarian — the world is the
+   subject, so the page gets out of the way.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.wlab { padding: 2.5rem 0 5rem; }
+
+.wlab-back {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  border-bottom: none;
+  margin-bottom: 2rem;
+}
+.wlab-back:hover { color: var(--accent); }
+
+.wlab-header { margin-bottom: 1.5rem; }
+.wlab-title {
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin: 0.6rem 0 0.7rem;
+  color: var(--ink);
+}
+.wlab-lede { max-width: 68ch; font-size: 1.02rem; color: var(--text-muted); margin: 0; }
+
+.wlab code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: rgba(26, 24, 20, 0.055);
+  padding: 0.08em 0.32em;
+  border-radius: 3px;
+}
+
+.wlab-locked {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.6;
+  padding: 0.9rem 1.1rem;
+  background: var(--accent-soft);
+  border: 1px solid rgba(168, 69, 31, 0.3);
+  border-radius: 10px;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.wlab-stage { margin-bottom: 1.25rem; }
+
+/* ── control panel ── */
+.wlab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.1rem 1.2rem 1.25rem;
+  margin-bottom: 1.5rem;
+  background: var(--glass-bg-dense);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+}
+.wlab-row { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; }
+.wlab-label {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  min-width: 92px;
+}
+.wlab-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+.wlab-chip {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 0.32rem 0.62rem;
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+.wlab-chip:hover { border-color: var(--border-strong); }
+.wlab-chip[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+.wlab-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.wlab-scrub { flex: 1; min-width: 200px; accent-color: var(--accent); cursor: pointer; }
+.wlab-scrub:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.wlab-scrub-val,
+.wlab-seed {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.wlab-seed { color: var(--text-subtle); }
+
+/* ── stats strip ── */
+.wlab-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 1px;
+  margin-bottom: 1.25rem;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.wlab-stat {
+  padding: 0.75rem 0.85rem;
+  background: var(--glass-bg-dense);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.wlab-stat b {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.wlab-stat span {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+.wlab-stat-key b { color: var(--accent); }
+
+/* ── cards ── */
+.wlab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.wlab-card {
+  padding: 1rem 1.1rem 1.15rem;
+  background: var(--glass-bg-dense);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+}
+.wlab-card h2 {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  font-weight: 500;
+  margin: 0 0 0.7rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+}
+.wlab-count { color: var(--accent); letter-spacing: 0; }
+
+.wlab-action {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--ink);
+  margin: 0 0 0.6rem;
+}
+.wlab-bar {
+  height: 4px;
+  background: rgba(26, 24, 20, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.wlab-bar span { display: block; height: 100%; background: var(--accent); }
+.wlab-meta {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--text-subtle);
+  margin: 0.55rem 0 0;
+  line-height: 1.5;
+}
+.wlab-empty {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-subtle);
+  margin: 0;
+}
+
+.wlab-res { margin: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+.wlab-res > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  padding-bottom: 0.28rem;
+  border-bottom: 1px solid var(--paper-line);
+}
+.wlab-res dt { color: var(--text-muted); }
+.wlab-res dd { margin: 0; color: var(--ink); font-variant-numeric: tabular-nums; }
+.wlab-res .is-kept dt,
+.wlab-res .is-kept dd { color: var(--accent); }
+
+.wlab-list { display: flex; flex-direction: column; gap: 0.32rem; }
+.wlab-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink);
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--paper-line);
+}
+.wlab-list li:last-child { border-bottom: none; }
+.wlab-list em { color: var(--text-subtle); font-style: normal; font-size: 0.92em; }
+.wlab-list span { margin-left: auto; color: var(--text-subtle); font-size: 0.92em; }
+
+.wlab-stage { font-size: 0.68em !important; letter-spacing: 0.06em; text-transform: uppercase; }
+.wlab-stage.is-child { color: #6E8B5A !important; }
+.wlab-stage.is-adult { color: var(--text-subtle) !important; }
+.wlab-stage.is-elder { color: #8C5A3C !important; }
+
+.wlab-graves li { color: var(--text-muted); }
+
+/* ── chronicle ── */
+.wlab-chronicle { padding-bottom: 1rem; }
+.wlab-log {
+  max-height: 340px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  padding-right: 0.4rem;
+}
+.wlab-log p {
+  display: flex;
+  gap: 0.7rem;
+  align-items: baseline;
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+}
+.wlab-log-day {
+  flex: none;
+  min-width: 84px;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+.wlab-log-day em { color: var(--accent); font-style: normal; }
+
+@media (max-width: 720px) {
+  .wlab-label { min-width: 100%; }
+  .wlab-log-day { min-width: 70px; }
+}

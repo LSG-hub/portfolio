@@ -1,9 +1,10 @@
 User-agent: *
 Allow: /
 
-# Development bench for the avatar's physics — reachable, but it should never
-# turn up in search results next to the real content.
+# Development benches — reachable, but they should never turn up in search
+# results next to the real content.
 Disallow: /avatar-lab
+Disallow: /world-lab
 
 # Sitemap
 Sitemap: https://sreenivasgurram.com/sitemap.xml
