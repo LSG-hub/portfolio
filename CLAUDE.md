@@ -80,6 +80,17 @@ New content files (world data, dialogue, sprite definitions) fall under `LICENSE
 
 He hops rather than walks: stub legs and detached hands make a gait look wrong, and hopping delivers squash-and-stretch for free.
 
+## The world simulation (`src/world/`)
+
+**Read `docs/tuk-world.md` before touching this.** Design doc first; the code implements it.
+
+- `rng.js` — seeded PRNG. **`Math.random()` must never appear anywhere in `src/world/`.** The global world works only because every visitor computes an identical state from the same seed and clock; one unseeded call desyncs everyone silently, and determinism cannot be retrofitted. Same for `Date.now()` — time enters as an argument.
+- `simulate.js` — `worldAt(seed, elapsedSeconds)` is the single entry point. **Event-driven, not fixed-timestep:** a 0.25s step over a 30-day cycle is ~10M iterations; jumping event to event is ~170k and runs in **~120ms**. Rendering interpolates the in-flight action via `actionProgress()`.
+- `state.js` — the state object *is* the save file and the entire render input. `state.elapsed` is **monotonic across all cycles and never resets**; cycle-relative time is `elapsed - cycleStart`. An earlier draft reset `elapsed` on collapse and it made multi-cycle advancement incoherent.
+- `data/` — eras, actions, structures, people. All content is table data, never logic, so adding an era is a table entry.
+
+Bump `SCHEMA_VERSION` in `state.js` on any state-shape change or cached saves get read as the wrong shape.
+
 ## Styling
 
 Warm "paper + glass" aesthetic. Cream `#FAF6EE` ground with four radial tints painted on `body::before`; EB Garamond serif with italic headings, JetBrains Mono for eyebrows and labels; terracotta `#A8451F` accent.
@@ -105,7 +116,7 @@ CI/CD via GitHub Actions at the repo root:
 - `.github/workflows/firebase-preview.yml` — pull requests get a temporary preview channel (7-day expiry) with the URL commented on the PR. Skips PRs from forks, which can't read secrets.
 - Both build from the `sreenivas-portfolio/` subdirectory and pass `entryPoint: sreenivas-portfolio` so the action finds `firebase.json`. Node is pinned to 20.
 - Auth uses the `FIREBASE_SERVICE_ACCOUNT_SREENIVAS_PORTFOLIO` repo secret, holding a key for the `github-action-deploy@sreenivas-portfolio.iam.gserviceaccount.com` service account. That SA has only `roles/firebasehosting.admin` — verified sufficient. Preview-channel deploys log two harmless `identitytoolkit` 403 warnings (the CLI trying to register the preview domain with Firebase Auth, which this site doesn't use); they do not affect the exit code.
-- `npm test` is deliberately not in the pipeline — `src/App.test.js` is still the stock CRA test and fails.
+- `npm test` is not in the pipeline, but it now **passes** — the stock CRA `App.test.js` was deleted and replaced with real tests for the world simulation (`src/world/world.test.js`, 22 tests). Run them with `CI=true npx react-scripts test --testPathPattern=world`. Worth adding to CI once there's coverage beyond the sim.
 - `CI=true` (set by Actions) makes react-scripts treat lint warnings as build errors. The build is currently warning-free, so this is left on intentionally.
 
 **Live domain: `https://sreenivasgurram.com`** (apex, canonical), with `www` redirecting to it. DNS is at GoDaddy: a single `A` record on `@` → `199.36.158.100`, a `TXT` on `@` → `hosting-site=sreenivas-portfolio`, and the `www` `CNAME` → `sreenivas-portfolio.web.app`.

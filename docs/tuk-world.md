@@ -67,7 +67,16 @@ Time comes from the server, not the visitor's machine — clock skew and people 
 
 ### 3.2 · Two clocks, deliberately incoherent
 
-**The day clock is cosmetic.** One world day ≈ **8 minutes** of real time. Sun and moon arc, dusk, night, dawn. Pleasant ambient rhythm.
+**The day clock is cosmetic.** One world day = **one real hour**. Sun and moon arc, dusk, night, dawn.
+
+*Revised after implementation.* This started at 8 minutes per day, which made the first era span 45 world days — the chronicle read "Day 46" after six real hours. Arithmetically correct, completely illegible. At one hour per day the **day number simply equals hours elapsed**, a cycle runs to about day 720, and the rhythm is calm rather than frantic. The chronicle now reads:
+
+```
+Day   1  a firepit was finished.
+Day   7  The Stone era began.
+Day  25  A wanderer arrived from the east and stayed. Tuk called him Rue.
+Day  31  The Settlement era began.
+```
 
 **Everything else is measured in real time.** Era durations, NPC lifespans, and build times are defined in real hours — *not* in world days.
 
@@ -410,7 +419,12 @@ Which is why §2.4 exists. Adding an era must be authoring a table, not writing 
 
 ## 13 · Open
 
-- **Cost curve.** Untuned. The rule is that nothing may ever feel like waiting.
+- **Cost curve, and the bigger thing it revealed.** The first implementation was out by two orders of magnitude — `gather` yields ~1,200 wood/hour, so a 40-wood hut was two minutes of work and every era finished all its structures within minutes of starting, then Tuk rested for the remaining 20-160 hours. Costs are now ~20× that draft.
+
+  **But scaling costs is not the answer and shouldn't be pushed further.** No sane cost makes building fill a 168-hour era. The correct reading is that **eras were never meant to be filled with building** — building is punctuation, and the substance is villagers, conversations, deaths, and scenes. Tuk resting for hours is a *content* gap where those belong, not a number to inflate. This reframes the content inventory (§12): the missing content is idle-time life, not more structures.
+
+- **Resource consumption.** Villagers eating would give gathering permanent purpose and stop the stockpile problem structurally rather than by tuning. Probably the right long-term fix; not implemented.
+- **Idle behaviour.** `rest` is currently a placeholder standing in for wandering, sitting, watching, tending, and conversation. It is the single largest content gap.
 - **Mobile.** Ribbon height, whether the expanded view exists at all, touch instead of hover for graves.
 - **Sound.** Almost certainly off by default. Probably not v1.
 - **Other robots in era 7.** How many, and do they get names and graves? (If they get graves, that's the strongest single beat in the game.)
