@@ -53,38 +53,66 @@
  * turns to you before he turns to the kettle.
  */
 
-/** Nominal wall-clock hour per beat, used only to choose where a visitor enters. */
+/**
+ * `stop` groups consecutive beats at one piece of furniture. A stop is one
+ * visit: he travels once, stays a notable while, works through two or three
+ * poses, and speaks one dialogue set. Eighteen separate errands had him crossing
+ * the room eighteen times a day, which read as pacing rather than living.
+ *
+ * `lift` raises him off the floor in the renderer only. 10px is the sofa: enough
+ * that the cushion's front layer covers his legs, not enough to look like he is
+ * standing on the furniture.
+ */
 export const BEATS = [
-  // ── morning ──
-  { key: 'wake',    hour: 6,  zone: 'dock',    at: 39,  secs: 10, light: 'dawn',  face: 'sleepy',     gesture: 'rest',  head: 'perk' },
-  { key: 'stretch', hour: 6,  zone: 'dock',    at: 54,  secs: 8,  light: 'dawn',  face: 'happy',      gesture: 'cheer', head: 'still' },
-  { key: 'boil',    hour: 7,  zone: 'kitchen', at: 72,  look: -1, secs: 22, light: 'day',   face: 'neutral',    gesture: 'reach', head: 'tilt' },
-  { key: 'drink',   hour: 7,  zone: 'kitchen', at: 72,  look: -1, secs: 14, light: 'day',   face: 'happy',      gesture: 'chin',  head: 'still', prop: 'mug' },
-  { key: 'water',   hour: 8,  zone: 'window',  at: 44,  secs: 18, light: 'day',   face: 'happy',      gesture: 'reach', head: 'lean',  prop: 'can' },
+  // ── he wakes on the charging mat ──
+  { key: 'wake',    stop: 'dock-am', hour: 6,  zone: 'dock',    at: 39,  secs: 12, face: 'sleepy',     gesture: 'rest',  head: 'still', lift: 7 },
+  { key: 'rise',    stop: 'dock-am', hour: 6,  zone: 'dock',    at: 54,  secs: 10, face: 'happy',      gesture: 'cheer', head: 'perk' },
+  { key: 'ready',   stop: 'dock-am', hour: 7,  zone: 'dock',    at: 54,  secs: 10, face: 'happy',      gesture: 'rest',  head: 'nod' },
 
-  // ── the working middle of the day ──
-  { key: 'type',    hour: 9,  zone: 'desk',    at: 72,  look: -1, secs: 24, light: 'day',   face: 'loading',    gesture: 'rest',  head: 'nod' },
-  { key: 'think',   hour: 10, zone: 'desk',    at: 72,  look: -1, secs: 12, light: 'day',   face: 'thinking',   gesture: 'chin',  head: 'tilt' },
-  { key: 'book',    hour: 11, zone: 'desk',    at: 80, secs: 14, light: 'day',   face: 'neutral',    gesture: 'reach', head: 'still', prop: 'book' },
-  { key: 'type2',   hour: 12, zone: 'desk',    at: 72,  look: -1, secs: 20, light: 'day',   face: 'determined', gesture: 'rest',  head: 'nod' },
+  // ── kitchen ──
+  { key: 'boil',    stop: 'kitchen', hour: 7,  zone: 'kitchen', at: 72,  look: -1, secs: 18, face: 'neutral', gesture: 'reach', head: 'tilt' },
+  { key: 'pour',    stop: 'kitchen', hour: 8,  zone: 'kitchen', at: 72,  look: -1, secs: 14, face: 'happy',   gesture: 'chin',  head: 'still', prop: 'mug' },
+  { key: 'sip',     stop: 'kitchen', hour: 8,  zone: 'kitchen', at: 84,  look: -1, secs: 16, face: 'happy',   gesture: 'rest',  head: 'still', prop: 'mug' },
 
-  // ── housework ──
-  { key: 'sweep',   hour: 14, zone: 'lounge',  at: 245, secs: 20, light: 'day',   face: 'neutral',    gesture: 'sweep', head: 'still', prop: 'broom' },
-  { key: 'tidy',    hour: 15, zone: 'window',  at: 62,  look: -1, secs: 16, light: 'day',   face: 'happy',      gesture: 'reach', head: 'still' },
-  { key: 'brew',    hour: 16, zone: 'kitchen', at: 72,  look: -1, secs: 14, light: 'dusk',  face: 'neutral',    gesture: 'chin',  head: 'still', prop: 'mug' },
+  // ── the plant, and the light ──
+  { key: 'water',   stop: 'window',  hour: 9,  zone: 'window',  at: 44,  secs: 18, face: 'happy',      gesture: 'reach', head: 'lean',  prop: 'can' },
+  { key: 'gaze',    stop: 'window',  hour: 10, zone: 'window',  at: 62,  look: -1, secs: 14, face: 'neutral', gesture: 'rest', head: 'lean' },
+  { key: 'tidy',    stop: 'window',  hour: 11, zone: 'window',  at: 62,  look: -1, secs: 12, face: 'happy',   gesture: 'reach', head: 'still' },
 
-  // ── evening ──
-  { key: 'tv',      hour: 18, zone: 'lounge',  at: 64,  secs: 30, light: 'dusk',  face: 'happy',      gesture: 'rest',  head: 'tilt' },
-  { key: 'laugh',   hour: 19, zone: 'lounge',  at: 64,  secs: 12, light: 'dusk',  face: 'heart',      gesture: 'cheer', head: 'perk' },
-  { key: 'stars',   hour: 20, zone: 'window',  at: 62,  look: -1, secs: 14, light: 'night', face: 'neutral',    gesture: 'rest',  head: 'lean' },
-  { key: 'read',    hour: 21, zone: 'desk',    at: 80, secs: 18, light: 'night', face: 'happy',      gesture: 'chin',  head: 'still', prop: 'book' },
+  // ── the desk. He reads the logs. ──
+  { key: 'type',    stop: 'desk',    hour: 12, zone: 'desk',    at: 72,  look: -1, secs: 20, face: 'loading',    gesture: 'rest', head: 'nod' },
+  { key: 'think',   stop: 'desk',    hour: 13, zone: 'desk',    at: 72,  look: -1, secs: 14, face: 'thinking',   gesture: 'chin', head: 'tilt' },
+  { key: 'book',    stop: 'desk',    hour: 14, zone: 'desk',    at: 80,  secs: 10, face: 'neutral',    gesture: 'reach', head: 'still', prop: 'book' },
+  { key: 'type2',   stop: 'desk',    hour: 15, zone: 'desk',    at: 72,  look: -1, secs: 12, face: 'determined', gesture: 'rest', head: 'nod' },
 
-  // ── night ──
-  { key: 'yawn',    hour: 22, zone: 'dock',    at: 54,  secs: 10, light: 'night', face: 'sleepy',     gesture: 'shrug', head: 'still' },
-  { key: 'sleep',   hour: 23, zone: 'dock',    at: 39,  secs: 26, light: 'night', face: 'sleepy',     gesture: 'rest',  head: 'still' }
+  // ── sweeps up, then sits down in front of the TV ──
+  { key: 'sweep',   stop: 'lounge',  hour: 16, zone: 'lounge',  at: 245, secs: 18, face: 'neutral', gesture: 'sweep', head: 'still', prop: 'broom' },
+  { key: 'tv',      stop: 'lounge',  hour: 18, zone: 'lounge',  at: 58,  secs: 24, face: 'happy',   gesture: 'rest',  head: 'tilt',  lift: 10 },
+  { key: 'laugh',   stop: 'lounge',  hour: 19, zone: 'lounge',  at: 58,  secs: 14, face: 'heart',   gesture: 'cheer', head: 'perk',  lift: 10 },
+
+  // ── back to the mat ──
+  { key: 'yawn',    stop: 'dock-pm', hour: 22, zone: 'dock',    at: 54,  secs: 12, face: 'sleepy', gesture: 'shrug', head: 'still' },
+  { key: 'sleep',   stop: 'dock-pm', hour: 23, zone: 'dock',    at: 39,  secs: 32, face: 'sleepy', gesture: 'rest',  head: 'still', lift: 7 }
 ];
 
-/** ≈302s of chores, plus travel. */
+/**
+ * Cumulative start second of each beat, so a continuous position in the day can
+ * be derived from "which beat, how far in". That fraction is what drives the
+ * light: see daylight.js, where dawn, midday and dusk are placed to line up with
+ * waking, the desk, and sitting down in front of the television.
+ */
+export const BEAT_START = BEATS.reduce((acc, b, i) => {
+  acc.push(i === 0 ? 0 : acc[i - 1] + BEATS[i - 1].secs);
+  return acc;
+}, []);
+
+/** Total seconds a stop lasts. */
+export const STOP_SECONDS = BEATS.reduce((acc, b) => {
+  acc[b.stop] = (acc[b.stop] || 0) + b.secs;
+  return acc;
+}, {});
+
+/** 280s of chores, plus travel: about five minutes a day. */
 export const DAY_SECONDS = BEATS.reduce((total, b) => total + b.secs, 0);
 
 /**

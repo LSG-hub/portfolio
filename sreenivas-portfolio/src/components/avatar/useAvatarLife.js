@@ -45,6 +45,55 @@ const NOTICE_RADIUS = 170;   // px — cursor proximity that makes him look up
 const GREET_MS = 2600;       // how long a hello lasts
 const GREET_DEBOUNCE = 300;  // ignore cursor jitter at the boundary
 
+/**
+ * ── The hovercraft ──────────────────────────────────────────────────────
+ * He boards when the cursor LINGERS on him, follows it until you CLICK, and
+ * never leaves the air he's allowed to occupy. Each of those three is a fix for
+ * something that was wrong first time round; the constants below say why.
+ *
+ * Takeoff radius, much tighter than the notice radius. Boarding is a decision,
+ * so it wants the cursor roughly ON him; 170px means "I can see you", which is
+ * right for a wave and far too eager for launching a vehicle.
+ */
+const FLY_RADIUS = 100;
+const FLY_ENTER_MS = 650;    // cursor has to stay close this long
+
+/**
+ * A CLICK ends the flight, or lifting your finger on a touch screen. Not
+ * distance: he flies to the cursor, so "the cursor is far away" stops being true
+ * the moment he starts chasing, and he would circle forever. Not stillness
+ * either, which punishes you for pausing to read.
+ *
+ * The idle timeout below is only a safety net for someone who wanders off with
+ * the pointer parked on him, not the intended way down.
+ */
+const FLY_IDLE_MS = 9000;
+const FLY_CHASE = 3.4;       // lerp rate; the lag is what reads as trying to catch it
+const FLY_OFF_Y = 28;        // his feet below the pointer, so it sits at his screen
+const FLY_BOB = 3.2;         // px of idle hover
+
+/**
+ * He must never sink into his own floor. His target is below the pointer, and a
+ * pointer near the bottom of the window therefore aims underground: unclamped, he
+ * dove 20px through the floor and rose again every time the cursor moved down,
+ * which reads exactly like hopping on and off the ground while hovering.
+ */
+const FLY_CLEARANCE = 14;
+const FLY_HEADROOM = 10;     // keep his head inside the viewport too
+
+/**
+ * Catching the cursor is how a flight ENDS, and it is a game you can lose by
+ * holding still. He closes about 95% of the gap in a second, so keeping him
+ * chasing means keeping the pointer moving; slow down and he gets you.
+ *
+ * The minimum flight time matters: the cursor is already on him at takeoff, which
+ * is what boarded him, so without it he would catch it on the first frame every
+ * time and never leave the ground.
+ */
+const FLY_MIN_MS = 1400;
+const CATCH_RADIUS = 26;
+const CELEBRATE_MS = 1500;
+
 export function useAvatarLife({
   containerRef,
   actorRef,
@@ -69,7 +118,9 @@ export function useAvatarLife({
    * kettle he walked over to use. Standing still through a chore is correct —
    * breathing, blinking and the gesture's own animation carry the life.
    */
-  wander = !goalRef
+  wander = !goalRef,
+  /** Opt in to the hovercraft. Off by default so the labs keep him on the ground. */
+  fly = false
 }) {
   const [phase, setPhase] = useState('grounded');
   const [noticing, setNoticing] = useState(false);
@@ -82,13 +133,36 @@ export function useAvatarLife({
   const [platformCount, setPlatformCount] = useState(0);
   /** Increments once each time a directed move completes. */
   const [arrivals, setArrivals] = useState(0);
+  /**
+   * 'chase' | 'caught' | 'return' | null. A phase rather than a boolean because
+   * the caller has to pose and speak differently in each: chasing, celebrating,
+   * and heading home are three different characters.
+   */
+  const [flightPhase, setFlightPhase] = useState(null);
+  const flightRef = useRef(null);
 
   const sim = useRef({
     x: 0, y: 0, vx: 0, vy: 0,
     grounded: true, facing: 1, squash: 1,
     restTimer: 1000, platforms: [], bounds: { w: 0, h: 0 },
     cursor: { x: -9999, y: -9999 }, started: false, lastGreet: 0,
-    goal: null, adopted: null
+    goal: null, adopted: null, goalFacing: 1, lastMove: 0, rearm: true,
+    viewTop: 0, floorTop: 0, flyStart: 0, caughtAt: 0,
+    /**
+     * Height above his standing surface, eased. Render-only: the simulation still
+     * has him on the floor.
+     *
+     * This is how sitting works, and why it needed no new artwork. Sit him at the
+     * cushion's own height and he reads as standing ON the sofa. Lift him just
+     * 10px instead and his legs fall inside the band the sofa's front layer
+     * covers, so the cushion hides them and he reads as sunk into the seat. Doing
+     * it in the renderer rather than the physics also avoids making the seat a
+     * landable platform, which would have caught him every time he hopped past
+     * the sofa on his way somewhere else.
+     */
+    lift: 0, targetLift: 0,
+    mode: 'ground', nearMs: 0, farMs: 0, bob: 0, bobY: 0,
+    home: { x: 0, y: 0 }
   });
 
   const phaseRef = useRef('grounded');
@@ -119,8 +193,19 @@ export function useAvatarLife({
     const hopReach = ((-2 * hopVy) / GRAVITY) * MAX_VX;
     const timers = [];
 
+    /**
+     * Dev-only handle on the live simulation. Motion bugs are invisible to
+     * sampling from outside — a bounce lasting three frames hides between
+     * 200ms probes — so the internals have to be readable frame by frame.
+     * Compiled out of production by NODE_ENV substitution.
+     */
+    if (process.env.NODE_ENV === 'development') window.__tuk = s;
+
     const setPhaseOnce = (p) => {
       if (phaseRef.current !== p) { phaseRef.current = p; setPhase(p); }
+    };
+    const setPhaseFlight = (v) => {
+      if (flightRef.current !== v) { flightRef.current = v; setFlightPhase(v); }
     };
 
     /** Harvest standable surfaces from the real DOM. */
@@ -141,6 +226,10 @@ export function useAvatarLife({
       platforms.sort((a, b) => a.top - b.top);
       s.platforms = platforms;
       s.bounds = { w: cRect.width, h: cRect.height };
+      // Flight limits, in the same container-relative space as everything else:
+      // the top of the window, and the lowest surface he could stand on.
+      s.viewTop = -cRect.top;
+      if (platforms.length) s.floorTop = platforms[platforms.length - 1].top;
       setPlatformCount(platforms.length);
 
       if (!s.started && platforms.length) {
@@ -161,7 +250,9 @@ export function useAvatarLife({
        * Matched on the smallest change in height, not on x, so a character
        * standing on an upper shelf stays on that shelf instead of teleporting.
        */
-      if (s.started && s.grounded && platforms.length) {
+      // Not while he's airborne under his own power: re-seating him mid-flight
+      // hauls him back to the floor twice a second and he never gets off the ground.
+      if (s.started && s.grounded && s.mode === 'ground' && platforms.length) {
         const seat = platforms.reduce(
           (best, p) => (Math.abs(p.top - s.y) < Math.abs(best.top - s.y) ? p : best),
           platforms[0]
@@ -186,7 +277,7 @@ export function useAvatarLife({
       if (!actorNow || !bodyNow) return;
 
       actorNow.style.transform =
-        `translate(${(s.x - halfW).toFixed(2)}px, ${(s.y - bodyH).toFixed(2)}px)`;
+        `translate(${(s.x - halfW).toFixed(2)}px, ${(s.y - bodyH - s.lift + s.bobY).toFixed(2)}px)`;
       bodyNow.style.transform =
         `scaleX(${s.facing}) scaleY(${s.squash.toFixed(3)})`;
       // Published as an attribute rather than React state so the speech bubble
@@ -208,6 +299,33 @@ export function useAvatarLife({
       if (!host) return;
       const cRect = host.getBoundingClientRect();
       s.cursor = { x: e.clientX - cRect.left, y: e.clientY - cRect.top };
+      s.lastMove = performance.now();
+    };
+
+    /** Pointer left the window entirely: end the flight rather than wait it out. */
+    const onLeave = () => {
+      s.cursor = { x: -9999, y: -9999 };
+      if (s.mode !== 'ground') land();
+    };
+
+    /**
+     * A click puts him down. On a touch screen the equivalent is lifting your
+     * finger, and there he boards on touch-down rather than on a dwell, because a
+     * tap is already deliberate and there is no hover to linger with.
+     */
+    const onDown = (e) => {
+      if (s.mode !== 'ground') { land(); return; }
+      if (e.pointerType !== 'touch') return;
+      const host = containerRef.current;
+      if (!host) return;
+      const r = host.getBoundingClientRect();
+      const px = e.clientX - r.left;
+      const py = e.clientY - r.top;
+      if (Math.hypot(px - s.x, py - (s.y - bodyH / 2)) < FLY_RADIUS) board();
+    };
+
+    const onUp = (e) => {
+      if (e.pointerType === 'touch' && s.mode !== 'ground') land();
     };
 
     /**
@@ -239,6 +357,34 @@ export function useAvatarLife({
       return { vx, vy };
     };
 
+    /** Board the hovercraft from wherever he is standing. */
+    const board = () => {
+      if (!fly || s.mode !== 'ground') return;
+      s.home = { x: s.x, y: s.y };
+      s.mode = 'fly';
+      s.grounded = false;
+      s.lastMove = performance.now();
+      s.flyStart = performance.now();
+      s.bob = 0;
+      s.targetLift = 0;
+      setPhaseFlight('chase');
+    };
+
+    /**
+     * Head home. `rearm` is cleared so he cannot board again until the cursor has
+     * left his radius: come down with the pointer still resting on him and the
+     * dwell test passes on the very next frame, which is a robot that yo-yos off
+     * the floor for as long as you hold still.
+     */
+    const land = () => {
+      if (s.mode === 'ground' || s.mode === 'return') return;
+      s.mode = 'return';
+      s.rearm = false;
+      setPhaseFlight('return');
+      const floor = s.platforms[s.platforms.length - 1];
+      if (floor) s.home.y = floor.top;
+    };
+
     /** The surface he is standing on, if any. */
     const platformHere = () => s.platforms.find(
       (p) => Math.abs(p.top - s.y) < 2 && s.x >= p.left && s.x <= p.right
@@ -256,6 +402,7 @@ export function useAvatarLife({
       const x = Math.min(Math.max(req.x, here.left + EDGE_PAD), here.right - EDGE_PAD);
 
       s.goalFacing = req.facing || 1;
+      s.targetLift = req.lift || 0;
 
       if (req.instant) {
         s.x = x;
@@ -298,10 +445,9 @@ export function useAvatarLife({
       setPhaseOnce('airborne');
     };
 
+    /** Ambient wandering: pick somewhere plausible and hop at it. */
     const chooseHop = () => {
-      const here = s.platforms.find(
-        (p) => Math.abs(p.top - s.y) < 2 && s.x >= p.left && s.x <= p.right
-      );
+      const here = platformHere();
 
       // Prefer somewhere he can actually get to.
       const maxRise = (MAX_VY * MAX_VY) / (2 * GRAVITY) - APEX_CLEARANCE;
@@ -319,9 +465,9 @@ export function useAvatarLife({
         const dir = Math.min(room.l, room.r) > 90
           ? (Math.random() < 0.5 ? -1 : 1)
           : (room.r > room.l ? 1 : -1);
-        const step = hopReach * (0.42 + Math.random() * 0.5);
+        const stride = hopReach * (0.42 + Math.random() * 0.5);
         target = {
-          x: Math.min(Math.max(s.x + dir * step, here.left + EDGE_PAD), here.right - EDGE_PAD),
+          x: Math.min(Math.max(s.x + dir * stride, here.left + EDGE_PAD), here.right - EDGE_PAD),
           y: here.top
         };
       } else {
@@ -351,6 +497,98 @@ export function useAvatarLife({
       // A destination posted by the caller outranks ambient wandering.
       const req = goalRef && goalRef.current;
       if (req && req !== s.adopted) adoptGoal(req);
+
+      // Sitting down and standing up, eased so it reads as a movement.
+      s.lift += (s.targetLift - s.lift) * Math.min(dt * 7, 1);
+
+      /**
+       * Cursor proximity, resolved BEFORE anything moves — takeoff, catching and
+       * landing all depend on where the pointer is and how long it has been there,
+       * so this cannot live at the end of the frame the way it used to.
+       */
+      const dx = s.cursor.x - s.x;
+      const dy = s.cursor.y - (s.y - bodyH / 2);
+      const dist = Math.hypot(dx, dy);
+      const near = dist < NOTICE_RADIUS;   // close enough to look up and wave
+      const onHim = dist < FLY_RADIUS;     // close enough to mean it
+      if (onHim) {
+        s.nearMs += dt * 1000;
+      } else {
+        s.nearMs = 0;
+        s.rearm = true;
+      }
+
+      if (near !== noticeRef.current) {
+        noticeRef.current = near;
+        setNoticing(near);
+        if (near && now - s.lastGreet > GREET_MS + GREET_DEBOUNCE) {
+          s.lastGreet = now;
+          setGreeting(now); // timestamp doubles as "pick a new line"
+        }
+      }
+      if (near && s.grounded && s.mode === 'ground' && Math.abs(dx) > 12) {
+        s.facing = Math.sign(dx);
+      }
+
+      // Board once the cursor has dwelt on him, and only if it has left since he
+      // last came down.
+      if (s.grounded && s.rearm && s.nearMs > FLY_ENTER_MS) board();
+
+      /**
+       * Flight bypasses the ground simulation entirely: no gravity, no hops, no
+       * goals. Three phases, because they are three different characters —
+       * chasing the cursor, celebrating having caught it, and heading home.
+       */
+      if (s.mode !== 'ground') {
+        const k = Math.min(dt * FLY_CHASE, 1);
+        // The air he is allowed to occupy: feet clear of the floor by more than
+        // the hover bob, head inside the window, body inside the width.
+        const lowest = (s.floorTop || 0) - FLY_CLEARANCE - FLY_BOB;
+        const highest = (s.viewTop || 0) + bodyH + FLY_HEADROOM;
+        const clampY = (v) => Math.min(Math.max(v, highest), lowest);
+        const clampX = (v) => Math.min(Math.max(v, halfW), Math.max(s.bounds.w - halfW, halfW));
+
+        if (s.mode === 'fly') {
+          const tx = clampX(s.cursor.x);
+          const ty = clampY(s.cursor.y + FLY_OFF_Y);
+          s.x = clampX(s.x + (tx - s.x) * k);
+          s.y = clampY(s.y + (ty - s.y) * k);
+          if (Math.abs(tx - s.x) > 14) s.facing = Math.sign(tx - s.x);
+
+          const gap = Math.hypot(s.cursor.x - s.x, s.cursor.y - (s.y - bodyH / 2));
+          if (now - s.flyStart > FLY_MIN_MS && gap < CATCH_RADIUS) {
+            s.mode = 'caught';
+            s.caughtAt = now;
+            setPhaseFlight('caught');
+          } else if (now - s.lastMove > FLY_IDLE_MS) {
+            land();  // safety net for a pointer parked on him and abandoned
+          }
+        } else if (s.mode === 'caught') {
+          // Holds where he caught it; the pose and the line do the celebrating.
+          if (now - s.caughtAt > CELEBRATE_MS) land();
+        } else {
+          const tx = clampX(s.home.x);
+          s.x += (tx - s.x) * k;
+          s.y += (s.home.y - s.y) * k;   // home IS the floor, so no clamp here
+          if (Math.abs(tx - s.x) > 14) s.facing = Math.sign(tx - s.x);
+          if (Math.hypot(s.home.x - s.x, s.home.y - s.y) < 5) {
+            s.x = s.home.x;
+            s.y = s.home.y;
+            s.bobY = 0;
+            s.mode = 'ground';
+            s.grounded = true;
+            s.restTimer = REST_MIN;
+            setPhaseFlight(null);
+          }
+        }
+
+        s.bob += dt;
+        s.bobY = s.mode === 'ground' ? 0 : Math.sin(s.bob * 2.6) * FLY_BOB;
+        s.squash += (1 - s.squash) * Math.min(dt * 8, 1);
+        render();
+        raf = requestAnimationFrame(step);
+        return;
+      }
 
       if (s.grounded) {
         s.restTimer -= dt * 1000;
@@ -411,22 +649,6 @@ export function useAvatarLife({
         }
       }
 
-      // cursor proximity
-      const dx = s.cursor.x - s.x;
-      const dy = s.cursor.y - (s.y - bodyH / 2);
-      const near = Math.hypot(dx, dy) < NOTICE_RADIUS;
-      if (near !== noticeRef.current) {
-        noticeRef.current = near;
-        setNoticing(near);
-        if (near && now - s.lastGreet > GREET_MS + GREET_DEBOUNCE) {
-          s.lastGreet = now;
-          setGreeting(now); // timestamp doubles as "pick a new line"
-        }
-      }
-      if (near && s.grounded && Math.abs(dx) > 12) {
-        s.facing = Math.sign(dx);
-      }
-
       render();
       raf = requestAnimationFrame(step);
     };
@@ -434,16 +656,31 @@ export function useAvatarLife({
     raf = requestAnimationFrame(step);
     window.addEventListener('resize', measure);
     window.addEventListener('pointermove', onPointer, { passive: true });
+    document.addEventListener('mouseleave', onLeave);
+    window.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointerup', onUp);
 
     return () => {
       if (raf) cancelAnimationFrame(raf);
       timers.forEach(window.clearTimeout);
       window.removeEventListener('resize', measure);
       window.removeEventListener('pointermove', onPointer);
+      document.removeEventListener('mouseleave', onLeave);
+      window.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('pointerup', onUp);
     };
-  }, [containerRef, actorRef, bodyRef, footprint, hopVy, goalRef, wander]);
+  }, [containerRef, actorRef, bodyRef, footprint, hopVy, goalRef, wander, fly]);
 
-  return { phase, noticing, greeting, platformCount, arrivals, greetMs: GREET_MS };
+  return {
+    phase,
+    noticing,
+    greeting,
+    platformCount,
+    arrivals,
+    flightPhase,
+    flying: flightPhase !== null,
+    greetMs: GREET_MS
+  };
 }
 
 export default useAvatarLife;

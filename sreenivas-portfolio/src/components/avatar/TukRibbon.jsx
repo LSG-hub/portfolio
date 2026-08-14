@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import TukAvatar from './TukAvatar';
+import TukAvatar, { Hovercraft } from './TukAvatar';
 import SpeechBubble from './SpeechBubble';
 import useAvatarLife from './useAvatarLife';
 import useRoutine from './useRoutine';
 import RoomFurniture from './RoomFurniture';
-import { GREETINGS, createShuffleBag } from './dialogue';
+import skyAt from './daylight';
+import { GREETINGS, FLIGHT_LINES, createShuffleBag } from './dialogue';
 import '../../styles/components/tuk-ribbon.css';
 
 /**
@@ -48,13 +49,14 @@ const TukRibbon = () => {
   /** Where the routine wants him. Written by useRoutine, read by the physics loop. */
   const goalRef = useRef(null);
 
-  const { phase, noticing, greeting, greetMs, arrivals } = useAvatarLife({
+  const { phase, noticing, greeting, greetMs, arrivals, flying, flightPhase } = useAvatarLife({
     containerRef: stageRef,
     actorRef,
     bodyRef,
     footprint: FOOTPRINT,
     hopVy: HOP_VY,
-    goalRef
+    goalRef,
+    fly: true
   });
 
   /**
@@ -75,7 +77,28 @@ const TukRibbon = () => {
     return r.left - stage.getBoundingClientRect().left + at;
   }, []);
 
-  const { beat } = useRoutine({ goalRef, arrivals, zoneX });
+  /** His day stops while he is out flying, and picks up where it left off. */
+  const { beat, speech, progress } = useRoutine({ goalRef, arrivals, zoneX, enabled: !flying });
+
+  /**
+   * The light, sampled from a curve rather than switched between named states.
+   * Written as inline style because that is the only way it moves: a gradient is
+   * a background-image, and background-image does not interpolate, so the CSS
+   * transition this used to rely on never ran and every change was a hard cut.
+   * The three levels ride down as custom properties, which the furniture inherits.
+   */
+  const sky = useMemo(() => skyAt(progress), [progress]);
+
+  /**
+   * The wall clock, on his time. progress 0 is the `wake` beat, which the routine
+   * calls 6am, so the face agrees with what he is doing: midday at the desk,
+   * evening on the sofa. His day is 280 real seconds, so the minute hand sweeps a
+   * full turn roughly every 11 seconds. That visible speed is the point.
+   */
+  const clock = useMemo(() => {
+    const hourOfDay = (6 + progress * 24) % 24;
+    return { hour: (hourOfDay % 12) * 30, minute: (hourOfDay % 1) * 360 };
+  }, [progress]);
 
   /** Reserve the space the strip occupies, and give it back on unmount. */
   useEffect(() => {
@@ -95,33 +118,76 @@ const TukRibbon = () => {
   }, [greeting, greetMs]);
 
   /**
+   * What he says in the air. Chase lines come and go while he is closing on the
+   * cursor; the catch line plays once, on the spot, and stays up for the whole
+   * celebration because that is the payoff of the game.
+   */
+  const [flightLine, setFlightLine] = useState('');
+  const chaseBag = useRef(createShuffleBag(FLIGHT_LINES.chase));
+  const caughtBag = useRef(createShuffleBag(FLIGHT_LINES.caught));
+
+  useEffect(() => {
+    if (flightPhase === 'caught') {
+      setFlightLine(caughtBag.current.draw());
+      return undefined;
+    }
+    if (flightPhase !== 'chase') {
+      setFlightLine('');
+      return undefined;
+    }
+    setFlightLine(chaseBag.current.draw());
+    let showing = true;
+    const id = window.setInterval(() => {
+      showing = !showing;
+      setFlightLine(showing ? chaseBag.current.draw() : '');
+    }, 2400);
+    return () => window.clearInterval(id);
+  }, [flightPhase]);
+
+  /**
    * Composition priority: a greeting interrupts everything — including sleep,
    * which is what makes a 3am visitor the one who gets to wake him — then
    * locomotion, then mere proximity, then whatever his day says he's doing.
    */
   const pose = useMemo(() => {
+    // Happy, not `determined`: >_< with slanted brows reads as furious, and a
+    // robot who scowls at you for coming close is the wrong character entirely.
+    if (flightPhase === 'caught') return { gesture: 'cheer', face: 'heart', head: 'perk' };
+    if (flightPhase === 'return') return { gesture: 'rest', face: 'happy', head: 'still' };
+    if (flying) return { gesture: 'reach', face: 'happy', head: 'lean' };
     if (saying) return { gesture: 'wave', face: 'happy', head: 'nod' };
     if (phase === 'airborne') return { gesture: 'reach', face: 'surprise', head: 'still' };
     if (noticing) return { gesture: 'rest', face: 'happy', head: 'lean' };
     return { gesture: beat.gesture, face: beat.face, head: beat.head };
-  }, [phase, noticing, saying, beat]);
+  }, [phase, noticing, saying, beat, flying, flightPhase]);
 
   /**
    * The prop survives hops and proximity — he carries his mug to the kitchen —
-   * but not a greeting, where he sets it down to wave.
+   * but not a greeting or a flight, where he needs his hands.
    */
-  const prop = saying ? null : beat.prop || null;
+  const prop = saying || flying ? null : beat.prop || null;
+
+  /**
+   * A hello outranks a chore line: if you've just turned up, that's what he
+   * answers. His chore dialogue is what he says when nobody is watching.
+   */
+  const bubble = flightLine || (saying ? line : null) || (!flying ? speech : null) || '';
 
   return (
-    <div className={`tuk-ribbon is-${beat.light}`} aria-hidden="true">
-      <div className="tuk-ribbon-surface" />
+    <div
+      className="tuk-ribbon"
+      aria-hidden="true"
+      style={{ '--rp-lamp': sky.lamp, '--rp-screen': sky.screen, '--rp-day': sky.day }}
+    >
+      <div className="tuk-ribbon-surface" style={{ background: sky.gradient }} />
       <div className="tuk-ribbon-stage" ref={stageRef}>
         <div className="tuk-ribbon-floor" data-avatar-platform />
-        <RoomFurniture />
+        <RoomFurniture clock={clock} />
         {/* actorRef carries translation only; bodyRef carries scale, so the
             bubble is neither squashed nor mirrored when he turns. */}
-        <div className="tuk-actor" ref={actorRef}>
-          <SpeechBubble text={line} visible={saying} />
+        <div className={`tuk-actor ${flying ? 'is-flying' : ''}`} ref={actorRef}>
+          <SpeechBubble text={bubble} visible={Boolean(bubble)} />
+          <Hovercraft />
           <div className="tuk-actor-body" ref={bodyRef}>
             <TukAvatar
               face={pose.face}

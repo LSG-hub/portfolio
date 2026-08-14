@@ -86,19 +86,32 @@ const WindowPlant = () => (
 /**
  * Lounge — sofa, TV, rug, wall clock. Back layer.
  *
- * The clock's hands are static for now; the routine drives them, and at a
- * 5-minute day they will visibly sweep, which is what sells the compression.
+ * THE CLOCK RUNS ON HIS TIME. The hands are driven from his position in the day,
+ * so the minute hand sweeps a full turn every 11 seconds. That is the compression
+ * made visible: it is the one object in the room that admits time moves
+ * differently down here.
+ *
+ * THE TELEVISION IS SHOWING ORIGINS. Eight silhouettes rise out of a horizon,
+ * stand a while, and fall, on a 36-second loop. It is the parked civilisation
+ * simulation as a two-inch vignette, which is the right size for it: nobody needs
+ * it explained, and the rare sofa line ("That world again. Stone tools, then
+ * towers. Then it starts over.") lands on someone who has already half-noticed.
+ * Pure CSS, so it costs no re-renders.
  */
-const LoungeBack = () => (
+const LoungeBack = ({ clock }) => (
   <svg className="rp" width="196" height="64" viewBox="0 0 196 64" aria-hidden="true">
     {/* Rug, seen edge-on. Neutral rather than accent-tinted: in accent-soft it
         read as a pink stain spreading out from under the sofa. */}
     <rect className="rp-rug" x="8" y="60" width="150" height="4" rx="2" />
 
-    {/* wall clock */}
+    {/* wall clock, running on his clock */}
     <circle className="rp-paper" cx="54" cy="11" r="8.5" />
-    <path className="rp-thin" d="M54 11 L54 6" />
-    <path className="rp-thin" d="M54 11 L57.5 13" />
+    <g transform={`rotate(${clock.hour} 54 11)`}>
+      <path className="rp-ink" d="M54 11 L54 6.5" />
+    </g>
+    <g transform={`rotate(${clock.minute} 54 11)`}>
+      <path className="rp-thin" d="M54 11 L54 4.5" />
+    </g>
     <circle className="rp-knob" cx="54" cy="11" r="1" />
 
     {/* sofa: backrest and the far arm */}
@@ -116,6 +129,19 @@ const LoungeBack = () => (
         TV would never brighten as the room goes dark. Multiplying instead. */}
     <g className="rp-tv-flicker">
       <rect className="rp-screen" x="130" y="21" width="52" height="21" rx="2" />
+      {/* what's on */}
+      <g className="rp-tv-show">
+        <circle className="rp-tv-sun" cx="135" cy="32" r="1.7" />
+        <rect className="rp-tv-tower rp-t1" x="133" y="30" width="4" height="8" />
+        <rect className="rp-tv-tower rp-t2" x="138" y="25" width="5" height="13" />
+        <rect className="rp-tv-tower rp-t3" x="144" y="28" width="4" height="10" />
+        <rect className="rp-tv-tower rp-t4" x="149" y="23" width="6" height="15" />
+        <rect className="rp-tv-tower rp-t5" x="156" y="27" width="4" height="11" />
+        <rect className="rp-tv-tower rp-t6" x="161" y="24" width="5" height="14" />
+        <rect className="rp-tv-tower rp-t7" x="167" y="29" width="4" height="9" />
+        <rect className="rp-tv-tower rp-t8" x="172" y="26" width="6" height="12" />
+        <path className="rp-tv-horizon" d="M131 38.6 L181 38.6" />
+      </g>
     </g>
   </svg>
 );
@@ -209,12 +235,12 @@ const DockDoor = () => (
  * No z-index on `.rp-room` or `.rp-zone` on purpose — either one would open a
  * stacking context and trap `.rp-front` below the actor.
  */
-const RoomFurniture = () => (
+const RoomFurniture = ({ clock }) => (
   <div className="rp-room">
     <div className="rp-zone rp-kitchen" data-tuk-zone="kitchen"><KitchenNook /></div>
     <div className="rp-zone rp-window" data-tuk-zone="window"><WindowPlant /></div>
     <div className="rp-zone rp-lounge" data-tuk-zone="lounge">
-      <LoungeBack />
+      <LoungeBack clock={clock} />
       <div className="rp-front"><LoungeFront /></div>
     </div>
     <div className="rp-zone rp-desk" data-tuk-zone="desk"><DeskNook /></div>

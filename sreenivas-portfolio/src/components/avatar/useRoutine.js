@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { BEATS, entryIndexForHour } from './routine';
+import { BEATS, BEAT_START, DAY_SECONDS, entryIndexForHour } from './routine';
+import { linesForVisit } from './dialogue';
 
 /**
  * useRoutine — plays Tuk's day.
@@ -17,11 +18,23 @@ import { BEATS, entryIndexForHour } from './routine';
  * beats are skipped rather than left to strand him mid-room, and the search for
  * a playable beat is bounded — an unplayable list must not spin.
  *
- * The day pauses when the tab is hidden. Someone who tabs away and comes back
- * resumes where they left off rather than finding him three days older.
+ * The day pauses when the tab is hidden, and when he's out flying. Someone who
+ * tabs away and comes back resumes where they left off rather than finding him
+ * three days older.
  */
 
 const TICK = 250;
+
+/**
+ * Dialogue pacing. Lines sit close together so a set plays as one thought:
+ * spreading three of them evenly across a 56-second visit put 25 seconds between
+ * them, which destroys a setup and a punchline and leaves most visitors with one
+ * orphaned line.
+ */
+const LINE_LEAD = 1600;     // silence after arriving, before he says anything
+const LINE_HOLD = 3800;     // how long a line stays up
+const LINE_GAP = 5200;      // start-to-start, when the beat is long enough
+const LINE_GAP_MIN = 3400;  // and the tightest it will compress to on a short one
 
 export default function useRoutine({ goalRef, arrivals, zoneX, enabled = true }) {
   const [index, setIndex] = useState(() => {
@@ -44,6 +57,7 @@ export default function useRoutine({ goalRef, arrivals, zoneX, enabled = true })
   const firstRef = useRef(true);
 
   indexRef.current = index;
+  const beat = BEATS[index];
 
   /** Post the destination for whichever beat is current. */
   useEffect(() => {
@@ -61,19 +75,91 @@ export default function useRoutine({ goalRef, arrivals, zoneX, enabled = true })
 
     // The first beat teleports: nobody should watch him walk in before his day
     // starts, and at 3am he must already be at the dock, asleep.
-    goalRef.current = { x, instant: firstRef.current, facing: BEATS[i].look || 1 };
+    goalRef.current = {
+      x,
+      instant: firstRef.current,
+      facing: BEATS[i].look || 1,
+      lift: BEATS[i].lift || 0
+    };
     firstRef.current = false;
     stageRef.current = 'travel';
     heldRef.current = 0;
   }, [index, enabled, goalRef, zoneX]);
 
-  /** He got there — start counting the chore. */
+  /**
+   * Dialogue belongs to the ACTION, and fires on arrival at it.
+   *
+   * Keyed per beat rather than per stop, because a stop covers two or three
+   * different things at the same furniture and they do not share a thought: the
+   * kettle has something to say and the mug he then carries does not. Keying it
+   * to the stop also let a waking line play while he was already back asleep.
+   *
+   * On arrival rather than on the beat changing, because the beat changes the
+   * moment he sets off and he was talking to himself halfway across the room.
+   * Within a stop he is already standing there, so the goal resolves instantly
+   * and arrival still fires.
+   */
+  const [scene, setScene] = useState(0);
+  const sceneRef = useRef(null);
+  const spokenBeatRef = useRef(null);
+  const visitsRef = useRef({});
+
+  /** He got there — start counting the chore, and say whatever this one says. */
   useEffect(() => {
     if (stageRef.current === 'travel') {
       stageRef.current = 'chore';
       heldRef.current = 0;
     }
+    if (spokenBeatRef.current !== beat.key) {
+      spokenBeatRef.current = beat.key;
+      const visit = visitsRef.current[beat.key] || 0;
+      visitsRef.current[beat.key] = visit + 1;
+      sceneRef.current = { lines: linesForVisit(beat.key, visit), secs: beat.secs };
+      setScene((n) => n + 1);
+    }
+    // Fires on arrival; the beat is read, not watched.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arrivals]);
+
+  const [speech, setSpeech] = useState(null);
+
+  useEffect(() => {
+    const cue = sceneRef.current;
+    if (!scene || !cue || !cue.lines.length) return undefined;
+    const { lines, secs } = cue;
+
+    /**
+     * Pace to the beat's own length so a set always finishes inside it. A fixed
+     * gap overran the short actions and cut the last line off mid-thought; the
+     * floor keeps the pauses long enough to read.
+     */
+    const room = secs * 1000 - LINE_LEAD - LINE_HOLD;
+    const gap = lines.length > 1
+      ? Math.min(LINE_GAP, Math.max(room / (lines.length - 1), LINE_GAP_MIN))
+      : 0;
+
+    const timers = lines.flatMap((text, i) => [
+      window.setTimeout(() => setSpeech(text), LINE_LEAD + i * gap),
+      window.setTimeout(() => setSpeech(null), LINE_LEAD + i * gap + LINE_HOLD)
+    ]);
+    return () => {
+      timers.forEach(window.clearTimeout);
+      setSpeech(null);
+    };
+  }, [scene]);
+
+  /**
+   * Continuous position through the day, 0..1. Published every tick so the light
+   * can be sampled from a curve rather than switched between states: four CSS
+   * classes cut between frames, because a gradient cannot be transitioned.
+   *
+   * 4Hz is plenty — one step is 1/1200th of the cycle, well under what reads as
+   * a step rather than a drift. It holds still during travel and while the tab is
+   * hidden, which is correct: his day is paused, so the sun should be too.
+   */
+  const [progress, setProgress] = useState(
+    () => BEAT_START[index] / DAY_SECONDS
+  );
 
   /** Advance the day. */
   useEffect(() => {
@@ -82,12 +168,14 @@ export default function useRoutine({ goalRef, arrivals, zoneX, enabled = true })
       if (document.visibilityState !== 'visible') return;
       if (stageRef.current !== 'chore') return;
       heldRef.current += TICK;
-      if (heldRef.current >= BEATS[indexRef.current].secs * 1000) {
+      const i = indexRef.current;
+      setProgress((BEAT_START[i] + heldRef.current / 1000) / DAY_SECONDS);
+      if (heldRef.current >= BEATS[i].secs * 1000) {
         setIndex((n) => (n + 1) % BEATS.length);
       }
     }, TICK);
     return () => window.clearInterval(id);
   }, [enabled]);
 
-  return { beat: BEATS[index], beatIndex: index };
+  return { beat, beatIndex: index, speech, progress };
 }

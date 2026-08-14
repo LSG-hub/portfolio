@@ -50,63 +50,16 @@
   -webkit-backdrop-filter: blur(9px) saturate(120%);
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 26%);
   mask-image: linear-gradient(to bottom, transparent 0, #000 26%);
-  /* Slow enough to feel like light changing rather than a state toggling. */
-  transition: background 2600ms linear;
+  /* No transition on `background`: it does nothing, and believing it did is what
+     made the light cut between frames. The gradient above is a fallback for the
+     first paint; TukRibbon overwrites it inline, sampled from a curve, 4x a
+     second. See daylight.js. */
 }
 
-/* ── the light through his day ───────────────────────────────────────────
-   The reason a five-minute day is worth having: under real time nobody ever
-   sees this. At this speed a two-minute visitor watches the room go to evening.
-   Only the room's own plane and its light sources shift — the page above is
-   never tinted.
-   ──────────────────────────────────────────────────────────────────────── */
-.tuk-ribbon.is-dawn .tuk-ribbon-surface {
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 246, 240, 0.42) 0%,
-    rgba(253, 235, 226, 0.8) 55%,
-    rgba(252, 238, 231, 0.93) 100%
-  );
-}
-.tuk-ribbon.is-dusk .tuk-ribbon-surface {
-  background: linear-gradient(
-    to bottom,
-    rgba(252, 240, 226, 0.46) 0%,
-    rgba(248, 226, 203, 0.82) 55%,
-    rgba(246, 226, 206, 0.94) 100%
-  );
-}
-.tuk-ribbon.is-night .tuk-ribbon-surface {
-  background: linear-gradient(
-    to bottom,
-    rgba(226, 224, 226, 0.5) 0%,
-    rgba(206, 206, 214, 0.84) 55%,
-    rgba(198, 198, 208, 0.95) 100%
-  );
-}
-
-/* Lamp, TV and dock LED gain as the room loses daylight — the light sources
-   should read as the brightest thing in the room once it's dark. */
-.tuk-ribbon-surface,
-.rp-glow,
-.rp-screen,
-.rp-screen-sm {
-  transition: opacity 2600ms linear;
-}
-.tuk-ribbon.is-dusk .rp-glow { opacity: 0.22; }
-.tuk-ribbon.is-night .rp-glow { opacity: 0.3; }
-.tuk-ribbon.is-dusk .rp-screen,
-.tuk-ribbon.is-dusk .rp-screen-sm { opacity: 0.28; }
-.tuk-ribbon.is-night .rp-screen,
-.tuk-ribbon.is-night .rp-screen-sm { opacity: 0.36; }
-/* Daylight through the window goes the other way. */
-.tuk-ribbon.is-night .rp-window .rp-glow { opacity: 0.05; }
-
-/* the coordinate space the physics loop measures against */
-.tuk-ribbon-stage {
-  position: absolute;
-  inset: 0;
-}
+/* How the room responds to the light lives in tuk-room.css, next to the rest of
+   the furniture's styling, rather than here — the two sets of rules tie on
+   specificity, and resolving that by stylesheet import order is not a thing to
+   depend on. */
 
 /* the standable surface. Its top edge is the floor line he walks on, harvested
    by useAvatarLife through the data attribute. */

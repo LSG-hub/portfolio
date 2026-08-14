@@ -45,14 +45,27 @@
   stroke-width: 1;
 }
 
-/* light sources — where the accent is allowed to be loud */
-.rp-glow { fill: var(--accent); opacity: 0.14; stroke: none; }
+/* ── light sources: where the accent is allowed to be loud ───────────────
+   Levels come from the sky curve as inherited custom properties (see
+   daylight.js), so the lamp and screens brighten as the daylight drops and the
+   window dims with it. Without that the light change reads as a filter laid over
+   the room rather than something happening inside it.
+
+   The fallbacks are what the labs get, where there is no ribbon setting them.
+   ──────────────────────────────────────────────────────────────────────── */
+.rp-glow {
+  fill: var(--accent);
+  stroke: none;
+  opacity: var(--rp-lamp, 0.14);
+}
 .rp-screen,
 .rp-screen-sm {
   fill: var(--accent);
   stroke: none;
-  opacity: 0.2;
+  opacity: var(--rp-screen, 0.2);
 }
+/* Daylight through the window runs the other way to the lamps. */
+.rp-window .rp-glow { opacity: calc(var(--rp-day, 1) * 0.2); }
 /* A multiplier on the screen's own opacity, not a replacement for it — see the
    comment in RoomFurniture.jsx. */
 .rp-tv-flicker { animation: rp-flicker 4600ms ease-in-out infinite; }
@@ -70,6 +83,61 @@
 @keyframes rp-led {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.3; }
+}
+
+/* ── what's on the television ────────────────────────────────────────────
+   The parked Origins world as a two-inch vignette: silhouettes rise out of a
+   horizon, stand, and fall, on a 36-second loop. Staggered delays mean they
+   don't rise in unison, which is what makes it read as a settlement growing
+   rather than a bar chart animating.
+
+   Pure CSS on purpose. Driving eight towers from React would re-render the room
+   every frame to animate something the size of a postage stamp.
+   ──────────────────────────────────────────────────────────────────────── */
+.rp-tv-horizon {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 0.9;
+  opacity: 0.4;
+}
+.rp-tv-tower {
+  fill: var(--ink);
+  opacity: 0.34;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: rp-rise 36s ease-in-out infinite;
+}
+.rp-t2 { animation-delay: -1.4s; }
+.rp-t3 { animation-delay: -3.2s; }
+.rp-t4 { animation-delay: -2.1s; }
+.rp-t5 { animation-delay: -4.6s; }
+.rp-t6 { animation-delay: -0.7s; }
+.rp-t7 { animation-delay: -5.4s; }
+.rp-t8 { animation-delay: -2.8s; }
+
+@keyframes rp-rise {
+  0%      { transform: scaleY(0.06); }
+  22%     { transform: scaleY(0.34); }
+  55%     { transform: scaleY(1); }
+  76%     { transform: scaleY(1); }
+  /* the collapse, then rubble, then it starts over */
+  83%     { transform: scaleY(0.1); }
+  100%    { transform: scaleY(0.06); }
+}
+
+/* Its own sun, on its own day, indifferent to his. */
+.rp-tv-sun {
+  fill: var(--accent);
+  opacity: 0.75;
+  transform-box: fill-box;
+  animation: rp-tv-sun 36s linear infinite;
+}
+@keyframes rp-tv-sun {
+  0%   { transform: translate(0, 4px); opacity: 0; }
+  12%  { opacity: 0.75; }
+  50%  { transform: translate(21px, -7px); opacity: 0.75; }
+  88%  { opacity: 0; }
+  100% { transform: translate(43px, 4px); opacity: 0; }
 }
 
 /* the kettle is always just off the boil */
@@ -123,6 +191,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .rp-tv-flicker,
+  .rp-tv-tower,
+  .rp-tv-sun,
   .rp-led,
   .rp-steam path {
     animation: none !important;

@@ -186,6 +186,22 @@ const Prop = ({ name }) => {
   }
 };
 
+/**
+ * The hovercraft. Its own SVG, mounted as a sibling of the scaled body so it
+ * neither mirrors when he turns nor squashes when he lands.
+ */
+export const Hovercraft = () => (
+  <svg className="tuk-craft" width="58" height="22" viewBox="0 0 58 22" aria-hidden="true">
+    <ellipse className="tuk-craft-wash" cx="29" cy="17" rx="21" ry="4.5" />
+    <path className="tuk-craft-body" d="M5 9 Q29 1 53 9 Q29 16 5 9 Z" />
+    <path className="tuk-craft-edge" d="M12 11.4 L46 11.4" />
+    <g className="tuk-craft-jets">
+      <circle className="tuk-craft-jet" cx="18" cy="13.5" r="2.4" />
+      <circle className="tuk-craft-jet" cx="40" cy="13.5" r="2.4" />
+    </g>
+  </svg>
+);
+
 const TukAvatar = ({
   face = 'neutral',
   gesture = 'rest',
