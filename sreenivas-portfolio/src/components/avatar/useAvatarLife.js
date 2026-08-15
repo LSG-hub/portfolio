@@ -105,6 +105,18 @@ const FLY_HEADROOM = 10;     // keep his head inside the viewport too
  * time and never leave the ground.
  */
 const FLY_MIN_MS = 1400;
+/**
+ * Touch has two gestures on one pair of events, and they need telling apart.
+ * A press-and-drag should end when you let go — that is the model. But a TAP is
+ * a down and an up about a hundred milliseconds apart, so treating every release
+ * as "let go" made a tap board him and land him again inside a blink, which
+ * reads as a glitch rather than an interaction.
+ *
+ * Under this threshold the release is ignored: he boards and stays, catches your
+ * finger a moment later, celebrates and takes himself home. Over it, you were
+ * dragging, and letting go means what it says.
+ */
+const TAP_MS = 400;
 const CATCH_RADIUS = 26;
 const CELEBRATE_MS = 1500;
 
@@ -162,7 +174,7 @@ export function useAvatarLife({
     cursor: { x: -9999, y: -9999 }, started: false, lastGreet: 0,
     goal: null, adopted: null, goalFacing: 1, lastMove: 0, rearm: true,
     viewTop: 0, floorTop: 0, flyStart: 0, caughtAt: 0,
-    cam: 0, viewW: 0,
+    cam: 0, viewW: 0, touchAt: 0,
     /**
      * Height above his standing surface, eased. Render-only: the simulation still
      * has him on the floor.
@@ -338,18 +350,30 @@ export function useAvatarLife({
      * tap is already deliberate and there is no hover to linger with.
      */
     const onDown = (e) => {
+      /**
+       * Seed the pointer position here, not only on move. A tap fires no
+       * pointermove at all, so on touch the chase target was still the stale
+       * off-screen cursor: he boarded, flew at nothing, and never caught the
+       * finger that summoned him.
+       */
+      const host = containerRef.current;
+      if (host) {
+        const r = host.getBoundingClientRect();
+        s.cursor = { x: e.clientX - r.left, y: e.clientY - r.top };
+        s.lastMove = performance.now();
+      }
+
       if (s.mode !== 'ground') { land(); return; }
       if (e.pointerType !== 'touch') return;
-      const host = containerRef.current;
-      if (!host) return;
-      const r = host.getBoundingClientRect();
-      const px = e.clientX - r.left;
-      const py = e.clientY - r.top;
-      if (Math.hypot(px - s.x, py - (s.y - bodyH / 2)) < FLY_RADIUS) board();
+      if (Math.hypot(s.cursor.x - s.x, s.cursor.y - (s.y - bodyH / 2)) < FLY_RADIUS) {
+        board();
+        s.touchAt = performance.now();
+      }
     };
 
     const onUp = (e) => {
-      if (e.pointerType === 'touch' && s.mode !== 'ground') land();
+      if (e.pointerType !== 'touch' || s.mode === 'ground') return;
+      if (performance.now() - s.touchAt > TAP_MS) land();
     };
 
     /**
