@@ -21,18 +21,20 @@
  * works. Travel time is deliberately off the clock: a beat's timer only starts
  * once he has arrived.
  *
- * ── Entry ───────────────────────────────────────────────────────────────
- * There is no global sync. That was carried over from the Origins simulation,
- * where it earned its keep because the world accumulated; a repeating routine
- * accumulates nothing, so no visitor could ever tell whether they saw the same
- * beat as anyone else. It bought nothing and cost the first impression — one
- * arrival in eight landed on a sleeping robot.
+ * ── Entry: HIS DAY STARTS WHEN YOU ARRIVE ───────────────────────────────
+ * Opening the page wakes him. Every visitor gets the same deliberate opening and
+ * then the whole arc in order: up off the pad, kettle, plant, desk, sweeping,
+ * evening on the sofa, back to bed.
  *
- * Instead each visitor enters at the beat matching their own local hour, so the
- * opening is never arbitrary, and the fast cycle takes over immediately. Anyone
- * arriving between midnight and 6am finds him asleep at the dock and wakes him
- * with their cursor, which turns the one dead beat into the reward for visiting
- * late.
+ * Two earlier answers were both worse. A global clock shared by all visitors was
+ * carried over from the Origins simulation, where it earned its keep because that
+ * world accumulated; a repeating routine accumulates nothing, so nobody could
+ * tell, and it cost the opening. Entering at the visitor's own local hour was
+ * better but still wrong twice over: hours 0 to 5 all land on `sleep`, the longest
+ * beat in the day, so anyone arriving after midnight opened the page on a
+ * motionless robot — and matching their clock is invisible anyway. No visitor can
+ * perceive that 3pm put him at his desk, so the whole arc was being spent on
+ * something nobody could see.
  *
  * ── Stand BESIDE the thing, never on it ─────────────────────────────────
  * The rule every beat obeys, and the one that isn't obvious until you look: Tuk
@@ -65,34 +67,36 @@
  */
 export const BEATS = [
   // ── he wakes on the charging mat ──
-  { key: 'wake',    stop: 'dock-am', hour: 6,  zone: 'dock',    at: 39,  secs: 12, face: 'sleepy',     gesture: 'rest',  head: 'still', lift: 7 },
-  { key: 'rise',    stop: 'dock-am', hour: 6,  zone: 'dock',    at: 54,  secs: 10, face: 'happy',      gesture: 'cheer', head: 'perk' },
-  { key: 'ready',   stop: 'dock-am', hour: 7,  zone: 'dock',    at: 54,  secs: 10, face: 'happy',      gesture: 'rest',  head: 'nod' },
+  // Shorter and with a head motion, because this is now the FIRST thing every
+  // visitor sees: twelve static seconds of a groggy robot is a slow hello.
+  { key: 'wake',    stop: 'dock-am', zone: 'dock',    at: 39,  secs: 8,  face: 'sleepy',     gesture: 'rest',  head: 'perk',  lift: 7 },
+  { key: 'rise',    stop: 'dock-am', zone: 'dock',    at: 54,  secs: 10, face: 'happy',      gesture: 'cheer', head: 'perk' },
+  { key: 'ready',   stop: 'dock-am', zone: 'dock',    at: 54,  secs: 10, face: 'happy',      gesture: 'rest',  head: 'nod' },
 
   // ── kitchen ──
-  { key: 'boil',    stop: 'kitchen', hour: 7,  zone: 'kitchen', at: 72,  look: -1, secs: 18, face: 'neutral', gesture: 'reach', head: 'tilt' },
-  { key: 'pour',    stop: 'kitchen', hour: 8,  zone: 'kitchen', at: 72,  look: -1, secs: 14, face: 'happy',   gesture: 'chin',  head: 'still', prop: 'mug' },
-  { key: 'sip',     stop: 'kitchen', hour: 8,  zone: 'kitchen', at: 84,  look: -1, secs: 16, face: 'happy',   gesture: 'rest',  head: 'still', prop: 'mug' },
+  { key: 'boil',    stop: 'kitchen', zone: 'kitchen', at: 72,  look: -1, secs: 18, face: 'neutral', gesture: 'reach', head: 'tilt' },
+  { key: 'pour',    stop: 'kitchen', zone: 'kitchen', at: 72,  look: -1, secs: 14, face: 'happy',   gesture: 'chin',  head: 'still', prop: 'mug' },
+  { key: 'sip',     stop: 'kitchen', zone: 'kitchen', at: 84,  look: -1, secs: 16, face: 'happy',   gesture: 'rest',  head: 'still', prop: 'mug' },
 
   // ── the plant, and the light ──
-  { key: 'water',   stop: 'window',  hour: 9,  zone: 'window',  at: 44,  secs: 18, face: 'happy',      gesture: 'reach', head: 'lean',  prop: 'can' },
-  { key: 'gaze',    stop: 'window',  hour: 10, zone: 'window',  at: 62,  look: -1, secs: 14, face: 'neutral', gesture: 'rest', head: 'lean' },
-  { key: 'tidy',    stop: 'window',  hour: 11, zone: 'window',  at: 62,  look: -1, secs: 12, face: 'happy',   gesture: 'reach', head: 'still' },
+  { key: 'water',   stop: 'window',  zone: 'window',  at: 44,  secs: 18, face: 'happy',      gesture: 'reach', head: 'lean',  prop: 'can' },
+  { key: 'gaze',    stop: 'window',  zone: 'window',  at: 62,  look: -1, secs: 14, face: 'neutral', gesture: 'rest', head: 'lean' },
+  { key: 'tidy',    stop: 'window',  zone: 'window',  at: 62,  look: -1, secs: 12, face: 'happy',   gesture: 'reach', head: 'still' },
 
   // ── the desk. He reads the logs. ──
-  { key: 'type',    stop: 'desk',    hour: 12, zone: 'desk',    at: 72,  look: -1, secs: 20, face: 'loading',    gesture: 'rest', head: 'nod' },
-  { key: 'think',   stop: 'desk',    hour: 13, zone: 'desk',    at: 72,  look: -1, secs: 14, face: 'thinking',   gesture: 'chin', head: 'tilt' },
-  { key: 'book',    stop: 'desk',    hour: 14, zone: 'desk',    at: 80,  secs: 10, face: 'neutral',    gesture: 'reach', head: 'still', prop: 'book' },
-  { key: 'type2',   stop: 'desk',    hour: 15, zone: 'desk',    at: 72,  look: -1, secs: 12, face: 'determined', gesture: 'rest', head: 'nod' },
+  { key: 'type',    stop: 'desk',    zone: 'desk',    at: 72,  look: -1, secs: 20, face: 'loading',    gesture: 'rest', head: 'nod' },
+  { key: 'think',   stop: 'desk',    zone: 'desk',    at: 72,  look: -1, secs: 14, face: 'thinking',   gesture: 'chin', head: 'tilt' },
+  { key: 'book',    stop: 'desk',    zone: 'desk',    at: 80,  secs: 10, face: 'neutral',    gesture: 'reach', head: 'still', prop: 'book' },
+  { key: 'type2',   stop: 'desk',    zone: 'desk',    at: 72,  look: -1, secs: 12, face: 'determined', gesture: 'rest', head: 'nod' },
 
   // ── sweeps up, then sits down in front of the TV ──
-  { key: 'sweep',   stop: 'lounge',  hour: 16, zone: 'lounge',  at: 245, secs: 18, face: 'neutral', gesture: 'sweep', head: 'still', prop: 'broom' },
-  { key: 'tv',      stop: 'lounge',  hour: 18, zone: 'lounge',  at: 58,  secs: 24, face: 'happy',   gesture: 'rest',  head: 'tilt',  lift: 10 },
-  { key: 'laugh',   stop: 'lounge',  hour: 19, zone: 'lounge',  at: 58,  secs: 14, face: 'heart',   gesture: 'cheer', head: 'perk',  lift: 10 },
+  { key: 'sweep',   stop: 'lounge',  zone: 'lounge',  at: 245, secs: 18, face: 'neutral', gesture: 'sweep', head: 'still', prop: 'broom' },
+  { key: 'tv',      stop: 'lounge',  zone: 'lounge',  at: 58,  secs: 24, face: 'happy',   gesture: 'rest',  head: 'tilt',  lift: 10 },
+  { key: 'laugh',   stop: 'lounge',  zone: 'lounge',  at: 58,  secs: 14, face: 'heart',   gesture: 'cheer', head: 'perk',  lift: 10 },
 
   // ── back to the mat ──
-  { key: 'yawn',    stop: 'dock-pm', hour: 22, zone: 'dock',    at: 54,  secs: 12, face: 'sleepy', gesture: 'shrug', head: 'still' },
-  { key: 'sleep',   stop: 'dock-pm', hour: 23, zone: 'dock',    at: 39,  secs: 32, face: 'sleepy', gesture: 'rest',  head: 'still', lift: 7 }
+  { key: 'yawn',    stop: 'dock-pm', zone: 'dock',    at: 54,  secs: 12, face: 'sleepy', gesture: 'shrug', head: 'still' },
+  { key: 'sleep',   stop: 'dock-pm', zone: 'dock',    at: 39,  secs: 32, face: 'sleepy', gesture: 'rest',  head: 'still', lift: 7 }
 ];
 
 /**
@@ -114,16 +118,3 @@ export const STOP_SECONDS = BEATS.reduce((acc, b) => {
 
 /** 280s of chores, plus travel: about five minutes a day. */
 export const DAY_SECONDS = BEATS.reduce((total, b) => total + b.secs, 0);
-
-/**
- * Where a visitor drops in. The last beat whose nominal hour has passed — so
- * 10am starts him at the desk and 3am finds him asleep, because no beat's hour
- * is under 3 and the list falls through to its end.
- */
-export function entryIndexForHour(hour) {
-  let index = BEATS.length - 1;
-  for (let i = 0; i < BEATS.length; i += 1) {
-    if (BEATS[i].hour <= hour) index = i;
-  }
-  return index;
-}

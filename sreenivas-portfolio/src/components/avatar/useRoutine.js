@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { BEATS, BEAT_START, DAY_SECONDS, entryIndexForHour } from './routine';
+import { BEATS, BEAT_START, DAY_SECONDS } from './routine';
 import { linesForVisit } from './dialogue';
 
 /**
@@ -48,7 +48,9 @@ export default function useRoutine({ goalRef, arrivals, zoneX, enabled = true })
       const found = BEATS.findIndex((b) => b.key === want);
       if (found >= 0) return found;
     }
-    return entryIndexForHour(new Date().getHours());
+    // His day starts when you arrive. See the entry note in routine.js for the
+    // two worse answers this replaced.
+    return 0;
   });
 
   const indexRef = useRef(index);
@@ -73,8 +75,9 @@ export default function useRoutine({ goalRef, arrivals, zoneX, enabled = true })
     if (x == null) return;            // nothing playable — hold rather than spin
     if (i !== index) { setIndex(i); return; }
 
-    // The first beat teleports: nobody should watch him walk in before his day
-    // starts, and at 3am he must already be at the dock, asleep.
+    // The first beat teleports him onto the charging pad rather than walking him
+    // there: his day starts the moment the page opens, and nobody should watch him
+    // cross the room to go to bed before he can get out of it.
     goalRef.current = {
       x,
       instant: firstRef.current,
@@ -102,7 +105,19 @@ export default function useRoutine({ goalRef, arrivals, zoneX, enabled = true })
   const [scene, setScene] = useState(0);
   const sceneRef = useRef(null);
   const spokenBeatRef = useRef(null);
-  const visitsRef = useRef({});
+  /**
+   * Which dialogue set each action is on. Seeded at random rather than zero:
+   * now that every visitor starts at the same beat, a zero seed would make the
+   * opening lines byte-identical on every single page load. A random offset makes
+   * the first thing he says vary between his two sets, and the 12% rare draw
+   * occasionally beats both.
+   */
+  const visitsRef = useRef(
+    BEATS.reduce((acc, b) => {
+      acc[b.key] = Math.random() < 0.5 ? 0 : 1;
+      return acc;
+    }, {})
+  );
 
   /** He got there — start counting the chore, and say whatever this one says. */
   useEffect(() => {
