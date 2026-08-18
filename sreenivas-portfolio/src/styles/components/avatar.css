@@ -204,6 +204,14 @@
   z-index: 40;
   pointer-events: none;
   will-change: transform;
+  /**
+   * Starts hidden, revealed by the physics loop once something has placed him.
+   * It has to be CSS rather than a JS write: the element exists for a frame or two
+   * before the loop's first tick, and in that window he was painted at the actor's
+   * untransformed origin — visible in the bottom-left corner of the screen before
+   * snapping to where he belongs.
+   */
+  visibility: hidden;
 }
 /* scale only — the facing flip and squash live here, so they never reach the
    bubble hanging off the actor above. */

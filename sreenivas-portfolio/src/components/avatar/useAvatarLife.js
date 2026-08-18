@@ -176,6 +176,20 @@ export function useAvatarLife({
     viewTop: 0, floorTop: 0, flyStart: 0, caughtAt: 0,
     cam: 0, viewW: 0, touchAt: 0,
     /**
+     * Whether anyone has told him where to stand yet. False only while a caller
+     * with a goalRef owes him a position; without one, `measure` places him and he
+     * counts as placed from the start.
+     *
+     * This exists because the first placement used to be a race. measure() drops
+     * him in the middle of the floor, and the teleport meant to correct that was
+     * gated on a flag inside useRoutine — which StrictMode's double mount consumed
+     * before the loop had run a single frame, so the surviving goal was an ordinary
+     * walk and he strolled across the room to go to bed, asleep. The physics
+     * decides now: the first directed placement is ALWAYS instant, and he is not
+     * drawn at all until it has happened.
+     */
+    placed: !goalRef,
+    /**
      * Height above his standing surface, eased. Render-only: the simulation still
      * has him on the floor.
      *
@@ -311,6 +325,11 @@ export function useAvatarLife({
       // element, so the pan cancels out of all of them.
       const host = containerRef.current;
       if (host) host.style.transform = `translateX(${(-s.cam).toFixed(2)}px)`;
+
+      // Never show him standing somewhere nobody chose. A single frame in the
+      // middle of the room reads as a glitch even when the next frame fixes it.
+      const wanted = s.placed ? 'visible' : 'hidden';
+      if (actorNow.style.visibility !== wanted) actorNow.style.visibility = wanted;
 
       actorNow.style.transform =
         `translate(${(s.x - halfW).toFixed(2)}px, ${(s.y - bodyH - s.lift + s.bobY).toFixed(2)}px)`;
@@ -452,16 +471,18 @@ export function useAvatarLife({
       s.goalFacing = req.facing || 1;
       s.targetLift = req.lift || 0;
 
-      if (req.instant) {
+      if (req.instant || !s.placed) {
         s.x = x;
         s.y = here.top;
         s.vx = 0; s.vy = 0;
         s.grounded = true;
         s.goal = null;
         s.facing = s.goalFacing;
+        s.placed = true;
         setArrivals((n) => n + 1);
         return;
       }
+      s.placed = true;
       s.goal = x;
       if (s.grounded) s.restTimer = Math.min(s.restTimer, GOAL_REST);
     };
