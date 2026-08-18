@@ -173,7 +173,7 @@ export function useAvatarLife({
     restTimer: 1000, platforms: [], bounds: { w: 0, h: 0 },
     cursor: { x: -9999, y: -9999 }, started: false, lastGreet: 0,
     goal: null, adopted: null, goalFacing: 1, lastMove: 0, rearm: true,
-    viewTop: 0, floorTop: 0, flyStart: 0, caughtAt: 0,
+    viewTop: 0, viewLeft: 0, viewportW: 0, floorTop: 0, flyStart: 0, caughtAt: 0,
     cam: 0, viewW: 0, touchAt: 0,
     /**
      * Whether anyone has told him where to stand yet. False only while a caller
@@ -270,9 +270,15 @@ export function useAvatarLife({
       // The world's width is cRect; the WINDOW onto it is the parent's. The camera
       // needs both, and they differ only on screens narrower than the room.
       s.viewW = host.parentElement ? host.parentElement.clientWidth : cRect.width;
-      // Flight limits, in the same container-relative space as everything else:
-      // the top of the window, and the lowest surface he could stand on.
+      /**
+       * Flight limits, in the same container-relative space as everything else.
+       * These describe the WINDOW, not the container, and that distinction is the
+       * whole point: the container used to be a full-width strip, and is now a
+       * 110px corner widget. Clamping flight to it caged him in the corner.
+       */
       s.viewTop = -cRect.top;
+      s.viewLeft = -cRect.left;
+      s.viewportW = document.documentElement.clientWidth;
       if (platforms.length) s.floorTop = platforms[platforms.length - 1].top;
       setPlatformCount(platforms.length);
 
@@ -633,7 +639,11 @@ export function useAvatarLife({
         const lowest = (s.floorTop || 0) - FLY_CLEARANCE - FLY_BOB;
         const highest = (s.viewTop || 0) + bodyH + FLY_HEADROOM;
         const clampY = (v) => Math.min(Math.max(v, highest), lowest);
-        const clampX = (v) => Math.min(Math.max(v, halfW), Math.max(s.bounds.w - halfW, halfW));
+        // The whole window is his while airborne — he is chasing a cursor that can
+        // be anywhere, so the walls are the window's, not his widget's.
+        const flyLeft = s.viewLeft + halfW;
+        const flyRight = s.viewLeft + (s.viewportW || s.bounds.w) - halfW;
+        const clampX = (v) => Math.min(Math.max(v, flyLeft), Math.max(flyRight, flyLeft));
 
         if (s.mode === 'fly') {
           const tx = clampX(s.cursor.x);

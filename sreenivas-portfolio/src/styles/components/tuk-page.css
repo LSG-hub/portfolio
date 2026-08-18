@@ -1,0 +1,55 @@
+/* ── /tuk ────────────────────────────────────────────────────────────────
+   The house's own page. TukRibbon still pins itself to the bottom of the window
+   and still reserves its own space through `body.has-tuk-ribbon`, so nothing here
+   needs to lay out around it.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.tuk-page {
+  padding: 7rem 0 3rem;
+}
+
+.tuk-page-back {
+  display: inline-block;
+  margin-bottom: 2.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  border-bottom-color: transparent;
+}
+.tuk-page-back:hover { border-bottom-color: var(--accent); }
+
+.tuk-page-header { margin-bottom: 3rem; }
+
+.tuk-page-title {
+  margin: 0.6rem 0 1.2rem;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+}
+
+.tuk-page-lede {
+  font-size: 1.15rem;
+  line-height: 1.75;
+  color: var(--text-muted);
+}
+
+.tuk-page-h2 {
+  margin-bottom: 0.4rem;
+  font-size: 1.4rem;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.tuk-page-list li { align-items: start; }
+
+.tuk-page-foot {
+  margin-top: 2rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--paper-line);
+  font-style: italic;
+  color: var(--text-subtle);
+}
+
+@media (max-width: 720px) {
+  .tuk-page { padding: 5.5rem 0 2rem; }
+  .tuk-page-header { margin-bottom: 2rem; }
+}

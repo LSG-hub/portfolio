@@ -1,0 +1,102 @@
+/* ── Tuk's corner ───────────────────────────────────────────────────────
+   He stands on a charging pad in the bottom right of every page. No strip, no
+   reserved space, no layout cost — the whole point of replacing the room.
+
+   The box is only as big as he and the pad need. It floats over the page rather
+   than pushing it, which is why there is no `has-tuk-ribbon`-style body padding
+   here: a 110px corner is the footprint every site assistant has, and reserving
+   a band for it was exactly the cost we were trying to remove.
+   ──────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --tuk-corner-w: 110px;
+  --tuk-corner-h: 96px;
+  --tuk-corner-gap: 1.25rem;
+}
+
+.tuk-corner {
+  position: fixed;
+  right: var(--tuk-corner-gap);
+  bottom: var(--tuk-corner-gap);
+  width: var(--tuk-corner-w);
+  height: var(--tuk-corner-h);
+  z-index: 45;
+  /* He is watched, not clicked — and a fixed box in the corner must never
+     swallow a link underneath it. */
+  pointer-events: none;
+}
+
+/* Overflow stays visible: his speech bubble hangs above the box and his flight
+   leaves it entirely. Clipping either would break both. */
+.tuk-corner-stage {
+  position: absolute;
+  inset: 0;
+}
+
+.tc-pad-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+.tc-pad { display: block; overflow: visible; }
+
+/**
+ * The standable surface, invisible, sitting on the pad's top face. Harvested by
+ * useAvatarLife through the data attribute, exactly like the floor used to be —
+ * so he stands ON the charger rather than in front of it, with no render-time
+ * lift needed. Wider than his footprint or `measure` rejects it as too narrow.
+ */
+.tc-surface {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 9px;
+  height: 2px;
+}
+
+.tc-paper {
+  fill: var(--bg);
+  stroke: var(--ink);
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+}
+.tc-thin {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  opacity: 0.75;
+}
+.tc-led {
+  fill: var(--accent);
+  stroke: none;
+  animation: tc-led 2400ms ease-in-out infinite;
+}
+@keyframes tc-led {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+
+/* Move the back-to-top button clear of him rather than stacking them. */
+body.has-tuk-corner .scroll-to-top {
+  right: calc(var(--tuk-corner-gap) + var(--tuk-corner-w) + 0.5rem);
+}
+
+@media (max-width: 640px) {
+  :root {
+    --tuk-corner-gap: 0.75rem;
+  }
+  /* On a phone the button and the robot both want the bottom right, and the
+     button wins on usefulness — so he moves up and out of its way. */
+  body.has-tuk-corner .scroll-to-top {
+    right: var(--tuk-corner-gap);
+  }
+  .tuk-corner {
+    bottom: calc(var(--tuk-corner-gap) + 3.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-led { animation: none !important; }
+}
