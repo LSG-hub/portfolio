@@ -49,8 +49,11 @@
  */
 .tc-surface {
   position: absolute;
-  left: 12px;
-  right: 12px;
+  /* Matches the mat: 110px box, 58px mat centred, so 26px in from each side.
+     Must stay wider than his 52px footprint or `measure` rejects it as too
+     narrow to stand on and he is never placed at all. */
+  left: 26px;
+  right: 26px;
   bottom: 9px;
   height: 2px;
 }

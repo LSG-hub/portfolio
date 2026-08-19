@@ -31,13 +31,21 @@ import '../../styles/components/tuk-corner.css';
 
 const FOOTPRINT = 52;
 
+/**
+ * The pad is only as long as he is. It was deliberately wider back when it lived
+ * in the house, so he couldn't hide it by standing on it — but there he was
+ * walking on and off it. Here he never leaves, so the extra length was just a
+ * slab sticking out either side of him.
+ *
+ * The post is tall enough to read as a charging column rather than a stub,
+ * reaching a bit past his shoulder.
+ */
 const ChargePad = () => (
-  <svg className="tc-pad" width="86" height="30" viewBox="0 0 86 30" aria-hidden="true">
-    {/* the mat, wider than he is so he can't hide it by standing on it */}
-    <rect className="tc-paper" x="2" y="21" width="82" height="7" rx="2.5" />
-    <path className="tc-thin" d="M10 24.6 L76 24.6" />
-    {/* the post carries the indicator, clear of his shoulder */}
-    <rect className="tc-paper" x="2" y="2" width="8" height="19" rx="2.5" />
+  <svg className="tc-pad" width="62" height="46" viewBox="0 0 62 46" aria-hidden="true">
+    <rect className="tc-paper" x="2" y="37" width="58" height="7" rx="2.5" />
+    <path className="tc-thin" d="M9 40.6 L53 40.6" />
+    {/* the post carries the indicator, standing clear of his shoulder */}
+    <rect className="tc-paper" x="2" y="2" width="8" height="35" rx="2.5" />
     <circle className="tc-led" cx="6" cy="6" r="2" />
   </svg>
 );
