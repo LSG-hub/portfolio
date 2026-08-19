@@ -33,53 +33,39 @@
   inset: 0;
 }
 
-.tc-pad-wrap {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
-}
-.tc-pad { display: block; overflow: visible; }
-
 /**
- * The standable surface, invisible, sitting on the pad's top face. Harvested by
- * useAvatarLife through the data attribute, exactly like the floor used to be —
- * so he stands ON the charger rather than in front of it, with no render-time
- * lift needed. Wider than his footprint or `measure` rejects it as too narrow.
+ * The standable surface: invisible, and the only thing here the physics can place
+ * him on. Must stay at least as wide as his 52px footprint — `measure` rejects
+ * anything narrower as too small to stand on, and with no platform he is never
+ * placed, which now also means never drawn.
  */
 .tc-surface {
   position: absolute;
-  /* Matches the mat: 110px box, 58px mat centred, so 26px in from each side.
-     Must stay wider than his 52px footprint or `measure` rejects it as too
-     narrow to stand on and he is never placed at all. */
   left: 26px;
   right: 26px;
-  bottom: 9px;
+  bottom: 8px;
   height: 2px;
 }
 
-.tc-paper {
-  fill: var(--bg);
-  stroke: var(--ink);
-  stroke-width: 1.7;
-  stroke-linejoin: round;
+/**
+ * What replaced the charging pad. His legs end in stubs with no feet, so with
+ * nothing underneath he reads as floating rather than standing; a soft ellipse
+ * grounds him for a fraction of the pad's visual weight.
+ *
+ * It goes out while he is airborne — a shadow sitting under an empty patch of
+ * screen is worse than no shadow at all.
+ */
+.tc-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 34px;
+  height: 8px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(26, 24, 20, 0.18), rgba(26, 24, 20, 0) 68%);
+  transition: opacity 220ms ease;
 }
-.tc-thin {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 1.15;
-  stroke-linecap: round;
-  opacity: 0.75;
-}
-.tc-led {
-  fill: var(--accent);
-  stroke: none;
-  animation: tc-led 2400ms ease-in-out infinite;
-}
-@keyframes tc-led {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0.3; }
-}
+.tuk-corner.is-flying .tc-shadow { opacity: 0; }
 
 /* Move the back-to-top button clear of him rather than stacking them. */
 body.has-tuk-corner .scroll-to-top {
@@ -101,5 +87,5 @@ body.has-tuk-corner .scroll-to-top {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tc-led { animation: none !important; }
+  .tc-shadow { transition: none !important; }
 }

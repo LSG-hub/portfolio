@@ -27,28 +27,22 @@ import '../../styles/components/tuk-corner.css';
  * escapes the corner — the whole viewport is his.
  *
  * The bubble hangs to his LEFT because he lives on the right edge.
+ *
+ * ── No charging pad ─────────────────────────────────────────────────────
+ * There was one, carried over from the house. It had no function here — he never
+ * sleeps, never leaves it, never charges — so it was decoration in the one place
+ * we moved him to STOP competing with the page, and it was what forced the awkward
+ * geometry: post against mat proportions, an asymmetric silhouette, and a floor on
+ * how narrow the standable surface could be.
+ *
+ * The surface is still there, just invisible, because the physics needs something
+ * to place him on. What replaces the pad visually is a contact shadow: his legs
+ * end in stubs with no feet, so with nothing underneath he reads as floating
+ * rather than standing. It hides while he's airborne, since a shadow under an
+ * empty patch of screen is worse than none.
  */
 
 const FOOTPRINT = 52;
-
-/**
- * The pad is only as long as he is. It was deliberately wider back when it lived
- * in the house, so he couldn't hide it by standing on it — but there he was
- * walking on and off it. Here he never leaves, so the extra length was just a
- * slab sticking out either side of him.
- *
- * The post is tall enough to read as a charging column rather than a stub,
- * reaching a bit past his shoulder.
- */
-const ChargePad = () => (
-  <svg className="tc-pad" width="62" height="46" viewBox="0 0 62 46" aria-hidden="true">
-    <rect className="tc-paper" x="2" y="37" width="58" height="7" rx="2.5" />
-    <path className="tc-thin" d="M9 40.6 L53 40.6" />
-    {/* the post carries the indicator, standing clear of his shoulder */}
-    <rect className="tc-paper" x="2" y="2" width="8" height="35" rx="2.5" />
-    <circle className="tc-led" cx="6" cy="6" r="2" />
-  </svg>
-);
 
 const TukCorner = () => {
   const stageRef = useRef(null);
@@ -126,15 +120,14 @@ const TukCorner = () => {
   const bubble = flightLine || (saying ? line : '') || '';
 
   return (
-    <div className="tuk-corner" aria-hidden="true">
+    <div className={`tuk-corner ${flying ? 'is-flying' : ''}`} aria-hidden="true">
       <div className="tuk-corner-stage" ref={stageRef}>
-        <div className="tc-pad-wrap">
-          <ChargePad />
-        </div>
-        {/* The pad's own surface is the only standable thing here, so `measure`
-            places him on it without anyone having to direct him. */}
+        {/* The only standable thing here, so `measure` places him on it without
+            anyone having to direct him. Invisible, but it has to be at least as
+            wide as his footprint or it is rejected as too narrow to stand on. */}
         <div className="tc-surface" data-avatar-platform />
-        <div className={`tuk-actor ${flying ? 'is-flying' : ''}`} ref={actorRef}>
+        <div className="tc-shadow" />
+        <div className="tuk-actor" ref={actorRef}>
           <SpeechBubble text={bubble} visible={Boolean(bubble)} side="left" />
           <Hovercraft />
           <div className="tuk-actor-body" ref={bodyRef}>
