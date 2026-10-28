@@ -17,7 +17,7 @@
 
 \begin{rSection}{SUMMARY}
 
-AI/ML Engineer specializing in \textbf{Agentic Workflows}, \textbf{LangGraph orchestration}, and \textbf{LLM optimization}, with full-stack capability across React, FastAPI, Flutter, and cloud-native infrastructure. Architected enterprise \textbf{MCP Gateways} managing \textbf{10,000+ daily requests}, earned \textbf{Second Runner-Up at the Guinness World Record-certified Google Cloud Agentic AI Day 2025}, and co-authored a research paper at \textbf{NCAIT-2025}. Focused on building cost-efficient autonomous systems that move beyond standard API integrations to solve complex, unstructured problems at scale.
+Full-Stack AI Engineer who designs and builds AI applications end to end, mostly in \textbf{Python}: the architecture behind \textbf{agentic workflows}, \textbf{MCP servers} and \textbf{AI gateways}, React frontends, and deployments on \textbf{GCP}, \textbf{AWS} and \textbf{Azure}. End-to-end owner of two production AI products at DigitalAPI.ai: \textbf{App Builder}, live on Tata Communications' API marketplace, and the AI assistant on \textbf{Fiserv}'s developer marketplace. Both give AI real access to real systems, so the work is as much about guardrails as models. \textbf{2nd Runner-Up} at the \textbf{Guinness World Record-certified} Google Cloud Agentic AI Day 2025, and co-author of a paper at \textbf{NCAIT-2025}.
 
 \end{rSection}
 
@@ -31,20 +31,21 @@ AI/ML Engineer specializing in \textbf{Agentic Workflows}, \textbf{LangGraph orc
 DigitalAPI.ai \hfill \textit{Bangalore, India}
  \begin{itemize}
     \itemsep -3pt {} 
-     \item \textbf{Architected ``DAC Studio'' Agentic Suite:} Led system design of a multi-model (\textit{Gemini, Claude, OpenAI}) enterprise AI assistant for holistic API discovery and workflow generation; engineered a dynamic \textbf{RBAC} architecture that contextually routes \textbf{7+ custom MCP tools} including server-side secure cURL execution and live web search, with live reasoning streaming for an on-demand AI experience.
-     \item \textbf{Engineered Optimized RAG \& Vector Infrastructure:} Designed a cost-efficient pipeline using \textbf{PostgreSQL + PGVector} to process \textbf{thousands of APIs} via method/path summary embeddings without exceeding LLM context limits; deployed vector-search MCP tools enabling autonomous catalog queries — reducing token consumption by \textbf{60\%} while maintaining high retrieval accuracy.
-     \item \textbf{Developed Real-Time Collaborative Workspace:} Built a full-stack drag-and-drop workflow builder with \textbf{React Flow} and \textbf{WebSockets} for multi-user real-time collaboration; engineered an MCP tool that translates natural language into structured graph nodes, enabling the AI to autonomously design, sandbox-execute, and visually render functional applications directly in the UI.
-     \item \textbf{Engineered Core Features for Custom AI Gateway:} Co-built a proprietary multi-model routing infrastructure to overcome the limitations of \textit{LiteLLM} and \textit{Apache APISIX}; developed backend support for \textbf{thinking tokens}, strict response schemas, and live reasoning streaming, plus rate-limiting and telemetry integrations — managing \textbf{10,000+} daily API requests with zero downtime.
-     \item \textbf{Architected Enterprise MCP Gateway:} Designed high-throughput, centralized infrastructure transforming traditional API marketplaces into \textbf{``Agent-Ready''} ecosystems. Built a custom parsing algorithm that dynamically converts OpenAPI specs into \textbf{JSON-RPC HTTP MCP Servers} with \textbf{zero-downtime} auto-deploys to \textbf{GCP Cloud Run}. Routing layer features centralized authentication, \textbf{multi-tier rate limiting} (server \& tool level), dynamic tool-filtering, comprehensive telemetry, and direct \textbf{tool monetization} — managing \textbf{100,000+} daily requests while reducing LLM context bloat by \textbf{70\%}.
+     \item \textbf{Took App Builder from prototype to a v1.0 production release as its sole engineer:} an AI workspace over a marketplace's entire API catalog, where users discover and find the right APIs in conversation, call and test them live, chain them into workflows, and turn those workflows into working web apps. One deployment serves every marketplace.
+     \item \textbf{Gave an autonomous agent safe access to customers' live systems:} wrote a framework-free agent runtime (\textit{OpenAI} and \textit{Gemini}, \textbf{10 tools}) with approval gates before any change or live API call, a read-only, tenant-scoped database role behind its SQL tool, and automatic checks on every file of code it generates.
+     \item \textbf{Load-tested the platform with k6 and re-architected how it serves:} a single 2-vCPU server now holds \textbf{200 concurrent chat sessions}, and errors at 400 concurrent users fell from \textbf{7.4\% to 0\%} with throughput doubled. Moved it off Google Cloud to self-managed servers with CI/CD and automatic rollback.
+     \item \textbf{Re-architected Fiserv's AI assistant around an agent that plans its own searches:} a tool-calling loop on \textit{Azure OpenAI} with \textbf{8 retrieval tools} over hybrid \textit{Azure AI Search}, in production since \textbf{September 2026}. Cut a production report that was timing out from \textbf{$\sim$148 s to 4.4 s}.
+     \item \textbf{Kept every answer inside what each bank is entitled to see:} the agent's tools accept only the Fiserv products a customer's company has bought, the server re-checks every call, and code-side guards replace prompt rules the model kept ignoring, linking every API it cites and flagging endpoints that don't exist.
+     \item \textbf{Built the proofs of concept that set the company's agent-infrastructure direction:} co-built an AI Gateway with multi-model routing, reasoning streaming, strict response schemas, rate limiting and telemetry beyond what \textit{LiteLLM} and \textit{APISIX} supported, and an MCP Gateway that turns any OpenAPI spec into an MCP server auto-deployed to \textit{Cloud Run}, with rate limiting, telemetry and tool monetization.
  \end{itemize}
- 
+
 \textbf{Engineering Intern} \hfill April 2025 - Sept 2025\\
 DigitalAPI.ai \hfill \textit{Bangalore, India}
  \begin{itemize}
     \itemsep -3pt {} 
-     \item \textbf{Engineered ``Analytics on Demand'' Platform:} Designed a natural language-to-analytics agent using \textbf{Gemini 2.0} and \textbf{Model Context Protocol (MCP)}; built \textbf{5+ custom MCP tools} for autonomous cross-database querying (\textbf{PostgreSQL, MongoDB}) across \textbf{millions of data rows}, deriving complex reasoning and generating dynamic visual dashboards in \textbf{under 3 seconds} per query — eliminating \textbf{15+ hours/week} of manual reporting at \textbf{100\% retrieval accuracy}.
-     \item \textbf{Engineered Scalable OpenAPI Processing Pipeline:} Built an autonomous \textbf{LangGraph + Gemini} agentic workflow to process enterprise OpenAPI specifications exceeding \textbf{1.3M+ input tokens}; implemented advanced \textit{reference resolution algorithms} for circular dependencies and path-by-path intelligent chunking with parallel async processing — reducing inference costs by \textbf{45\%}, accelerating generation by \textbf{85\%}, with \textbf{99.9\% structural accuracy}.
-     \item \textbf{Developed Custom Documentation Rendering Engine:} Built a high-performance proprietary \textbf{React} library that dynamically renders AI-enhanced API specs — enriched descriptions, complex schemas, and multi-language code snippets (\textit{Python, C, Java}) — into a customized Redoc-style UI with a \textbf{100\% automated} generation-to-download pipeline, doubling downstream developer satisfaction scores.
+     \item \textbf{Made API specs larger than the model's context window processable:} built an OpenAPI pipeline with \textit{LangGraph} and \textit{Gemini} that handles enterprise specs over \textbf{1.3M input tokens}, resolving circular references and chunking work in parallel. Cut inference cost by \textbf{45\%} and generation time by \textbf{85\%} at \textbf{99.9\% structural accuracy}.
+     \item \textbf{Turned AI-enhanced API specs into finished documentation automatically:} built a React rendering engine that lays out enriched descriptions, complex schemas and code samples in \textit{Python}, \textit{C} and \textit{Java} in a Redoc-style UI, with a \textbf{fully automated} generation-to-download pipeline.
+     \item \textbf{Co-built ``Analytics on Demand''}, a natural-language analytics agent on \textit{Gemini 2.0} and \textbf{MCP} with \textbf{5+ custom tools} that queries \textit{PostgreSQL} and \textit{MongoDB} across millions of rows. Generates dashboards in \textbf{under 3 seconds} and removes \textbf{15+ hours a week} of manual reporting at \textbf{100\% retrieval accuracy}.
  \end{itemize}
 
 \end{rSection}
@@ -56,11 +57,11 @@ DigitalAPI.ai \hfill \textit{Bangalore, India}
 \begin{rSection}{FEATURED PROJECTS}
 \vspace{-1.25em}
 
-\item \textbf{Juno — Voice-Native Financial Operating System} | \textit{Google Cloud Agentic AI Day 2025} \\
+\item \textbf{Juno: Voice-Native Financial Operating System} | \textit{Google Cloud Agentic AI Day 2025} \\
 \textit{Tech Stack: Flutter, Vertex AI (Gemini 2.5 Flash Lite), Firebase, Firestore, Cloud Run, Cloud Speech-to-Text, MCP}
 \begin{itemize}
     \item \textbf{Multi-Agent Financial Reasoning:} Built a multi-agent advisory system in which a \textbf{Coordinator MCP} orchestrates specialized Gemini-powered agents (\textit{Growth, Security, Context, Feedback}); integrated with the \textbf{Fi Money MCP Server} to securely stream a user's normalized assets, liabilities, cash-flow, and risk metrics into agent context.
-    \item \textbf{Voice-First Multilingual UX:} Engineered a \textbf{Flutter} mobile app with Cloud Speech-to-Text + TTS, enabling plain-language queries in multiple Indian languages — converting natural questions like \textit{``Could I retire at 50 if my SIP grows 12\%?''} into Monte-Carlo simulations and Search-grounded financial projections.
+    \item \textbf{Voice-First Multilingual UX:} Engineered a \textbf{Flutter} mobile app with Cloud Speech-to-Text + TTS, enabling plain-language queries in multiple Indian languages, converting natural questions like \textit{``Could I retire at 50 if my SIP grows 12\%?''} into Monte-Carlo simulations and Search-grounded financial projections.
     \item \textbf{Production Cloud Backend:} Deployed serverless MCP micro-agents on \textbf{Cloud Run} with \textbf{Firebase Auth} (Phone-OTP, passkey), \textbf{Firestore} for per-user agent memory and life-event store (e.g., \textit{``wedding in Feb 2026 → high liquidity need''}), and \textbf{Google Search Grounding} for real-time market and regulatory data.
     \item \href{https://drive.google.com/file/d/12SFmxkaDG8kcLFpLTg6fAuKgeOlFq4Y8/view?usp=sharing}{\textit{Demo video}}
 \end{itemize}
@@ -72,16 +73,16 @@ DigitalAPI.ai \hfill \textit{Bangalore, India}
 \begin{itemize}
     \item \textbf{Agentic IDE Architecture:} Developed an autonomous AI software team using \textbf{LangGraph} to coordinate distinct personas (Developer, Reviewer, QA), achieving \textbf{95\%} accuracy in code compilation and functionality tests.
     \item \textbf{Context-Optimized Generation:} Engineered a file-based coding algorithm to overcome LLM context window limitations, enabling generation of enterprise-scale applications while maintaining consistent design patterns.
-    \item \textbf{Published Research:} Co-authored \textit{``SPEAR: An Innovative AI-Powered Web Development Assistant''} presented at the \textbf{11th National Conference on Advancements in Information Technology (NCAIT-2025)}, JSS Academy of Technical Education, Bengaluru — May 2025.
+    \item \textbf{Published Research:} Co-authored \textit{``SPEAR: An Innovative AI-Powered Web Development Assistant''} presented at the \textbf{11th National Conference on Advancements in Information Technology (NCAIT-2025)}, JSS Academy of Technical Education, Bengaluru, May 2025.
 \end{itemize}
 
 \vspace{0.5em}
 
-\item \textbf{Skooc — Multi-Persona Therapeutic AI Suite} | \textit{Consulting (2025 -- present)} \\
+\item \textbf{Skooc: Multi-Persona Therapeutic AI Suite} | \textit{Consulting (2025 -- present)} \\
 \textit{Tech Stack: Python, LangGraph, RAG}
 \begin{itemize}
-    \item \textbf{Three-Persona Chatbot Architecture:} Architected a suite of three persona-specialized agents — \textit{Educator} (for teachers), \textit{Parent}, and \textit{Child} — that internally aggregate cross-persona context, purely orchestrated in \textbf{LangGraph}; handles \textbf{300+ clinical scenarios} across \textbf{20 psychological themes} with adaptive ``Quick Help'' vs ``Deep Dive'' workflows scaling 5 to 30 minutes per session.
-    \item \textbf{Crisis Intervention \& Counsellor Override Layer:} Implemented \textbf{Severity-C} binary classification for zero-tolerance safety, instantly routing high-risk inputs (self-harm/abuse) to human counsellors; integrated automated therapeutic screenings to flag patterns requiring professional intervention — \textbf{100\% safety compliance}.
+    \item \textbf{Three-Persona Chatbot Architecture:} Architected a suite of three persona-specialized agents, \textit{Educator} (for teachers), \textit{Parent} and \textit{Child}, that internally aggregate cross-persona context, purely orchestrated in \textbf{LangGraph}; handles \textbf{300+ clinical scenarios} across \textbf{20 psychological themes} with adaptive ``Quick Help'' vs ``Deep Dive'' workflows scaling 5 to 30 minutes per session.
+    \item \textbf{Crisis Intervention \& Counsellor Override Layer:} Implemented \textbf{Severity-C} binary classification for zero-tolerance safety, instantly routing high-risk inputs (self-harm/abuse) to human counsellors; integrated automated therapeutic screenings to flag patterns requiring professional intervention, achieving \textbf{100\% safety compliance}.
     \item \textbf{Neurodivergent-Aware Routing \& Cultural-Context RAG:} Engineered dedicated LangGraph paths for children with ND concerns ($\sim$50 unique interaction states with ``Confidence Check'' and ``Pattern Recognition'' nodes), backed by a Cultural-Context RAG pipeline of \textbf{50+ evidence-based strategies} tuned to Indian parenting and education contexts.
 \end{itemize}
 
@@ -93,7 +94,7 @@ DigitalAPI.ai \hfill \textit{Bangalore, India}
 
 \begin{rSection}{ACHIEVEMENTS} 
 \begin{itemize}
-    \item \textbf{Second Runner-Up — Google Cloud Agentic AI Day 2025:} Awarded \textbf{INR 1 Lakh} prize at the \textbf{Guinness World Record-certified} 30-hour innovation sprint by Google Cloud $\times$ Hack2Skill — the \textit{largest agentic-AI hackathon ever held}, with \textbf{1,941 adjudicated developers across 700+ teams}. Built \textit{Juno} (see Featured Projects) for the ``Let AI Speak to Your Money'' challenge. \href{https://drive.google.com/drive/folders/1IPTQvzsI8YVqeHt31QAsgNWxUqD66qVd?usp=sharing}{\textit{View submission}}
+    \item \textbf{Second Runner-Up, Google Cloud Agentic AI Day 2025:} Awarded \textbf{INR 1 Lakh} prize at the \textbf{Guinness World Record-certified} 30-hour innovation sprint by Google Cloud $\times$ Hack2Skill, the \textit{largest agentic-AI hackathon ever held}, with \textbf{1,941 adjudicated developers across 700+ teams}. Built \textit{Juno} (see Featured Projects) for the ``Let AI Speak to Your Money'' challenge. \href{https://drive.google.com/drive/folders/1IPTQvzsI8YVqeHt31QAsgNWxUqD66qVd?usp=sharing}{\textit{View submission}}
 \end{itemize}
 \end{rSection}
 
@@ -103,7 +104,7 @@ DigitalAPI.ai \hfill \textit{Bangalore, India}
 
 \begin{rSection}{Education}
 
-{\bf Bachelors in Artificial Intelligence and Machine Learning} \hfill {2021 - 2025} \\
+{\bf Bachelor's in Artificial Intelligence and Machine Learning} \hfill {2021 - 2025} \\
 BMS College of Engineering \hfill {CGPA - 8.04} \\
 Bangalore, India
 
@@ -114,12 +115,13 @@ Bangalore, India
 %----------------------------------------------------------------------------------------
 \begin{rSection}{TECHNICAL SKILLS}
 
-\textbf{Languages}: Python, C, C++, JavaScript / TypeScript, Dart, SQL \\
-\textbf{AI / ML \& Agentic}: LangChain, LangGraph, MCP (Model Context Protocol), RAG, Vector Search, TensorFlow, PyTorch, NumPy, Pandas, Matplotlib \\
-\textbf{Web \& Mobile}: React, React Flow, FastAPI, Django, Flutter, WebSockets, REST, JSON-RPC \\
-\textbf{Databases}: PostgreSQL, PGVector, MongoDB, MySQL, BigQuery, Firestore \\
-\textbf{Cloud \& DevOps}: GCP (Cloud Run, Vertex AI, Firebase, VMs), AWS, Docker, Jenkins, Git, RabbitMQ, MinIO, UiPath \\
-\textbf{Spoken Languages}: English, Hindi, Kannada, Telugu \\
+\textbf{Languages}: Python, C, C++, JavaScript / TypeScript, Java, PHP, Dart, SQL \\
+\textbf{AI \& Agentic}: OpenAI, Gemini, Azure OpenAI, MCP (Model Context Protocol), LangGraph, LangChain, RAG, Vector Search, Azure AI Search, TensorFlow, PyTorch, NumPy, Pandas, Matplotlib \\
+\textbf{Web \& Mobile}: React, Angular, React Flow, FastAPI, Django, Flutter, Magento, Drupal, WebSockets, REST, JSON-RPC \\
+\textbf{Databases}: PostgreSQL, pgvector, MongoDB, Azure Cosmos DB, MySQL, BigQuery, Firestore \\
+\textbf{Cloud \& DevOps}: GCP (Cloud Run, Vertex AI, Firebase, VMs), Azure (AKS, Container Registry, Monitor), AWS, Hetzner (self-managed servers), Docker, GitHub Actions, Jenkins, Git, RabbitMQ, MinIO, UiPath \\
+\textbf{AI-Assisted Development}: Claude Code, used daily to ship in any stack \\
+\textbf{Spoken Languages}: English, Hindi, Telugu, Kannada \\
 
 \end{rSection}
 
