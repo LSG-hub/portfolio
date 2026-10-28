@@ -4,7 +4,7 @@ import '../../styles/components/footer.css';
 const FOOTER_LINKS = [
   { label: 'LinkedIn', url: 'https://www.linkedin.com/in/sreenivas-gurram-363528289/' },
   { label: 'GitHub', url: 'https://github.com/LSG-hub' },
-  { label: 'Email', url: 'mailto:srinu202012@gmail.com' }
+  { label: 'Email', url: 'mailto:me@sreenivasgurram.com' }
 ];
 
 const Footer = () => {

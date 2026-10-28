@@ -1,7 +1,11 @@
 import React from 'react';
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { getProjectBySlug } from '../data/projects';
 import { richText } from '../utils/richText';
+import { profile } from '../data/profile';
+import { notFoundMeta, projectMeta } from '../utils/seo';
+import usePageMeta from '../hooks/usePageMeta';
+import NotFoundPage from './NotFoundPage';
 import '../styles/components/project-detail.css';
 
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
@@ -15,9 +19,12 @@ const formatLabel = (key) =>
 const ProjectDetailPage = () => {
   const { slug } = useParams();
   const project = getProjectBySlug(slug);
+  // Called before the early return so the hook order never changes.
+  usePageMeta(project ? projectMeta(project, profile) : notFoundMeta(profile));
 
+  // An unknown slug is a 404 like any other URL, not a silent bounce home.
   if (!project) {
-    return <Navigate to="/" replace />;
+    return <NotFoundPage />;
   }
 
   const hasImage = Boolean(project.image);

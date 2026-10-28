@@ -1,16 +1,17 @@
+# Search engines and AI crawlers are welcome: Googlebot, Bingbot, GPTBot,
+# OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-User, PerplexityBot,
+# Google-Extended, Applebot and the rest. They all fall under this one group,
+# so nothing below needs repeating per crawler.
+#
+# For AI agents, a Markdown summary of the whole site lives at /llms.txt
+# and the full content at /llms-full.txt.
+
 User-agent: *
 Allow: /
 
-# Development benches — reachable, but they should never turn up in search
+# Development benches: reachable, but they should never appear in search
 # results next to the real content.
 Disallow: /avatar-lab
 Disallow: /world-lab
 
-# Sitemap
 Sitemap: https://sreenivasgurram.com/sitemap.xml
-
-# Crawl-delay
-Crawl-delay: 1
-
-# Allow all bots to access the portfolio
-Disallow:

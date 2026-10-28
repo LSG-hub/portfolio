@@ -1,12 +1,9 @@
 import React from 'react';
+import { profile } from '../../data/profile';
+import { richText } from '../../utils/richText';
 import '../../styles/components/contact.css';
 
-const SOCIALS = [
-  { label: 'LinkedIn', url: 'https://www.linkedin.com/in/sreenivas-gurram-363528289/' },
-  { label: 'GitHub', url: 'https://github.com/LSG-hub' },
-  { label: 'Twitter', url: 'https://x.com/SreenivasGurra3' },
-  { label: 'Blog', url: 'https://iotodyssey.blogspot.com/2024/11/the-iot-odyssey-from-smart-homes-to.html' }
-];
+const SOCIALS = profile.socials;
 
 const Contact = () => {
   return (
@@ -19,17 +16,13 @@ const Contact = () => {
         <h2 className="section-title">Contact</h2>
 
         <div className="contact-card glass-flat">
-          <p className="contact-intro">
-            Open to <em>AI/ML engineering</em> roles, agentic-systems work, and research
-            collaboration. Email is the fastest way to reach me &mdash; I respond within
-            a day.
-          </p>
+          <p className="contact-intro">{richText(profile.contactIntro)}</p>
 
           <div className="contact-list">
             <div className="contact-row">
               <span className="contact-label">Email</span>
-              <a href="mailto:srinu202012@gmail.com" className="contact-value">
-                srinu202012@gmail.com
+              <a href={`mailto:${profile.email}`} className="contact-value">
+                {profile.email}
               </a>
             </div>
             <div className="contact-row">

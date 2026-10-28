@@ -62,15 +62,6 @@ const TukCorner = () => {
     fly: true
   });
 
-  /**
-   * Only marks the page as having him, so the back-to-top button can step aside.
-   * No padding is reserved — unlike the strip, he floats over the page.
-   */
-  useEffect(() => {
-    document.body.classList.add('has-tuk-corner');
-    return () => document.body.classList.remove('has-tuk-corner');
-  }, []);
-
   /** Shuffle bag rather than Math.random — every line before any repeat. */
   const bag = useRef(createShuffleBag(GREETINGS));
 

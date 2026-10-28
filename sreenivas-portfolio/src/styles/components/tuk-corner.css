@@ -67,22 +67,9 @@
 }
 .tuk-corner.is-flying .tc-shadow { opacity: 0; }
 
-/* Move the back-to-top button clear of him rather than stacking them. */
-body.has-tuk-corner .scroll-to-top {
-  right: calc(var(--tuk-corner-gap) + var(--tuk-corner-w) + 0.5rem);
-}
-
 @media (max-width: 640px) {
   :root {
     --tuk-corner-gap: 0.75rem;
-  }
-  /* On a phone the button and the robot both want the bottom right, and the
-     button wins on usefulness — so he moves up and out of its way. */
-  body.has-tuk-corner .scroll-to-top {
-    right: var(--tuk-corner-gap);
-  }
-  .tuk-corner {
-    bottom: calc(var(--tuk-corner-gap) + 3.5rem);
   }
 }
 

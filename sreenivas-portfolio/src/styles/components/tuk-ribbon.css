@@ -108,11 +108,6 @@
   border-top: 1px solid var(--paper-line);
 }
 
-/* lift the back-to-top button clear of the strip */
-body.has-tuk-ribbon .scroll-to-top {
-  bottom: calc(var(--tuk-ribbon-h) + 1rem);
-}
-
 /* Reserve the space, so the footer is never hidden behind him. Keyed off a
    class TukRibbon owns, so the padding cannot outlive the strip. */
 body.has-tuk-ribbon {

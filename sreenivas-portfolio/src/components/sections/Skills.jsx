@@ -1,6 +1,7 @@
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
-import { skillsData, languages } from '../../data/skills';
+import { skillsData, skillsIntro, languages } from '../../data/skills';
+import { richText } from '../../utils/richText';
 import '../../styles/components/skills.css';
 
 const SkillGroup = ({ group }) => {
@@ -29,6 +30,8 @@ const Skills = () => {
         <h2 className="section-title">Skills</h2>
 
         <div className="skills-panel glass-flat">
+          <p className="skills-intro">{richText(skillsIntro)}</p>
+
           <div className="skills-list">
             {Object.entries(skillsData).map(([key, group]) => (
               <SkillGroup key={key} group={group} />

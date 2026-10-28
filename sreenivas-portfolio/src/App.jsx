@@ -5,7 +5,6 @@ import './styles/components/glass.css';
 
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
-import ScrollToTop from './components/common/ScrollToTop';
 import TukCorner from './components/avatar/TukCorner';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -17,6 +16,7 @@ const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
 const TukPage = lazy(() => import('./pages/TukPage'));
 const AvatarLab = lazy(() => import('./pages/AvatarLab'));
 const WorldLab = lazy(() => import('./pages/WorldLab'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 const SectionFallback = () => <div className="section-fallback" aria-hidden />;
 
@@ -57,11 +57,11 @@ function App() {
               <Route path="/tuk" element={<TukPage />} />
               <Route path="/avatar-lab" element={<AvatarLab />} />
               <Route path="/world-lab" element={<WorldLab />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
         </main>
         <Footer />
-        <ScrollToTop />
         <CornerGate />
       </div>
     </BrowserRouter>
