@@ -25,7 +25,7 @@
 
 \begin{rSection}{SUMMARY}
 
-Full-Stack AI Engineer who designs and builds AI applications end to end, mostly in \textbf{Python}: the architecture behind \textbf{agentic workflows}, \textbf{MCP servers} and \textbf{AI gateways}, React frontends, and deployments on \textbf{GCP}, \textbf{AWS} and \textbf{Azure}. End-to-end owner of two production AI products at DigitalAPI.ai: \textbf{App Builder}, live on Tata Communications' API marketplace, and the AI assistant on \textbf{Fiserv}'s developer marketplace. Both give AI real access to real systems, so the work is as much about guardrails as models. \textbf{2nd Runner-Up} at the \textbf{Guinness World Record-certified} Google Cloud Agentic AI Day 2025, and co-author of a paper at \textbf{NCAIT-2025}.
+I design and build AI applications end to end, mostly in \textbf{Python}: the architecture behind \textbf{agentic workflows}, \textbf{MCP servers} and \textbf{AI gateways}, the \textbf{React} frontends on top, and deployments on \textbf{GCP}, \textbf{AWS} and \textbf{Azure}. Most of my work is giving AI real access to real systems, like an agent that calls a company's live APIs, or an assistant that answers bank developers using only the documentation their company has paid for. So I spend as much care on the guardrails as on the model: approvals, access boundaries, and checks that catch a wrong answer before anyone sees it.
 
 \end{rSection}
 
@@ -39,7 +39,7 @@ Full-Stack AI Engineer who designs and builds AI applications end to end, mostly
 DigitalAPI.ai \hfill \textit{Bangalore, India}
  \begin{itemize}
     \itemsep -3pt {} 
-     \item \textbf{Took App Builder from prototype to a v1.0 production release as its sole engineer:} an AI workspace over a marketplace's entire API catalog, where users discover and find the right APIs in conversation, call and test them live, chain them into workflows, and turn those workflows into working web apps. One deployment serves every marketplace.
+     \item \textbf{Took App Builder from prototype to a v1.0 production release as its sole engineer,} now live on Tata Communications' API marketplace: an AI workspace over a marketplace's entire API catalog, where users discover and find the right APIs in conversation, call and test them live, chain them into workflows, and turn those workflows into working web apps. One deployment serves every marketplace.
      \item \textbf{Gave an autonomous agent safe access to customers' live systems:} wrote a framework-free agent runtime (\textit{OpenAI} and \textit{Gemini}, \textbf{10 tools}) with approval gates before any change or live API call, a read-only, tenant-scoped database role behind its SQL tool, and automatic checks on every file of code it generates.
      \item \textbf{Load-tested the platform with k6 and re-architected how it serves:} a single 2-vCPU server now holds \textbf{200 concurrent chat sessions}, and errors at 400 concurrent users fell from \textbf{7.4\% to 0\%} with throughput doubled. Moved it off Google Cloud to self-managed servers with CI/CD and automatic rollback.
      \item \textbf{Re-architected Fiserv's AI assistant around an agent that plans its own searches:} a tool-calling loop on \textit{Azure OpenAI} with \textbf{8 retrieval tools} over hybrid \textit{Azure AI Search}, in production since \textbf{September 2026}. Cut a production report that was timing out from \textbf{$\sim$148 s to 4.4 s}.
