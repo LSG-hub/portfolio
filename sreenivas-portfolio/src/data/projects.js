@@ -84,7 +84,7 @@ export const projectsData = [
       "**Neurodivergent-aware routing** with ~50 unique interaction states (Confidence Check, Pattern Recognition)",
       "**Cultural-Context RAG**: 50+ evidence-based strategies tuned for Indian parenting and education"
     ],
-    technologies: ["Python", "LangGraph", "RAG", "Vector Search"],
+    technologies: ["Python", "LangGraph", "RAG", "Vector Search", "AWS"],
     metrics: {
       scenarios: "300+ clinical scenarios",
       themes: "20 psychological themes",
