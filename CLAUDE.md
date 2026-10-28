@@ -36,10 +36,11 @@ Create React App (`react-scripts` 5.0.1), React 19, `react-router-dom` v7, `reac
 
 ## Architecture
 
-- `src/App.jsx` — BrowserRouter with two lazy routes: `/` (HomePage) and `/projects/:slug` (ProjectDetailPage). Renders fixed Navbar + Footer + ScrollToTop, plus `ScrollRestore`, which resets scroll on route change unless the URL has a hash.
+- `src/App.jsx` — BrowserRouter with two lazy routes: `/` (HomePage) and `/projects/:slug` (ProjectDetailPage). Renders fixed Navbar + Footer + the Tuk corner widget, plus `ScrollRestore`, which resets scroll on route change unless the URL has a hash.
 - `src/pages/HomePage.jsx` — stacks six sections in order: Hero → Experience → Projects → Achievements → Skills → Contact. Scrolls to `location.hash` on mount.
 - `src/pages/ProjectDetailPage.jsx` — looks the project up by slug via `getProjectBySlug`; `<Navigate to="/" replace />` on miss. Sections: Overview / What I built / Highlights / gallery / Stack / CTA links.
-- `src/hooks/useScrollPosition.js` — rAF-throttled "is scroll past N px" boolean. Drives the navbar `scrolled` state and ScrollToTop visibility.
+- `src/utils/seo.js` — page titles, descriptions and canonical paths (`homeMeta`, `projectMeta`, `tukMeta`). Plain JS with no imports, because the prerender loads it in Node outside webpack. `usePageMeta` applies it on in-app navigation.
+- `src/hooks/useScrollPosition.js` — rAF-throttled "is scroll past N px" boolean. Drives the navbar `scrolled` state. (There is no back-to-top button; it was removed 2026-10-28 because it crowded Tuk's corner.)
 - `src/hooks/useScrollSpy.js` — IntersectionObserver over section ids for navbar highlighting. It retries attachment for up to 120 frames because sections mount late (lazy routes); don't "simplify" that retry loop away.
 
 ## Content lives in data files, not components
@@ -48,11 +49,12 @@ All résumé copy is in `src/data/`:
 
 - `experience.js` — `experienceData`, `educationData`, `achievementsData`
 - `projects.js` — `projectsData` (each with `slug`, `gradient`, optional `image`/`gallery`/`demo`), plus `getProjectBySlug`
-- `skills.js` — `skillsData` groups and spoken `languages`
+- `skills.js` — `skillsData` groups, `skillsIntro`, and spoken `languages`
+- `profile.js` — name, role, bio, hero facts, contact intro, socials, and the meta `summary`. Hero and Contact render from it.
 
 Copy strings use a minimal inline markup — `**bold**` and `*italic*` — parsed into React elements by `src/utils/richText.jsx`. Only those two tokens are supported; anything else renders literally. Components call `richText(...)` on any prose field.
 
-Editing content means editing these files. Section headers carry hardcoded numbers (`01 / Career`, `02 / Selected Work`, …) inside each section component, so reordering sections in HomePage means renumbering them too.
+Editing content means editing these files. Keep copy out of JSX: `scripts/prerender.mjs` reads these files to write the crawlable HTML, so text that only exists inside a component is invisible to search engines and AI crawlers. Section headers carry hardcoded numbers (`01 / Career`, `02 / Selected Work`, …) inside each section component, so reordering sections in HomePage means renumbering them too.
 
 Images go in `public/images/` and are referenced by absolute path (`/images/foo.jpg`). Photos render as CSS `background-image` on a `role="img"` div with `aria-label`, not as `<img>` — follow that pattern for consistent cropping, and always supply the alt text.
 
@@ -106,7 +108,8 @@ Conventions: fonts come from Google Fonts in `public/index.html`; there are no i
 
 **Primary: Firebase Hosting**, GCP project `sreenivas-portfolio`, on the free Spark plan. No billing account is attached, so this project cannot incur charges; the tradeoff is that exceeding the free quota (10 GB storage, 360 MB/day transfer) stops serving rather than billing.
 
-- `sreenivas-portfolio/firebase.json` — serves `build/`, rewrites all paths to `/index.html` for client-side routing, and sets cache headers. The header globs are deliberately **non-overlapping** because Firebase's precedence when multiple blocks match is undocumented: `/static/**` gets 1-year immutable (safe — CRA content-hashes those filenames), `/images/**` gets 1 day, and `!/@(static|images)/**` gets `no-cache` so HTML revalidates on every load and deploys land immediately.
+- **Prerender:** `npm run build` is `react-scripts build && node scripts/prerender.mjs`. The script writes `build/index.html`, `build/projects/<slug>.html` and `build/tuk.html`, each with its own title, description, canonical and OG tags and the page content as plain HTML inside `#root` (wrapped in `.prerender`). An inline script in `public/index.html` hides that snapshot before first paint and React's `createRoot` replaces it. No headless browser, no dependencies. Without it, non-JS crawlers (most AI crawlers) saw only an empty root. It throws if the template's meta tags, canonical link or empty `#root` go missing, so don't rename those in `public/index.html`. Adding a route means adding it to the script's `pages` list.
+- `sreenivas-portfolio/firebase.json` — serves `build/` with `cleanUrls` (so `/projects/juno` serves `projects/juno.html`) and `trailingSlash: false`. **There is no catch-all rewrite:** only `/avatar-lab` and `/world-lab` rewrite to `/index.html`, because they are the only routes without their own prerendered file. Every other unknown path gets `build/404.html` with a real 404 status, and React renders `NotFoundPage` there. **A new route needs either a prerendered file or a rewrite here, or it will 404.** Cache headers are set here too.
 - Firebase matches header rules against the **request path, not the resolved file**. A rule on `/index.html` therefore never applies to `/` or `/projects/juno`, which is why the catch-all negation glob is used instead. Verify header changes with `curl -sI <url>`, not by reading the config.
 - Live URL: `https://sreenivas-portfolio.web.app`
 
@@ -125,7 +128,9 @@ CI/CD via GitHub Actions at the repo root:
 
 **Vercel is now redirect-only.** `sreenivas-portfolio/vercel.json` holds a single permanent redirect of `/(.*)` → `https://sreenivasgurram.com/$1`, deliberately *not* deleted: `Resume.tex` previously linked to `https://portfolio-31jx.vercel.app/`, and résumé PDFs already sent to employers still carry that URL. The Vercel project must stay alive for those links to resolve. Vercel still auto-deploys from `main`, which is harmless — it serves only the redirect.
 
-Because the SPA rewrite is a catch-all, **any missing file under the site root returns 200 with `index.html` rather than 404.** That silently masks broken asset references — `og-image.jpg` and `twitter-image.jpg` are referenced in `index.html` but do not exist, so social link previews receive HTML and render blank. `public/sitemap.xml` was created for the same reason. When adding any absolute asset reference, verify with `curl -sI` that the response is the expected content type, not `text/html`.
+**Structured data and social cards.** Each page's schema.org JSON-LD is generated by `scripts/prerender.mjs` (WebSite + Person on every page, ProfilePage on `/`, CreativeWork + BreadcrumbList on project pages); don't put a static `ld+json` block back in `public/index.html`. The Person node's `sameAs` comes from `profile.sameAs` and is what ties his LinkedIn, GitHub and X to this site; add new profiles (e.g. YouTube) there. `award` only lists achievements with `kind: "award"`. The link-preview card `public/og-image.jpg` (1200x630, Tuk waving, kept under ~300 KB for WhatsApp) and the icons (`favicon.ico`, `apple-touch-icon.png`, `logo192/512.png`) are generated by `~/.claude-tools/brand-assets.mjs` (outside the repo, needs the dev server running); re-run it if the name, role or focus line in `profile.js` changes. Project pages with an `image` use it as their preview instead of the card.
+
+Missing files now return a real **404** (they used to return 200 with `index.html` under the old catch-all rewrite, which hid broken references like `og-image.jpg`). Still verify any new absolute asset reference with `curl -sI`. `sitemap.xml`, `llms.txt` and `llms-full.txt` are generated by `scripts/prerender.mjs` from `src/data`; don't add static copies to `public/`.
 
 ## Machine setup (identities)
 
@@ -149,8 +154,5 @@ Commits from May 2026 are authored with the work email `sreenivas.g@digitalapi.a
 
 ## Known stale bits (left as-is deliberately)
 
-- `manifest.json` still carries the old dark-theme palette (`#00ff96` / `#0a0a0a`) and points at `favicon.ico` while `index.html` uses `favicon.svg`.
-- `index.html` references `og-image.jpg` and `twitter-image.jpg`, which don't exist in `public/`; `robots.txt` points at a nonexistent `sitemap.xml`.
-- `index.html` loads Font Awesome from a CDN, but nothing uses it — dead render-blocking request.
 - `sreenivas-portfolio/README.md` describes an earlier dark-themed version (React 18, neural-network canvas, typing animation, cursor glow) that no longer exists.
 - `.DS_Store` is committed at the repo root.

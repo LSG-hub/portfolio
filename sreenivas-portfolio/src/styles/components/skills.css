@@ -6,6 +6,14 @@
   padding: 2.5rem;
 }
 
+.skills-intro {
+  font-size: 1.15rem;
+  line-height: 1.65;
+  color: var(--text);
+  margin: 0 0 2rem;
+  max-width: 50rem;
+}
+
 .skills-list {
   display: flex;
   flex-direction: column;

@@ -30,11 +30,15 @@ main {
   position: relative;
 }
 
+/* The eyebrow sits tight above the title and the space goes BELOW the title.
+   The title is a sibling of .section-header, not inside it, so the header's own
+   margin only ever separates the eyebrow from the title; the gap before the
+   content has to live on .section-title. */
 .section-header {
   display: flex;
   align-items: baseline;
   gap: 1rem;
-  margin-bottom: 3rem;
+  margin-bottom: 0.75rem;
 }
 
 .section-header-num {
@@ -52,6 +56,7 @@ main {
   font-style: italic;
   letter-spacing: -0.015em;
   color: var(--text);
+  margin-bottom: 3rem;
 }
 
 .fade-in {
@@ -135,38 +140,6 @@ main {
   min-height: 60vh;
 }
 
-.scroll-to-top {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid var(--glass-border);
-  color: var(--ink);
-  cursor: pointer;
-  font-family: var(--font-serif);
-  font-size: 1.1rem;
-  z-index: 50;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.2s ease;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 4px 16px rgba(60, 40, 20, 0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.scroll-to-top.visible {
-  opacity: 1;
-  visibility: visible;
-}
-
-.scroll-to-top:hover {
-  transform: translateY(-2px);
-}
-
 @media (max-width: 720px) {
   .container,
   .container-narrow,
@@ -182,6 +155,10 @@ main {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
     margin-bottom: 2.5rem;
   }
 }

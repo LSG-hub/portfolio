@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { profile } from '../data/profile';
+import { homeMeta } from '../utils/seo';
+import usePageMeta from '../hooks/usePageMeta';
 
 import Hero from '../components/sections/Hero';
 import Projects from '../components/sections/Projects';
@@ -10,6 +13,7 @@ import Contact from '../components/sections/Contact';
 
 const HomePage = () => {
   const location = useLocation();
+  usePageMeta(homeMeta(profile));
 
   useEffect(() => {
     if (location.hash) {

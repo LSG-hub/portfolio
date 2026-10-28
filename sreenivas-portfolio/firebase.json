@@ -6,9 +6,15 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "cleanUrls": true,
+    "trailingSlash": false,
     "rewrites": [
       {
-        "source": "**",
+        "source": "/avatar-lab",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/world-lab",
         "destination": "/index.html"
       }
     ],
