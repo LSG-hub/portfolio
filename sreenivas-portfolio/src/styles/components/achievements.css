@@ -115,3 +115,12 @@
     padding: 1.75rem;
   }
 }
+
+/* Proof link under a claim, e.g. the published paper. */
+.achievement-link {
+  display: inline-block;
+  margin: 0 0 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}

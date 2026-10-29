@@ -87,8 +87,9 @@ export const achievementsData = [
     kind: "publication",
     title: "Co-Authored Research Paper, NCAIT 2025",
     issuer: "11th National Conference on Advancements in Information Technology, JSS Academy of Technical Education",
-    date: "May 2025",
-    description: "Co-authored *'SPEAR: An Innovative AI-Powered Web Development Assistant'* presented at **NCAIT-2025**, Bengaluru. Research on **agentic IDE architecture** for autonomous, context-optimized code generation using *LangGraph* multi-persona orchestration.",
-    skills: ["Research", "LangGraph", "Agentic AI", "Code Generation", "Multi-Persona Orchestration"]
+    date: "2025",
+    description: "Co-authored *'SPEAR (Split Panel Engine for Automated Rendering): An Innovative AI-Powered Web Development Assistant'*, presented at **NCAIT-2025**, Bengaluru, and published in the *JSS Journal of Scientific Studies* (Special Issue 1, December 2025, pp. 9–12). It describes a system that turns plain-language prompts into working websites with a live preview: **92%** of 100 test prompts produced a working site on the first try.",
+    link: { url: "https://jssateb-journal.vercel.app/journal/vol2-issue-2/paper_17.pdf", label: "Read the paper" },
+    skills: ["Research", "Code Generation", "Generative AI", "FastAPI", "React"]
   }
 ];

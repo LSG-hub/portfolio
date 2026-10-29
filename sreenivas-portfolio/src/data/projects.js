@@ -44,27 +44,38 @@ export const projectsData = [
     title: "SPEAR",
     subtitle: "Split Panel Engine for Automated Rendering",
     category: "Code Generation",
-    tagline: "Capstone Project · Published at NCAIT-2025",
-    description: "An autonomous AI software development team built with *LangGraph*, in which *Developer*, *Reviewer*, and *QA* personas collaborate to generate **enterprise-scale applications**. Co-authored research paper presented at **NCAIT-2025**.",
-    detailedDescription: "Agentic IDE architecture demonstrating context-optimized code generation. Multi-persona agents coordinate via *LangGraph* to overcome **LLM context window limits** while maintaining design pattern consistency across enterprise codebases.",
+    tagline: "Published Research · NCAIT-2025",
+    description: "An AI web development assistant that turns a plain-language prompt into a working website with a live preview. The first version is **published research** (NCAIT-2025); I then rebuilt it for my capstone as a *LangGraph* team of *Developer*, *Reviewer* and *QA* agents.",
+    detailedDescription: "**Version 1, published:** a *FastAPI* backend asks *Claude* for HTML, CSS and JavaScript, validates it, and renders it live in the browser through *StackBlitz WebContainer*, all containerised with *Docker*. Across **100 test prompts**, **92%** produced a working website on the first try, and the time to a first prototype fell from about four hours to under five minutes. **Version 2, after the paper:** the single model became a *LangGraph* team of Developer, Reviewer and QA agents on *Gemini*, with file-based generation for applications larger than the model's context window.",
     features: [
-      "**LangGraph-orchestrated multi-persona agents** (*Developer / Reviewer / QA*)",
-      "**95% accuracy** in code compilation and functionality tests",
-      "**File-based coding algorithm** overcomes LLM context window limits",
-      "Maintains consistent design patterns at **enterprise scale**",
-      "Research published at **NCAIT-2025**, *JSS Academy of Technical Education*, Bengaluru, in May 2025"
+      "**Published research (v1):** a natural-language prompt becomes a working website, previewed in real time in *StackBlitz WebContainer*",
+      "**92% of 100 test prompts** produced a working website on the first try, and **over 90%** passed W3C validation",
+      "**Prototype time cut from about 4 hours to under 5 minutes**, with **94% satisfaction** from beta testers",
+      "**Validation before rendering:** *ESLint*, *Prettier* and sandboxed runtime checks on every generated site",
+      "**Capstone upgrade (v2):** *LangGraph*-orchestrated *Developer*, *Reviewer* and *QA* agents on *Gemini*",
+      "**File-based generation (v2)** for applications larger than the model's context window",
+      "Paper published in the *JSS Journal of Scientific Studies*, Special Issue 1 (December 2025), pp. 9–12, from **NCAIT-2025**"
     ],
-    technologies: ["Python", "FastAPI", "React", "LangGraph", "Docker", "Gemini", "MongoDB"],
+    technologies: ["Python", "FastAPI", "React", "TypeScript", "Claude", "StackBlitz WebContainer", "Docker", "LangGraph", "Gemini", "MongoDB"],
     metrics: {
-      accuracy: "95% code compilation",
-      publication: "NCAIT-2025",
-      personas: "Developer / Reviewer / QA",
-      focus: "Enterprise-scale generation"
+      firstTrySuccess: "92% of 100 prompts (v1)",
+      prototypeTime: "~4 h to under 5 min (v1)",
+      publication: "JSS Journal of Scientific Studies, 2025",
+      upgrade: "LangGraph multi-agent (v2)"
     },
     status: "Completed",
     github: null,
     demo: null,
     embed: null,
+    /** The published paper (v1). Proof for the claims above; cited in the JSON-LD too. */
+    paper: {
+      url: "https://jssateb-journal.vercel.app/journal/vol2-issue-2/paper_17.pdf",
+      title: "SPEAR (Split Panel Engine for Automated Rendering): An Innovative AI-Powered Web Development Assistant",
+      venue: "JSS Journal of Scientific Studies, Special Issue 1 (NCAIT-2025)",
+      published: "2025-12",
+      pages: "9-12",
+      authors: ["Pranava C Hiremath", "Varsha R", "Sreenivas Gurram", "Rohith B"]
+    },
     accent: "#3F4A2A",
     gradient: "linear-gradient(135deg, #DDE5C5 0%, #C9D5A8 50%, #A8B987 100%)"
   },

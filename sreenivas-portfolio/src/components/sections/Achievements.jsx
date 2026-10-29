@@ -32,6 +32,17 @@ const AchievementCard = ({ achievement }) => {
 
         <p className="achievement-description">{richText(achievement.description)}</p>
 
+        {achievement.link && (
+          <a
+            href={achievement.link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="achievement-link"
+          >
+            {achievement.link.label} <span className="arrow">↗</span>
+          </a>
+        )}
+
         <div className="achievement-tags">
           {achievement.skills.map((skill) => (
             <span key={skill} className="achievement-tag">{skill}</span>

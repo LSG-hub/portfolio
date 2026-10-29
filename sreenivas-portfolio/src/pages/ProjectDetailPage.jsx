@@ -119,7 +119,7 @@ const ProjectDetailPage = () => {
           </div>
         </section>
 
-        {(project.demo || project.github) && (
+        {(project.demo || project.github || project.paper) && (
           <div className="project-detail-cta">
             {project.demo && (
               <a
@@ -129,6 +129,16 @@ const ProjectDetailPage = () => {
                 className="glass-link primary"
               >
                 Watch demo <span className="arrow">&rarr;</span>
+              </a>
+            )}
+            {project.paper && (
+              <a
+                href={project.paper.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass-link primary"
+              >
+                Read the paper <span className="arrow">↗</span>
               </a>
             )}
             {project.github && (
