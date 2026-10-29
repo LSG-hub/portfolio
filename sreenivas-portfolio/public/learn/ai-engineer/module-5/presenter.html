@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt Engineering · Presenter</title>
+<style>
+@font-face { font-family: "Inter"; src: url(fonts/inter-latin-400-normal.woff2) format("woff2"); font-weight: 400; }
+@font-face { font-family: "Inter"; src: url(fonts/inter-latin-600-normal.woff2) format("woff2"); font-weight: 600; }
+@font-face { font-family: "JBM"; src: url(fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2"); font-weight: 400; }
+:root { --bg:#0b0c10; --panel:#14161c; --line:rgba(236,232,223,.12); --ink:#ece8df; --ink2:#b9b6ae; --dim:#7d828c; --amber:#f2b84b; --red:#ff6b5e; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--ink); font-family: Inter, -apple-system, sans-serif; overflow: hidden; }
+.app { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 14px; height: 100%; padding: 14px; }
+header { grid-column: 1 / 3; display: flex; align-items: center; gap: 22px; font-family: JBM, monospace; font-size: 14px; color: var(--dim); }
+header .clock { font-size: 30px; color: var(--ink); letter-spacing: .04em; }
+header .clock.warn { color: var(--amber); }
+header .pos { color: var(--amber); }
+header .sp { flex: 1; }
+.btn { font-family: JBM, monospace; font-size: 13px; color: var(--ink2); background: var(--panel); border: 1px solid var(--line); padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+.btn:hover { border-color: var(--amber); color: var(--ink); }
+.btn.on { background: var(--amber); color: #000; }
+.left { display: flex; flex-direction: column; gap: 10px; min-height: 0; min-width: 0; }
+.frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+.label { font-family: JBM, monospace; font-size: 12px; letter-spacing: .14em; color: var(--dim); text-transform: uppercase; display: flex; gap: 12px; }
+.label b { color: var(--amber); font-weight: 400; }
+.beats { display: flex; gap: 6px; margin-left: auto; }
+.beats i { width: 18px; height: 6px; border-radius: 3px; background: var(--line); display: inline-block; }
+.beats i.done { background: var(--amber); }
+.right { display: flex; flex-direction: column; gap: 10px; min-height: 0; min-width: 0; }
+.below { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 6px; min-height: 0; }
+.below .col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.notes { flex: 1; min-height: 0; overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 22px 26px; }
+.notes h2 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+.notes .meta { font-family: JBM, monospace; font-size: 12px; color: var(--dim); margin-bottom: 18px; letter-spacing: .08em; }
+.notes p { font-size: var(--nfs, 22px); line-height: 1.55; color: var(--ink); margin-bottom: 14px; }
+.notes .screen { font-size: 14px; color: var(--dim); border-left: 2px solid var(--line); padding-left: 12px; margin-bottom: 18px; white-space: pre-wrap; }
+.notes .clk { font-family: JBM, monospace; font-size: .62em; letter-spacing: .1em; color: #000; background: var(--amber); padding: 2px 6px; border-radius: 4px; vertical-align: 2px; }
+.notes .cut { color: var(--dim); border-left: 2px dashed var(--amber); padding-left: 12px; }
+.dc { display: flex; flex-wrap: wrap; gap: 8px; }
+footer { grid-column: 1 / 3; display: flex; gap: 8px; align-items: center; }
+.big { font-size: 15px; padding: 12px 22px; }
+.hint { font-family: JBM, monospace; font-size: 12px; color: var(--dim); margin-left: auto; }
+.offline { color: var(--red); }
+.subsP { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.subsP .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.subsP .btn { white-space: nowrap; text-align: center; }
+#ccOn { width: 72px; } #ccMode { width: 128px; } #ccSize { width: 66px; } #ccPos { width: 70px; } #ccLang { width: 62px; } #ccSim { width: 70px; }
+.subsP .btn { padding: 6px 10px; font-size: 12px; }
+.subsP .mic { font-family: JBM, monospace; font-size: 12px; color: var(--dim); margin-left: auto; width: 170px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.subsP .mic.listening { color: #5fd39a; }
+.subsP .mic.blocked, .subsP .mic.error, .subsP .mic.unsupported { color: var(--red); }
+.subsP .ln { font-family: JBM, monospace; font-size: 12px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; height: 16px; min-width: 0; }
+.subsP .ln span { color: var(--ink2); }
+.subsP .ln.at span b { color: var(--amber); font-weight: 400; }
+/* vertical monitor: stack the panels (current slide on top, next + director's cut, notes in the middle, subtitles + controls at the bottom) */
+@media (orientation: portrait) {
+  .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr) auto; }
+  header, footer { grid-column: 1; }
+  .nowF { width: min(100%, calc(36vh * 16 / 9)); align-self: center; }
+  .below { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-top: 0; }
+  .below .frame { width: min(100%, calc(17vh * 16 / 9)); }
+  footer { flex-wrap: wrap; }
+  footer .hint { flex-basis: 100%; margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <span class="clock" id="clock">00:00</span>
+    <button class="btn" id="timerBtn">START TIMER</button>
+    <button class="btn" id="resetBtn">RESET</button>
+    <span id="wall"></span>
+    <span class="sp"></span>
+    <span class="pos" id="pos">waiting for deck…</span>
+  </header>
+  <div class="left">
+    <div class="label"><b>NOW</b><span id="curTitle"></span><span class="beats" id="beats"></span></div>
+    <div class="frame nowF"><iframe id="curF" src="./?follow"></iframe></div>
+    <div class="below">
+      <div class="col">
+        <div class="label"><b>NEXT</b><span id="nextTitle"></span></div>
+        <div class="frame"><iframe id="nextF" src="./?follow&offset=1"></iframe></div>
+      </div>
+      <div class="col">
+        <div class="label"><b>DIRECTOR'S CUT</b></div>
+        <div class="dc" id="dc"></div>
+      </div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="notes" id="notes"></div>
+    <div class="subsP">
+      <div class="row">
+        <span class="label"><b>SUBTITLES</b></span>
+        <button class="btn" id="ccOn">CC ON</button>
+        <button class="btn" id="ccMode">FOLLOW SCRIPT</button>
+        <button class="btn" id="ccSize">SIZE M</button>
+        <button class="btn" id="ccPos">BOTTOM</button>
+        <button class="btn" id="ccLang">EN-IN</button>
+        <button class="btn" id="ccSim">TEST ▶</button>
+        <span class="mic" id="ccMic">● mic off</span>
+      </div>
+      <div class="ln">HEARD &nbsp;<span id="ccHeard">—</span></div>
+      <div class="ln at">SCRIPT <span id="ccAt">—</span></div>
+      <div class="row">
+        <button class="btn" data-nudge="-1">◀ WORD</button><button class="btn" data-nudge="1">WORD ▶</button>
+        <button class="btn" id="ccSent">SENTENCE ▶</button><button class="btn" id="ccSync">↺ BACK TO CLICK</button><button class="btn" id="ccClear">CLEAR</button>
+        <span class="hint" style="margin-left:auto">S toggles subtitles</span>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <button class="btn" data-cmd="home">⏮ START</button>
+    <button class="btn big" data-cmd="prev">◀ BACK</button>
+    <button class="btn big" data-cmd="next">NEXT ▶</button>
+    <button class="btn" id="skipBtn" data-cmd="skip">OPTIONAL: SHOWN</button>
+    <button class="btn" data-cmd="black">BLACK SCREEN</button>
+    <button class="btn" id="fsm">A−</button><button class="btn" id="fsp">A+</button>
+    <span class="hint">→ / space next · ← back · 0 or ⌘← start · S subtitles · O optional · B black · D director's cut · Esc return</span>
+  </footer>
+</div>
+<script src="js/subs.js"></script>
+<script>
+const chan = new BroadcastChannel('m5-cut3-deck');
+const send = (cmd, extra = {}) => chan.postMessage(Object.assign({ type: 'cmd', cmd }, extra));
+let notes = {}, state = null;
+fetch('data/notes.json', { cache: 'no-store' }).then(r => r.json()).then(n => { notes = n; render(); if (window.syncFollower) syncFollower(); }).catch(() => {});
+
+const esc = s => String(s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const clicks = h => h.replace(/\[click\]/g, '<span class="clk">▶ CLICK</span>');
+function paras(t) { return clicks(esc(t)).split(/\n\s*\n/).map(p => p.trim()).filter(Boolean).map(p => p.startsWith('✂') ? `<p class="cut">${p}</p>` : `<p>${p}</p>`).join(''); }
+function render() {
+  if (!state) return;
+  const n = notes[state.id] || {};
+  document.getElementById('pos').textContent = `${state.dc ? "DIRECTOR'S CUT · " : ''}${state.id} · ${state.index + 1} / ${state.total}`;
+  document.getElementById('curTitle').textContent = n.title || state.id;
+  document.getElementById('nextTitle').textContent = state.next ? `${state.next} · ${(notes[state.next] || {}).title || ''}` : 'END';
+  document.getElementById('beats').innerHTML = Array.from({ length: state.steps }, (_, i) => `<i class="${i < state.beat ? 'done' : ''}"></i>`).join('');
+  const nb = document.getElementById('notes');
+  nb.innerHTML = `<h2>${esc(n.title || state.id)}</h2><div class="meta">${n.optional ? 'OPTIONAL · ' : ''}CLICKS ${state.beat}/${state.steps}</div>` +
+    (n.screen ? `<div class="screen">${esc(n.screen)}</div>` : '') + (paras(n.say) || '<p style="color:var(--dim)">No notes for this scene.</p>');
+  const sk = document.getElementById('skipBtn');
+  sk.textContent = state.skip ? 'OPTIONAL: SKIPPED' : 'OPTIONAL: SHOWN'; sk.classList.toggle('on', state.skip);
+  const dc = document.getElementById('dc');
+  dc.innerHTML = (state.dc ? `<button class="btn on" data-close>◀ RETURN FROM DIRECTOR'S CUT</button>` : '') +
+    ((state.dcAvail || []).map(d => `<button class="btn" data-dc="${d.id}">🎬 ${esc(d.title)}</button>`).join('') || (state.dc ? '' : '<span class="hint" style="margin:0">none for this scene</span>'));
+  dc.querySelectorAll('[data-dc]').forEach(b => b.onclick = () => send('dc', { id: b.dataset.dc }));
+  dc.querySelectorAll('[data-close]').forEach(b => b.onclick = () => send('closedc'));
+}
+chan.onmessage = (ev) => {
+  const m = ev.data || {};
+  if (m.type === 'state') {
+    const sceneChanged = !state || state.id !== m.id;
+    state = m; render();
+    if (sceneChanged) document.getElementById('notes').scrollTop = 0;
+  }
+};
+send('hello');
+setInterval(() => { if (!state) send('hello'); }, 1500);
+
+document.querySelectorAll('[data-cmd]').forEach(b => b.onclick = () => send(b.dataset.cmd));
+addEventListener('keydown', (e) => {
+  const k = e.key;
+  if (['ArrowRight', ' ', 'PageDown', 'Enter'].includes(k)) { e.preventDefault(); send('next'); }
+  else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(k) && !(e.metaKey || e.ctrlKey)) { e.preventDefault(); send('prev'); }
+  else if (k === 'Home' || k === '0' || (k === 'ArrowLeft' && (e.metaKey || e.ctrlKey))) { e.preventDefault(); send('home'); }
+  else if (k === 'o' || k === 'O') send('skip');
+  else if (k === 'b' || k === 'B' || k === '.') send('black');
+  else if (k === 'Escape') send('closedc');
+  else if (k === 's' || k === 'S') setOn(!CC.on);
+  else if ((k === 'd' || k === 'D') && state && state.dcAvail && state.dcAvail[0]) send('dc', { id: state.dcAvail[0].id });
+});
+
+// timer
+let t0 = null, acc = 0;
+const fmt = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+document.getElementById('timerBtn').onclick = (e) => {
+  if (t0) { acc += (Date.now() - t0) / 1000; t0 = null; e.target.textContent = 'RESUME'; }
+  else { t0 = Date.now(); e.target.textContent = 'PAUSE'; }
+};
+document.getElementById('resetBtn').onclick = () => { t0 = t0 ? Date.now() : null; acc = 0; };
+setInterval(() => {
+  const s = acc + (t0 ? (Date.now() - t0) / 1000 : 0);
+  const c = document.getElementById('clock'); c.textContent = fmt(s); c.classList.toggle('warn', s > 45 * 60);
+  document.getElementById('wall').textContent = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+}, 500);
+
+// notes font size
+let nfs = 22;
+document.getElementById('fsm').onclick = () => { nfs = Math.max(14, nfs - 2); document.documentElement.style.setProperty('--nfs', nfs + 'px'); };
+document.getElementById('fsp').onclick = () => { nfs = Math.min(34, nfs + 2); document.documentElement.style.setProperty('--nfs', nfs + 'px'); };
+
+// ---------------- live subtitles: the mic and the script follower run here; the deck only draws ----------------
+const CC = Object.assign({ on: true, mode: 'script', size: 'M', pos: 'bottom', lang: 'en-IN' }, (() => { try { return JSON.parse(localStorage.getItem('m5-cut3-cc') || '{}'); } catch (e) { return {}; } })());
+let F = null, fScene = null, fBeat = 0, sim = null, rawText = '';
+const $ = (id) => document.getElementById(id);
+const saveCC = () => { try { localStorage.setItem('m5-cut3-cc', JSON.stringify(CC)); } catch (e) {} };
+const sendOpt = () => chan.postMessage({ type: 'subsOpt', opt: { visible: CC.on, size: CC.size, pos: CC.pos } });
+let qT = null;
+function push(preview = false) {
+  clearTimeout(qT);
+  const words = !CC.on ? null : CC.mode === 'raw' ? rawText.split(/\s+/).slice(-14).join(' ') : (F ? F.line(preview) : null);
+  chan.postMessage({ type: 'subs', words });
+  // teleprompter: a finished line stays lit for a moment, then the next one appears dimmed, ready to be read
+  if (CC.on && CC.mode !== 'raw' && F && !preview && F.chunkDone()) qT = setTimeout(() => push(true), 1100);
+  $('ccAt').innerHTML = F ? esc(F.context()).replace(/\[([^\]]*)\]/, '<b>$1</b>') : '—';
+}
+function ccUI() {
+  $('ccOn').textContent = CC.on ? 'CC ON' : 'CC OFF'; $('ccOn').classList.toggle('on', CC.on);
+  $('ccMode').textContent = CC.mode === 'raw' ? 'RAW SPEECH' : 'FOLLOW SCRIPT';
+  $('ccSize').textContent = 'SIZE ' + CC.size; $('ccPos').textContent = CC.pos.toUpperCase(); $('ccLang').textContent = CC.lang.toUpperCase();
+  $('ccSim').classList.toggle('on', !!sim);
+}
+const mic = Subs.Mic((words, raw) => {
+  rawText = raw; $('ccHeard').textContent = raw.split(/\s+/).slice(-16).join(' ') || '—';
+  if (CC.mode === 'raw') push(); else if (F && F.feed(words)) push();
+}, (st, msg) => { const m = $('ccMic'); m.className = 'mic ' + st; m.textContent = '● ' + (st === 'listening' ? 'mic listening' : msg); });
+mic.lang = CC.lang;
+function syncFollower() { // called on every deck state message
+  if (!state || !notes[state.id]) return;
+  if (state.id !== fScene) { fScene = state.id; fBeat = state.beat; F = Subs.Follower(notes[state.id].say || ''); F.anchor(state.beat, true); if (sim) { sim.stop(); sim = null; ccUI(); } push(true); }
+  else if (state.beat !== fBeat) { F.anchor(state.beat, state.beat < fBeat); fBeat = state.beat; push(true); }
+}
+function setOn(v) { CC.on = v; saveCC(); ccUI(); sendOpt(); push(); if (v) mic.start(); else mic.stop(); }
+$('ccOn').onclick = () => setOn(!CC.on);
+$('ccMode').onclick = () => { CC.mode = CC.mode === 'raw' ? 'script' : 'raw'; saveCC(); ccUI(); push(); };
+$('ccSize').onclick = () => { CC.size = { S: 'M', M: 'L', L: 'S' }[CC.size]; saveCC(); ccUI(); sendOpt(); };
+$('ccPos').onclick = () => { CC.pos = CC.pos === 'bottom' ? 'top' : 'bottom'; saveCC(); ccUI(); sendOpt(); };
+$('ccLang').onclick = () => { CC.lang = CC.lang === 'en-IN' ? 'en-US' : 'en-IN'; mic.setLang(CC.lang); saveCC(); ccUI(); };
+$('ccSim').onclick = () => {
+  if (sim) { sim.stop(); sim = null; } else if (F) { F.anchor(state ? state.beat : 0, true); sim = Subs.simulate(notes[fScene].say, (w, raw) => { rawText = raw; $('ccHeard').textContent = raw; if (CC.mode === 'raw') push(); else if (F.feed(w)) push(); }, 2.6, F.cur + 1); }
+  ccUI();
+};
+document.querySelectorAll('[data-nudge]').forEach(b => b.onclick = () => { if (F) { F.nudge(+b.dataset.nudge); push(); } });
+$('ccSent').onclick = () => { if (F) { F.nextSentence(); push(); } };
+$('ccSync').onclick = () => { if (F && state) { F.anchor(state.beat, true); push(true); } };
+$('ccClear').onclick = () => chan.postMessage({ type: 'subs', words: null });
+// the deck's S key
+chan.addEventListener('message', (ev) => { const m = ev.data || {}; if (m.type === 'subsCtl') setOn(!!m.visible); if (m.type === 'state') syncFollower(); });
+// Safari wants a user gesture before the mic starts: the first click or key in this window starts it
+const kick = () => { if (CC.on) mic.start(); };
+addEventListener('pointerdown', kick, { once: true }); addEventListener('keydown', kick, { once: true });
+setInterval(sendOpt, 3000); sendOpt(); ccUI();
+</script>
+</body>
+</html>
