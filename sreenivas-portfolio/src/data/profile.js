@@ -29,7 +29,7 @@ export const profile = {
    */
   facts: [
     { label: "Recognition", value: "2nd Runner-Up at Google Cloud Agentic AI Day 2025, a Guinness World Record-certified hackathon · 1,941\u00a0developers · 700+\u00a0teams · INR\u00a01\u00a0Lakh\u00a0prize" },
-    { label: "Research", value: "Co-author, NCAIT-2025 · agentic IDE architecture" },
+    { label: "Research", value: "Co-author, NCAIT-2025 · AI-powered web development assistant" },
     { label: "Location", value: "Bangalore, India · open to collaboration and consulting" }
   ],
 

@@ -156,6 +156,7 @@ const achievementsSection = () => `
     <h3>${esc(a.title)}</h3>
     <p>${esc(a.issuer)} · ${esc(a.date)}</p>
     <p>${rich(a.description)}</p>
+    ${a.link ? `<p><a href="${esc(a.link.url)}">${esc(a.link.label)}</a></p>` : ''}
   </article>`
     )
     .join('')}
@@ -215,6 +216,7 @@ const projectBody = (p) => `
       .join('')}</dl>
     <h2>Stack</h2>
     <p>${esc(p.technologies.join(', '))}</p>
+    ${p.paper ? `<p><a href="${esc(p.paper.url)}">Read the published paper: ${esc(p.paper.title)}</a> (${esc(p.paper.venue)}, pp. ${esc(p.paper.pages)})</p>` : ''}
     ${p.demo ? `<p><a href="${esc(p.demo)}">Watch the demo</a></p>` : ''}
     ${p.github ? `<p><a href="${esc(p.github)}">Source on GitHub</a></p>` : ''}
   </article>
@@ -285,6 +287,20 @@ const breadcrumb = (url, name) => ({
   ]
 });
 
+/** A published paper, so search engines and AI systems can verify the publication itself. */
+const paperNode = (p) => ({
+  '@type': 'ScholarlyArticle',
+  '@id': `${p.paper.url}#article`,
+  headline: p.paper.title,
+  url: p.paper.url,
+  datePublished: p.paper.published,
+  pagination: p.paper.pages,
+  isPartOf: { '@type': 'Periodical', name: p.paper.venue },
+  author: p.paper.authors.map((name) => (name === profile.name ? { '@id': ID.person } : { '@type': 'Person', name })),
+  about: { '@id': `${SITE_URL}/projects/${p.slug}#work` }
+});
+const papers = () => projectsData.filter((p) => p.paper).map(paperNode);
+
 const graph = (...nodes) => ({ '@context': 'https://schema.org', '@graph': [websiteNode(), personNode(), ...nodes] });
 
 const homeGraph = (meta) =>
@@ -295,7 +311,7 @@ const homeGraph = (meta) =>
     name: meta.title,
     isPartOf: { '@id': ID.website },
     mainEntity: { '@id': ID.person }
-  });
+  }, ...papers());
 
 const projectGraph = (p, meta) => {
   const url = `${SITE_URL}${meta.path}`;
@@ -311,8 +327,10 @@ const projectGraph = (p, meta) => {
       genre: p.category,
       keywords: p.technologies.join(', '),
       author: { '@id': ID.person },
-      creator: { '@id': ID.person }
+      creator: { '@id': ID.person },
+      ...(p.paper && { subjectOf: { '@id': `${p.paper.url}#article` } })
     },
+    ...(p.paper ? [paperNode(p)] : []),
     {
       '@type': 'WebPage',
       '@id': url,
@@ -399,7 +417,7 @@ const mdHome = () =>
     '## Education',
     ...educationData.map((ed) => `### ${ed.degree}, ${ed.institution}\n\n${ed.location} · ${ed.duration} · CGPA ${ed.cgpa}`),
     '## Achievements',
-    ...achievementsData.map((a) => `### ${a.title}\n\n${a.issuer} · ${a.date}\n\n${a.description}`),
+    ...achievementsData.map((a) => `### ${a.title}\n\n${a.issuer} · ${a.date}\n\n${a.description}${a.link ? `\n\n${a.link.label}: ${a.link.url}` : ''}`),
     '## Skills',
     skillsIntro,
     Object.values(skillsData).map((g) => `- **${g.title}:** ${g.skills.join(', ')}`).join('\n'),
@@ -422,7 +440,7 @@ const mdProject = (p) =>
     '### Highlights',
     Object.entries(p.metrics).map(([k, v]) => `- **${formatLabel(k)}:** ${v}`).join('\n'),
     `### Stack\n\n${p.technologies.join(', ')}`,
-    [p.demo && `Demo: ${p.demo}`, p.github && `Source: ${p.github}`].filter(Boolean).join('\n')
+    [p.paper && `Published paper: ${p.paper.url}`, p.demo && `Demo: ${p.demo}`, p.github && `Source: ${p.github}`].filter(Boolean).join('\n')
   ]
     .filter(Boolean)
     .join('\n\n');
