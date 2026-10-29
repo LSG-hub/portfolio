@@ -25,7 +25,7 @@ const NotFoundPage = () => {
         <ul className="not-found-links">
           <li><Link to="/">Back to the portfolio &rarr;</Link></li>
           {projectsData.map((p) => (
-            <li key={p.slug}><Link to={`/projects/${p.slug}`}>{p.title}: {p.subtitle}</Link></li>
+            <li key={p.slug}><Link to={`/projects/${p.slug}/`}>{p.title}: {p.subtitle}</Link></li>
           ))}
         </ul>
       </div>

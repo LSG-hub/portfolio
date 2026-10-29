@@ -12,7 +12,7 @@ const ProjectCard = ({ project, index }) => {
 
   return (
     <Link
-      to={`/projects/${project.slug}`}
+      to={`/projects/${project.slug}/`}
       ref={ref}
       className={`project-card glass fade-in ${inView ? 'is-visible' : ''}`}
     >

@@ -6,8 +6,7 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "cleanUrls": true,
-    "trailingSlash": false,
+    "trailingSlash": true,
     "rewrites": [
       {
         "source": "/avatar-lab",

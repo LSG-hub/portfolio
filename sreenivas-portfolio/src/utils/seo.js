@@ -9,6 +9,12 @@
 
 export const SITE_URL = 'https://sreenivasgurram.com';
 
+/**
+ * Every page is a folder and every URL ends in a slash (firebase.json has
+ * trailingSlash: true). One rule for the portfolio and the /learn decks, whose
+ * relative asset paths only resolve from a folder URL. Keep new paths in this form.
+ */
+
 /** Strip the **bold** / *italic* markup that utils/richText renders. */
 export const plainText = (text = '') =>
   text.replace(/\*\*([^*]+?)\*\*|\*([^*]+?)\*/g, (_, bold, italic) => bold ?? italic);
@@ -27,7 +33,7 @@ export const homeMeta = (profile) => ({
 });
 
 export const projectMeta = (project, profile) => ({
-  path: `/projects/${project.slug}`,
+  path: `/projects/${project.slug}/`,
   title: `${project.title}: ${project.subtitle} · ${profile.name}`,
   description: clip(plainText(project.description))
 });
@@ -39,7 +45,7 @@ export const notFoundMeta = (profile) => ({
 });
 
 export const tukMeta = (profile) => ({
-  path: '/tuk',
+  path: '/tuk/',
   title: `Tuk, at home · ${profile.name}`,
   description:
     'Tuk is the small robot who lives on this site. Watch his five-minute day at home: he boils a kettle he has no use for, waters a plant, sweeps, watches television and goes back to bed.'

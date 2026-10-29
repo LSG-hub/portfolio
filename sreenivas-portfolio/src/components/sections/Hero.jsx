@@ -56,7 +56,7 @@ const Hero = () => {
             <a href={`mailto:${profile.email}`} className="glass-link primary">
               Get in touch <span className="arrow">&rarr;</span>
             </a>
-            <Link to="/projects/juno" className="glass-link">
+            <Link to="/projects/juno/" className="glass-link">
               See my best work <span className="arrow">&rarr;</span>
             </Link>
           </div>
