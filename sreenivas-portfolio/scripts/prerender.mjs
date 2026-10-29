@@ -138,7 +138,7 @@ const projectsSection = () => `
     .map(
       (p) => `
   <article>
-    <h3><a href="/projects/${esc(p.slug)}">${esc(p.title)}: ${esc(p.subtitle)}</a></h3>
+    <h3><a href="/projects/${esc(p.slug)}/">${esc(p.title)}: ${esc(p.subtitle)}</a></h3>
     <p>${esc(p.tagline)}</p>
     <p>${rich(p.description)}</p>
   </article>`
@@ -193,7 +193,7 @@ const homeBody = () =>
     skillsSection(),
     contactSection(),
     '</main>',
-    `<footer><p>Also on this site: <a href="/tuk">Tuk, at home</a>.</p></footer>`
+    `<footer><p>Also on this site: <a href="/tuk/">Tuk, at home</a>.</p></footer>`
   ].join('\n');
 
 const projectBody = (p) => `
@@ -230,7 +230,7 @@ const notFoundBody = () => `
   <p>There is nothing at this address. It may have moved, or the link may be mistyped.</p>
   <ul>
     <li><a href="/">Back to the portfolio</a></li>
-    ${projectsData.map((p) => `<li><a href="/projects/${esc(p.slug)}">${esc(p.title)}: ${esc(p.subtitle)}</a></li>`).join('')}
+    ${projectsData.map((p) => `<li><a href="/projects/${esc(p.slug)}/">${esc(p.title)}: ${esc(p.subtitle)}</a></li>`).join('')}
   </ul>
 </main>`;
 
@@ -297,7 +297,7 @@ const paperNode = (p) => ({
   pagination: p.paper.pages,
   isPartOf: { '@type': 'Periodical', name: p.paper.venue },
   author: p.paper.authors.map((name) => (name === profile.name ? { '@id': ID.person } : { '@type': 'Person', name })),
-  about: { '@id': `${SITE_URL}/projects/${p.slug}#work` }
+  about: { '@id': `${SITE_URL}/projects/${p.slug}/#work` }
 });
 const papers = () => projectsData.filter((p) => p.paper).map(paperNode);
 
@@ -430,7 +430,7 @@ const mdHome = () =>
 const mdProject = (p) =>
   [
     `## Project: ${p.title}, ${p.subtitle}`,
-    `URL: ${SITE_URL}/projects/${p.slug}`,
+    `URL: ${SITE_URL}/projects/${p.slug}/`,
     p.tagline,
     p.description,
     '### Overview',
@@ -454,8 +454,8 @@ const llmsTxt = () =>
     '## Pages',
     [
       `- [Home](${SITE_URL}/): experience, projects, achievements, skills and contact`,
-      ...projectsData.map((p) => `- [${p.title}](${SITE_URL}/projects/${p.slug}): ${p.subtitle}. ${p.tagline}`),
-      `- [Tuk, at home](${SITE_URL}/tuk): ${tukMeta(profile).description}`
+      ...projectsData.map((p) => `- [${p.title}](${SITE_URL}/projects/${p.slug}/): ${p.subtitle}. ${p.tagline}`),
+      `- [Tuk, at home](${SITE_URL}/tuk/): ${tukMeta(profile).description}`
     ].join('\n'),
     '## Full content',
     `- [llms-full.txt](${SITE_URL}/llms-full.txt): the whole site as Markdown`,
@@ -471,9 +471,9 @@ const template = await readFile(join(BUILD, 'index.html'), 'utf8');
 
 const pages = [
   { file: 'index.html', meta: homeMeta(profile), body: homeBody(), jsonLd: homeGraph(homeMeta(profile)) },
-  { file: 'tuk.html', meta: tukMeta(profile), body: null, jsonLd: tukGraph(tukMeta(profile)) },
+  { file: 'tuk/index.html', meta: tukMeta(profile), body: null, jsonLd: tukGraph(tukMeta(profile)) },
   ...projectsData.map((p) => ({
-    file: `projects/${p.slug}.html`,
+    file: `projects/${p.slug}/index.html`,
     meta: projectMeta(p, profile),
     body: projectBody(p),
     jsonLd: projectGraph(p, projectMeta(p, profile)),
