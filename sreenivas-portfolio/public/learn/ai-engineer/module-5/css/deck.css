@@ -1,0 +1,181 @@
+/* ============ OPEN · Module 3 deck · design system ============ */
+@font-face { font-family: "Fraunces"; src: url(../fonts/fraunces-latin-300-normal.woff2) format("woff2"); font-weight: 300; }
+@font-face { font-family: "Fraunces"; src: url(../fonts/fraunces-latin-400-normal.woff2) format("woff2"); font-weight: 400; }
+@font-face { font-family: "Fraunces"; src: url(../fonts/fraunces-latin-600-normal.woff2) format("woff2"); font-weight: 600; }
+@font-face { font-family: "Fraunces"; src: url(../fonts/fraunces-latin-700-normal.woff2) format("woff2"); font-weight: 700; }
+@font-face { font-family: "Fraunces"; src: url(../fonts/fraunces-latin-400-italic.woff2) format("woff2"); font-weight: 400; font-style: italic; }
+@font-face { font-family: "Fraunces"; src: url(../fonts/fraunces-latin-300-italic.woff2) format("woff2"); font-weight: 300; font-style: italic; }
+@font-face { font-family: "Inter"; src: url(../fonts/inter-latin-300-normal.woff2) format("woff2"); font-weight: 300; }
+@font-face { font-family: "Inter"; src: url(../fonts/inter-latin-400-normal.woff2) format("woff2"); font-weight: 400; }
+@font-face { font-family: "Inter"; src: url(../fonts/inter-latin-500-normal.woff2) format("woff2"); font-weight: 500; }
+@font-face { font-family: "Inter"; src: url(../fonts/inter-latin-600-normal.woff2) format("woff2"); font-weight: 600; }
+@font-face { font-family: "Inter"; src: url(../fonts/inter-latin-700-normal.woff2) format("woff2"); font-weight: 700; }
+@font-face { font-family: "JBM"; src: url(../fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2"); font-weight: 400; }
+@font-face { font-family: "JBM"; src: url(../fonts/jetbrains-mono-latin-500-normal.woff2) format("woff2"); font-weight: 500; }
+@font-face { font-family: "JBM"; src: url(../fonts/jetbrains-mono-latin-700-normal.woff2) format("woff2"); font-weight: 700; }
+
+:root {
+  --bg: #07080b;
+  --bg-2: #0d0f14;
+  --panel: #12151c;
+  --line: rgba(236, 232, 223, 0.12);
+  --line-2: rgba(236, 232, 223, 0.22);
+  --ink: #ece8df;
+  --ink-2: #b9b6ae;
+  --dim: #7d828c;
+  --faint: #4a4f59;
+  --amber: #f2b84b;
+  --amber-soft: rgba(242, 184, 75, 0.14);
+  --red: #ff6b5e;
+  --green: #5fd39a;
+  --blue: #6aa8ff;
+  /* family colours */
+  --openai: #19c37d;
+  --anthropic: #e07a53;
+  --google: #5b9cff;
+  --gemma: #8fc1ff;
+  --cohere: #ff8a73;
+  --mistral: #ff7a1a;
+  --meta: #3d8bff;
+  --deepseek: #6c7cff;
+  --qwen: #a07bff;
+  --china: #ff5f6d;
+  --india: #ff9b3d;
+  --serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --sans: "Inter", -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --mono: "JBM", "SF Mono", Menlo, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+body { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+/* ---------- the 1920×1080 stage, scaled to fit ---------- */
+#viewport { position: fixed; inset: 0; background: #000; overflow: hidden; }
+#stage {
+  position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 40%, var(--bg-2) 0%, var(--bg) 60%, #040507 100%);
+  transform-origin: center center;
+}
+#scene { position: absolute; inset: 0; }
+
+/* film finishing */
+#grain { position: absolute; inset: -50%; width: 200%; height: 200%; pointer-events: none; opacity: 0.07; mix-blend-mode: overlay; z-index: 50; }
+#vignette { position: absolute; inset: 0; pointer-events: none; z-index: 49;
+  background: radial-gradient(110% 85% at 50% 45%, transparent 55%, rgba(0,0,0,0.55) 100%); }
+#blackout { position: absolute; inset: 0; background: #000; z-index: 90; opacity: 0; pointer-events: none; transition: opacity .4s; }
+#blackout.on { opacity: 1; }
+
+/* chrome: chapter label + timeline ribbon */
+#chrome-chapter { position: absolute; top: 44px; left: 72px; z-index: 40; font-family: var(--mono); font-size: 15px;
+  letter-spacing: .22em; text-transform: uppercase; color: var(--dim); display: flex; gap: 18px; align-items: center; }
+#chrome-chapter .num { color: var(--amber); }
+#chrome-chapter .opt { color: var(--faint); border: 1px solid var(--faint); padding: 2px 8px; border-radius: 4px; font-size: 12px; letter-spacing: .12em; }
+#ribbon { position: absolute; left: 72px; right: 72px; bottom: 40px; height: 34px; z-index: 40; opacity: .9; }
+#ribbon .track { position: absolute; left: 0; right: 0; top: 10px; height: 1px; background: var(--line-2); }
+#ribbon .tick { position: absolute; top: 4px; width: 1px; height: 13px; background: var(--line-2); }
+#ribbon .yr { position: absolute; top: 20px; transform: translateX(-50%); font-family: var(--mono); font-size: 12px; color: var(--faint); letter-spacing: .08em; }
+#ribbon .yr.on { color: var(--amber); }
+#ribbon .marker { position: absolute; top: 3px; width: 15px; height: 15px; margin-left: -7.5px; border-radius: 50%;
+  background: var(--amber); box-shadow: 0 0 0 5px var(--amber-soft), 0 0 22px rgba(242,184,75,.6); transition: left .9s cubic-bezier(.6,0,.2,1), opacity .4s; }
+#ribbon .span { position: absolute; top: 8px; height: 5px; background: var(--amber); opacity: .35; border-radius: 3px; transition: left .9s, width .9s; }
+#ribbon.hidden { opacity: 0; }
+#chrome-chapter.hidden { opacity: 0; }
+
+/* director's cut badge */
+#dc-badge { position: absolute; top: 40px; right: 72px; z-index: 41; font-family: var(--mono); font-size: 13px; letter-spacing: .2em;
+  color: var(--bg); background: var(--amber); padding: 6px 12px; border-radius: 4px; display: none; }
+#dc-badge.on { display: block; }
+
+/* ---------- typography primitives ---------- */
+.kicker { font-family: var(--mono); font-size: 18px; letter-spacing: .24em; text-transform: uppercase; color: var(--amber); }
+.h-xl { font-family: var(--serif); font-weight: 400; font-size: 128px; line-height: 1.0; letter-spacing: -0.02em; }
+.h-lg { font-family: var(--serif); font-weight: 400; font-size: 84px; line-height: 1.06; letter-spacing: -0.015em; }
+.h-md { font-family: var(--serif); font-weight: 400; font-size: 58px; line-height: 1.12; letter-spacing: -0.01em; }
+.h-sm { font-family: var(--serif); font-weight: 400; font-size: 40px; line-height: 1.2; }
+.body-lg { font-size: 34px; line-height: 1.4; color: var(--ink-2); font-weight: 300; }
+.body { font-size: 26px; line-height: 1.45; color: var(--ink-2); font-weight: 300; }
+.mono { font-family: var(--mono); }
+.dim { color: var(--dim); } .faint { color: var(--faint); } .amber { color: var(--amber); } .red { color: var(--red); } .green { color: var(--green); }
+em { font-style: italic; font-family: var(--serif); }
+
+.abs { position: absolute; }
+.center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.pad { position: absolute; left: 160px; right: 160px; top: 150px; bottom: 140px; }
+.hide { opacity: 0; }
+
+/* quote card (recreated documents) */
+.quote { position: relative; padding: 46px 56px 40px; border-left: 3px solid var(--amber); background: linear-gradient(90deg, rgba(242,184,75,.06), transparent 70%); }
+.quote .q { font-family: var(--serif); font-weight: 300; font-size: 46px; line-height: 1.28; color: var(--ink); font-style: italic; }
+.quote .src { margin-top: 26px; font-family: var(--mono); font-size: 17px; letter-spacing: .1em; color: var(--dim); text-transform: uppercase; }
+.quote .src b { color: var(--ink-2); font-weight: 500; }
+
+/* source stamp on every number */
+.source { font-family: var(--mono); font-size: 14px; letter-spacing: .06em; color: var(--faint); }
+.source::before { content: "SOURCE · "; color: var(--dim); }
+
+/* cards */
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 34px 36px; }
+.card .t { font-family: var(--serif); font-size: 38px; margin-bottom: 12px; }
+.card .d { font-size: 22px; line-height: 1.45; color: var(--ink-2); font-weight: 300; }
+.chip { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line-2);
+  font-family: var(--mono); font-size: 18px; letter-spacing: .04em; color: var(--ink); white-space: nowrap; }
+.chip i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+/* belief-that-broke card */
+.belief { font-family: var(--serif); font-size: 76px; line-height: 1.1; position: relative; display: inline-block; }
+.belief .strike { position: absolute; left: -2%; top: 52%; height: 6px; width: 0; background: var(--red); border-radius: 3px; transform: rotate(-1.5deg); }
+.lesson { font-size: 38px; line-height: 1.35; color: var(--ink); font-weight: 400; max-width: 1350px; }
+
+/* big numbers */
+.bignum { font-family: var(--serif); font-weight: 300; font-size: 190px; line-height: .9; letter-spacing: -0.03em; }
+.bignum small { font-size: .32em; letter-spacing: 0; color: var(--dim); font-family: var(--sans); font-weight: 300; }
+
+/* typewriter caret */
+.caret::after { content: "▍"; color: var(--amber); animation: blink 1s steps(1) infinite; margin-left: 4px; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* svg helpers */
+svg text { font-family: var(--mono); }
+.tok { font-family: var(--mono); }
+
+/* overlay: scene picker */
+#picker { position: fixed; inset: 0; z-index: 200; background: rgba(4,5,7,.94); display: none; overflow: auto; padding: 60px 80px; font-family: var(--mono); }
+#picker.on { display: block; }
+#picker h3 { color: var(--amber); font-weight: 400; letter-spacing: .2em; font-size: 14px; margin: 26px 0 10px; }
+#picker a { display: inline-block; margin: 4px 10px 4px 0; padding: 6px 12px; border: 1px solid var(--line-2); border-radius: 6px; color: var(--ink-2); text-decoration: none; font-size: 14px; }
+#picker a.opt { border-style: dashed; color: var(--dim); }
+#picker a.cur { background: var(--amber); color: #000; }
+#toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 210; font-family: var(--mono); font-size: 13px; color: var(--ink);
+  background: rgba(20,22,28,.95); border: 1px solid var(--line-2); padding: 8px 14px; border-radius: 6px; opacity: 0; transition: opacity .3s; pointer-events: none; }
+#toast.on { opacity: 1; }
+
+/* ---------- live subtitles (script-following; see js/subs.js) ----------
+   Teleprompter style, like captions in an edited product demo: the sentence waits dimmed in a rounded card and each word lights up as it is spoken. */
+#subs { position: absolute; left: 50%; transform: translateX(-50%); max-width: 1440px; z-index: 60; pointer-events: none;
+  opacity: 0; transition: opacity .3s; }
+#subs.on { opacity: 1; }
+#subs.subs-hidden { display: none; }
+#subs.subs-bottom { bottom: 96px; }
+#subs.subs-top { top: 104px; }
+#subs .box { display: inline-block; text-align: center; background: rgba(12, 13, 18, .9); border: 1px solid rgba(236, 232, 223, .12);
+  border-radius: 18px; padding: .42em .9em .48em; box-shadow: 0 18px 50px rgba(0, 0, 0, .55); color: #f6f2e9;
+  font-family: var(--sans); font-weight: 600; line-height: 1.38; letter-spacing: -.005em; }
+#subs .w { display: inline-block; white-space: pre; color: rgba(246, 242, 233, .34); transition: color .18s ease-out; }
+#subs .w.on { color: #f6f2e9; }
+#subs .w.k { color: rgba(242, 184, 75, .38); }
+#subs .w.k.on { color: var(--amber); }
+#subs.swap .box { animation: subsSwap .22s ease-out both; }
+@keyframes subsSwap { from { opacity: .2; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+#subs.subs-S .box { font-size: 30px; }
+#subs.subs-M .box { font-size: 38px; }
+#subs.subs-L .box { font-size: 48px; }
+
+/* ---------- Module 5 additions ---------- */
+.panel .kicker { font-size: 16px; }
+.panel .t { font-family: var(--serif); font-size: 44px; line-height: 1.12; margin-top: 12px; }
+.panel .body { font-size: 23px; margin-top: 16px; line-height: 1.45; }
+.uth { font-family: var(--mono); font-size: 14px; letter-spacing: .04em; color: var(--dim); line-height: 1.5; }
+.uth b { color: var(--amber); font-weight: 400; letter-spacing: .14em; opacity: .8; }
+:root { --violet: #a07bff; --teal: #3fd6c0; }
+.mono, pre, code { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }  /* show <| |> -> etc. literally (ChatML, code) */

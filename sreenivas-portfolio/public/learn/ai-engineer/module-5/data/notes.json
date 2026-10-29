@@ -1,0 +1,14 @@
+{
+ "T.title": {
+  "title": "Prompt Engineering",
+  "say": "Module 5: prompt engineering.",
+  "screen": "AI ENGINEER ROADMAP · MODULE 5 / PROMPT ENGINEERING / Engineering Learning Circle · 26 October 2026.",
+  "optional": false
+ },
+ "O.wall": {
+  "title": "Four questions",
+  "say": "A couple of years back, \"prompt engineering\" was everywhere. Some called it the job of the future; some called it a fad that would be dead in a year. By the end of today, you should be able to answer four questions.\n\n[click] Why does the same AI give you a different answer every time you ask?\n\n[click] What does a prompt that works every time actually look like?\n\n[click] When should you show it examples, or tell it to think first?\n\n[click] And is prompt engineering still worth learning in 2026?\n\n[click] Let's settle that last one before we start. Scan this, or type the link, and vote. Is it a core skill, a fad, or are you not sure yet? We'll ask exactly the same question at the end, and see if anything moved.",
+  "screen": "A wall of real posts, headlines, job ads and comments about \"prompt engineering\" pops up in date order (2020 → 2026), the year faint behind it. Then four questions, one per click, alternating white and gold: \"Why does the same AI give a different answer every time you ask?\" · \"What does a prompt that works every time look like?\" · \"When should you show it examples, or tell it to think first?\" · \"Is prompt engineering still worth learning in 2026?\" [click] The questions clear; question 4 moves to the top; LIVE VOTE: a QR code and a short link on the left, three bars on the right (Yes, it's a core skill · No, it's a fad · Not sure yet) filling as votes arrive.",
+  "optional": false
+ }
+}
