@@ -44,6 +44,16 @@ import '../../styles/components/tuk-corner.css';
 
 const FOOTPRINT = 52;
 
+/**
+ * Flight is stashed, not deleted (2026-10-29). Boarding fired whenever the
+ * cursor lingered near the corner, so scrolling past him launched a chase by
+ * accident, every time; a delight once, an irritation after. All of it is kept
+ * (hovercraft physics in useAvatarLife, the poses and chase lines below) and
+ * this one flag brings it back. It should return behind a deliberate action,
+ * like clicking him, rather than proximity. He still looks up and waves.
+ */
+const FLIGHT_ENABLED = false;
+
 const TukCorner = () => {
   const stageRef = useRef(null);
   const actorRef = useRef(null);
@@ -59,7 +69,7 @@ const TukCorner = () => {
     footprint: FOOTPRINT,
     // Nowhere to go: one pad-sized platform, so idle hops would just be a twitch.
     wander: false,
-    fly: true
+    fly: FLIGHT_ENABLED
   });
 
   /** Shuffle bag rather than Math.random — every line before any repeat. */
