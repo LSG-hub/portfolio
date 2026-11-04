@@ -61,11 +61,12 @@ async function loadSources(files) {
   return out;
 }
 
-const { profile: profileMod, experience, projects, skills, seo } = await loadSources({
+const { profile: profileMod, experience, projects, skills, tools, seo } = await loadSources({
   profile: 'src/data/profile.js',
   experience: 'src/data/experience.js',
   projects: 'src/data/projects.js',
   skills: 'src/data/skills.js',
+  tools: 'src/data/tools.js',
   seo: 'src/utils/seo.js'
 });
 
@@ -73,7 +74,8 @@ const { profile } = profileMod;
 const { experienceData, educationData, achievementsData } = experience;
 const { projectsData } = projects;
 const { skillsData, skillsIntro, languages } = skills;
-const { SITE_URL, homeMeta, projectMeta, tukMeta, notFoundMeta, plainText } = seo;
+const { toolsData, photoPresets, printSheet } = tools;
+const { SITE_URL, homeMeta, projectMeta, tukMeta, toolMeta, notFoundMeta, plainText } = seo;
 
 // ── HTML helpers ───────────────────────────────────────────────────────
 
@@ -235,6 +237,35 @@ const notFoundBody = () => `
   </ul>
 </main>`;
 
+const toolBody = (t) => {
+  const preset = photoPresets[0];
+  return `
+<nav><a href="/">${esc(profile.name)}</a></nav>
+<main>
+  <article>
+    <header>
+      <p>${esc(t.eyebrow)}</p>
+      <h1>${esc(t.title)}</h1>
+      <p>${rich(t.lede)}</p>
+    </header>
+    <h2>How it works</h2>
+    <ol>${t.steps.map((x) => `<li>${rich(x)}</li>`).join('')}</ol>
+    <h2>For a photo that gets accepted</h2>
+    ${list(t.tips)}
+    <h2>The photo</h2>
+    <dl>
+      <dt>Size</dt><dd>${esc(preset.size)}</dd>
+      <dt>Resolution</dt><dd>300 DPI</dd>
+      <dt>Print sheet</dt><dd>${esc(printSheet.label)}</dd>
+    </dl>
+    <p>${esc(preset.use)}</p>
+    <h2>Questions</h2>
+    <dl>${t.faq.map((f) => `<dt>${esc(f.q)}</dt><dd>${rich(f.a)}</dd>`).join('')}</dl>
+  </article>
+</main>
+<footer><p>Made by <a href="/">${esc(profile.name)}</a>, ${esc(profile.role)}.</p></footer>`;
+};
+
 const tukBody = (meta) => `
 <nav><a href="/">${esc(profile.name)}</a></nav>
 <main>
@@ -353,6 +384,48 @@ const tukGraph = (meta) => {
   );
 };
 
+/**
+ * A free web app plus its FAQ. `isAccessibleForFree` and a zero-price offer are
+ * what search engines read to show it as free.
+ */
+const toolGraph = (t, meta) => {
+  const url = `${SITE_URL}${meta.path}`;
+  return graph(
+    {
+      '@type': 'WebApplication',
+      '@id': `${url}#app`,
+      name: t.title,
+      description: meta.description,
+      url,
+      applicationCategory: 'MultimediaApplication',
+      operatingSystem: 'Any, in a web browser',
+      browserRequirements: 'Requires JavaScript',
+      isAccessibleForFree: true,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
+      creator: { '@id': ID.person }
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': `${url}#faq`,
+      mainEntity: t.faq.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: plainText(f.a) }
+      }))
+    },
+    {
+      '@type': 'WebPage',
+      '@id': url,
+      url,
+      name: meta.title,
+      isPartOf: { '@id': ID.website },
+      mainEntity: { '@id': `${url}#app` },
+      breadcrumb: { '@id': `${url}#breadcrumb` }
+    },
+    breadcrumb(url, t.name)
+  );
+};
+
 // ── Head rewriting ─────────────────────────────────────────────────────
 
 /** Replace the content of a meta tag, failing loudly if the template changed. */
@@ -458,13 +531,28 @@ const llmsTxt = () =>
       ...projectsData.map((p) => `- [${p.title}](${SITE_URL}/projects/${p.slug}/): ${p.subtitle}. ${p.tagline}`),
       `- [Tuk, at home](${SITE_URL}/tuk/): ${tukMeta(profile).description}`
     ].join('\n'),
+    '## Free tools',
+    toolsData.map((t) => `- [${t.title}](${SITE_URL}${toolMeta(t).path}): ${toolMeta(t).description}`).join('\n'),
     '## Full content',
     `- [llms-full.txt](${SITE_URL}/llms-full.txt): the whole site as Markdown`,
     '## Contact',
     [`- Email: ${profile.email}`, ...profile.socials.map((s) => `- [${s.label}](${s.url})`)].join('\n')
   ].join('\n\n') + '\n';
 
-const llmsFullTxt = () => [mdHome(), ...projectsData.map(mdProject)].join('\n\n') + '\n';
+const mdTool = (t) =>
+  [
+    `## ${t.title}`,
+    `${SITE_URL}${toolMeta(t).path}`,
+    t.lede,
+    '### How it works',
+    t.steps.map((x, i) => `${i + 1}. ${x}`).join('\n'),
+    '### Tips',
+    t.tips.map((x) => `- ${x}`).join('\n'),
+    '### Questions',
+    t.faq.map((f) => `**${f.q}** ${f.a}`).join('\n\n')
+  ].join('\n\n');
+
+const llmsFullTxt = () => [mdHome(), ...projectsData.map(mdProject), '# Free tools', ...toolsData.map(mdTool)].join('\n\n') + '\n';
 
 // ── Write ──────────────────────────────────────────────────────────────
 
@@ -493,6 +581,12 @@ const template = await readFile(join(BUILD, 'index.html'), 'utf8');
 const pages = [
   { file: 'index.html', meta: homeMeta(profile), body: homeBody(), jsonLd: homeGraph(homeMeta(profile)) },
   { file: 'tuk/index.html', meta: tukMeta(profile), body: null, jsonLd: tukGraph(tukMeta(profile)) },
+  ...toolsData.map((t) => ({
+    file: `tools/${t.slug}/index.html`,
+    meta: toolMeta(t),
+    body: toolBody(t),
+    jsonLd: toolGraph(t, toolMeta(t))
+  })),
   ...projectsData.map((p) => ({
     file: `projects/${p.slug}/index.html`,
     meta: projectMeta(p, profile),

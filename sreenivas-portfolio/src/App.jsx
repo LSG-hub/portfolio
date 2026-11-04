@@ -17,6 +17,8 @@ const TukPage = lazy(() => import('./pages/TukPage'));
 const AvatarLab = lazy(() => import('./pages/AvatarLab'));
 const WorldLab = lazy(() => import('./pages/WorldLab'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+// Free tools. Each is its own chunk, so the portfolio never downloads a tool's code.
+const PassportPhotoPage = lazy(() => import('./pages/PassportPhotoPage'));
 
 const SectionFallback = () => <div className="section-fallback" aria-hidden />;
 
@@ -57,6 +59,7 @@ function App() {
               <Route path="/tuk" element={<TukPage />} />
               <Route path="/avatar-lab" element={<AvatarLab />} />
               <Route path="/world-lab" element={<WorldLab />} />
+              <Route path="/tools/passport-photo" element={<PassportPhotoPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>

@@ -38,6 +38,12 @@ export const projectMeta = (project, profile) => ({
   description: clip(plainText(project.description))
 });
 
+export const toolMeta = (tool) => ({
+  path: `/tools/${tool.slug}/`,
+  title: tool.metaTitle,
+  description: tool.metaDescription
+});
+
 export const notFoundMeta = (profile) => ({
   path: '/404',
   title: `Page not found · ${profile.name}`,
