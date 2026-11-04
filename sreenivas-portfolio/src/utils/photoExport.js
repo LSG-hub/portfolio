@@ -34,11 +34,24 @@ export function coverFraming(image, aspect) {
   return { scale, cx: 0.5, cy: aspect / 2 };
 }
 
-export function renderPhoto(image, framing, preset) {
+/** A purpose's size in pixels: pixel sizes as given, physical ones at 300 DPI. */
+export function sizeToPx(size, dpi = DPI) {
+  if (size.unit === 'px') return { width: Math.round(size.width), height: Math.round(size.height) };
+  const perInch = size.unit === 'in' ? 1 : MM_PER_INCH;
+  return {
+    width: Math.round((size.width / perInch) * dpi),
+    height: Math.round((size.height / perInch) * dpi)
+  };
+}
+
+const trim = (n) => String(Number(n.toFixed(2)));
+export const formatSize = (size) => `${trim(size.width)} × ${trim(size.height)} ${size.unit}`;
+
+export function renderPhoto(image, framing, px, background) {
   const canvas = document.createElement('canvas');
-  canvas.width = mmToPx(preset.widthMm);
-  canvas.height = mmToPx(preset.heightMm);
-  drawFramed(canvas.getContext('2d'), image, framing, canvas.width, canvas.height);
+  canvas.width = px.width;
+  canvas.height = px.height;
+  drawFramed(canvas.getContext('2d'), image, framing, canvas.width, canvas.height, background);
   return canvas;
 }
 
@@ -162,6 +175,33 @@ export async function encode(canvas, format, { quality = 0.95, dpi = DPI } = {})
   if (format.mime === 'image/jpeg') return new Blob([jpegWithDpi(bytes, dpi)], { type: format.mime });
   if (format.mime === 'image/png') return new Blob([pngWithDpi(bytes, dpi)], { type: format.mime });
   return blob;
+}
+
+/**
+ * Encode under a file size limit, for forms that say "under 50 KB". Lowers JPEG or
+ * WebP quality by bisection; PNG is lossless and can't be squeezed this way.
+ * Resolves to { blob, fits } so the page can say when the limit can't be met.
+ */
+export async function encodeUnder(canvas, format, maxKB) {
+  const best = await encode(canvas, format);
+  if (!maxKB || best.size <= maxKB * 1024 || format.mime === 'image/png') {
+    return { blob: best, fits: !maxKB || best.size <= maxKB * 1024 };
+  }
+  let lo = 0.05;
+  let hi = 0.95;
+  let found = null;
+  for (let i = 0; i < 8; i++) {
+    const q = (lo + hi) / 2;
+    const blob = await encode(canvas, format, { quality: q });
+    if (blob.size <= maxKB * 1024) {
+      found = blob;
+      lo = q;
+    } else {
+      hi = q;
+    }
+  }
+  if (found) return { blob: found, fits: true };
+  return { blob: await encode(canvas, format, { quality: 0.05 }), fits: false };
 }
 
 export function download(blob, filename) {

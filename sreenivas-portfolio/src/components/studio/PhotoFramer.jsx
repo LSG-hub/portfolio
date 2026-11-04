@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { drawFramed } from '../../utils/photoExport';
+import { assess, loadFaceLandmarker, MESSAGES } from '../../utils/faceCheck';
 import PhotoGuide from './PhotoGuide';
 
 /**
@@ -9,8 +10,9 @@ import PhotoGuide from './PhotoGuide';
  * `framing` is owned by the parent (it drives the export); this component only
  * proposes new values through onChange.
  */
-const PhotoFramer = ({ image, framing, onChange, preset, minScale, maxScale }) => {
+const PhotoFramer = ({ image, framing, onChange, guide, aspect, minScale, maxScale }) => {
   const canvasRef = useRef(null);
+  const [code, setCode] = useState('loading');
   const pointers = useRef(new Map());
   const pinch = useRef(null);
 
@@ -32,6 +34,29 @@ const PhotoFramer = ({ image, framing, onChange, preset, minScale, maxScale }) =
     observer.observe(canvas);
     return () => observer.disconnect();
   }, [image, framing]);
+
+  // Check the framed photo shortly after each change, on a small copy of exactly what will be exported.
+  useEffect(() => {
+    let stopped = false;
+    const t = setTimeout(async () => {
+      const landmarker = await loadFaceLandmarker('IMAGE');
+      if (stopped) return;
+      if (!landmarker) {
+        setCode(null);
+        return;
+      }
+      const probe = document.createElement('canvas');
+      probe.width = 320;
+      probe.height = Math.round(320 * aspect);
+      drawFramed(probe.getContext('2d'), image, framing, probe.width, probe.height);
+      const result = landmarker.detect(probe);
+      if (!stopped) setCode(assess(result.faceLandmarks || [], guide, aspect));
+    }, 180);
+    return () => {
+      stopped = true;
+      clearTimeout(t);
+    };
+  }, [image, framing, guide, aspect]);
 
   /** Zoom about a point given in frame units, so the spot under the finger stays put. */
   const zoomAt = useCallback(
@@ -98,9 +123,9 @@ const PhotoFramer = ({ image, framing, onChange, preset, minScale, maxScale }) =
       ArrowRight: () => nudge(step, 0),
       ArrowUp: () => nudge(0, -step),
       ArrowDown: () => nudge(0, step),
-      '+': () => onChange(zoomAt(1.05, 0.5, preset.heightMm / preset.widthMm / 2)),
-      '=': () => onChange(zoomAt(1.05, 0.5, preset.heightMm / preset.widthMm / 2)),
-      '-': () => onChange(zoomAt(1 / 1.05, 0.5, preset.heightMm / preset.widthMm / 2))
+      '+': () => onChange(zoomAt(1.05, 0.5, aspect / 2)),
+      '=': () => onChange(zoomAt(1.05, 0.5, aspect / 2)),
+      '-': () => onChange(zoomAt(1 / 1.05, 0.5, aspect / 2))
     };
     if (keys[e.key]) {
       e.preventDefault();
@@ -109,7 +134,7 @@ const PhotoFramer = ({ image, framing, onChange, preset, minScale, maxScale }) =
   };
 
   return (
-    <div className="photo-stage">
+    <div className="photo-stage" style={{ '--aspect': aspect }}>
       <canvas
         ref={canvasRef}
         className="photo-stage-canvas photo-framer-canvas"
@@ -122,7 +147,12 @@ const PhotoFramer = ({ image, framing, onChange, preset, minScale, maxScale }) =
         onPointerCancel={onPointerUp}
         onKeyDown={onKeyDown}
       />
-      <PhotoGuide preset={preset} />
+      <PhotoGuide guide={guide} aspect={aspect} status={code === 'good' ? 'good' : 'idle'} />
+      {code && (
+        <span className={`photo-stage-tip ${code === 'good' ? 'is-good' : ''}`} aria-live="polite">
+          {MESSAGES.photo[code]}
+        </span>
+      )}
     </div>
   );
 };
