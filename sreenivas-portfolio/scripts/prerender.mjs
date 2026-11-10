@@ -36,6 +36,7 @@
  * as modules regardless of package.json's module type.
  */
 
+import { createHash } from 'node:crypto';
 import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -468,6 +469,26 @@ const llmsFullTxt = () => [mdHome(), ...projectsData.map(mdProject)].join('\n\n'
 // ── Write ──────────────────────────────────────────────────────────────
 
 const template = await readFile(join(BUILD, 'index.html'), 'utf8');
+
+/**
+ * firebase.json's Content-Security-Policy allows inline scripts only by hash. Editing
+ * the inline script in public/index.html without updating that hash would ship pages
+ * whose script the browser silently refuses to run, so fail the build instead.
+ * (JSON-LD blocks are data, not executed, so CSP doesn't apply to them.)
+ */
+{
+  const firebase = JSON.parse(await readFile(join(ROOT, 'firebase.json'), 'utf8'));
+  const csp = firebase.hosting.headers
+    .find((rule) => rule.source === '!/learn/**')
+    ?.headers.find((h) => h.key === 'Content-Security-Policy')?.value;
+  if (!csp) throw new Error('prerender: Content-Security-Policy for "!/learn/**" not found in firebase.json');
+  for (const [, code] of template.matchAll(/<script>([\s\S]*?)<\/script>/g)) {
+    const hash = `'sha256-${createHash('sha256').update(code).digest('base64')}'`;
+    if (!csp.includes(hash)) {
+      throw new Error(`prerender: inline script in index.html is not allowed by the CSP. Add ${hash} to script-src in firebase.json`);
+    }
+  }
+}
 
 const pages = [
   { file: 'index.html', meta: homeMeta(profile), body: homeBody(), jsonLd: homeGraph(homeMeta(profile)) },

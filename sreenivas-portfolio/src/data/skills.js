@@ -57,7 +57,7 @@ export const skillsData = {
 
 export const languages = [
   { name: "English", level: "Fluent" },
-  { name: "Hindi", level: "Native" },
+  { name: "Hindi", level: "Conversational" },
   { name: "Telugu", level: "Native" },
   { name: "Kannada", level: "Conversational" }
 ];
