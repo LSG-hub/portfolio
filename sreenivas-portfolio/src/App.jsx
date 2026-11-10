@@ -6,6 +6,7 @@ import './styles/components/glass.css';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import TukCorner from './components/avatar/TukCorner';
+import { StudioFooter, StudioHeader } from './components/studio/StudioChrome';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
@@ -17,6 +18,9 @@ const TukPage = lazy(() => import('./pages/TukPage'));
 const AvatarLab = lazy(() => import('./pages/AvatarLab'));
 const WorldLab = lazy(() => import('./pages/WorldLab'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+// Pocket Studio, the free tools. Their own chunks, so the portfolio never downloads them.
+const StudioHomePage = lazy(() => import('./pages/StudioHomePage'));
+const PhotoStudioPage = lazy(() => import('./pages/PhotoStudioPage'));
 
 const SectionFallback = () => <div className="section-fallback" aria-hidden />;
 
@@ -29,9 +33,18 @@ const CORNER_EXCLUDED = ['/tuk', '/avatar-lab', '/world-lab'];
 
 const CornerGate = () => {
   const { pathname } = useLocation();
-  if (CORNER_EXCLUDED.some((p) => pathname.startsWith(p))) return null;
+  if (isStudio(pathname) || CORNER_EXCLUDED.some((p) => pathname.startsWith(p))) return null;
   return <TukCorner />;
 };
+
+/**
+ * Pocket Studio (/studio/) lives on this domain but is not the portfolio: its own
+ * header and footer, and no Tuk wandering over the controls.
+ */
+const isStudio = (pathname) => pathname === '/studio' || pathname.startsWith('/studio/');
+
+const Header = () => (isStudio(useLocation().pathname) ? <StudioHeader /> : <Navbar />);
+const SiteFooter = () => (isStudio(useLocation().pathname) ? <StudioFooter /> : <Footer />);
 
 const ScrollRestore = () => {
   const { pathname, hash } = useLocation();
@@ -48,7 +61,7 @@ function App() {
     <BrowserRouter>
       <ScrollRestore />
       <div className="App">
-        <Navbar />
+        <Header />
         <main>
           <Suspense fallback={<SectionFallback />}>
             <Routes>
@@ -57,11 +70,13 @@ function App() {
               <Route path="/tuk" element={<TukPage />} />
               <Route path="/avatar-lab" element={<AvatarLab />} />
               <Route path="/world-lab" element={<WorldLab />} />
+              <Route path="/studio" element={<StudioHomePage />} />
+              <Route path="/studio/photo/:purpose" element={<PhotoStudioPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
         </main>
-        <Footer />
+        <SiteFooter />
         <CornerGate />
       </div>
     </BrowserRouter>

@@ -61,11 +61,12 @@ async function loadSources(files) {
   return out;
 }
 
-const { profile: profileMod, experience, projects, skills, seo } = await loadSources({
+const { profile: profileMod, experience, projects, skills, studioData, seo } = await loadSources({
   profile: 'src/data/profile.js',
   experience: 'src/data/experience.js',
   projects: 'src/data/projects.js',
   skills: 'src/data/skills.js',
+  studioData: 'src/data/studio.js',
   seo: 'src/utils/seo.js'
 });
 
@@ -73,7 +74,8 @@ const { profile } = profileMod;
 const { experienceData, educationData, achievementsData } = experience;
 const { projectsData } = projects;
 const { skillsData, skillsIntro, languages } = skills;
-const { SITE_URL, homeMeta, projectMeta, tukMeta, notFoundMeta, plainText } = seo;
+const { studio, photoPurposes, printSheet, studioFaq } = studioData;
+const { SITE_URL, homeMeta, projectMeta, tukMeta, studioHomeMeta, photoPurposeMeta, notFoundMeta, plainText } = seo;
 
 // ── HTML helpers ───────────────────────────────────────────────────────
 
@@ -235,6 +237,34 @@ const notFoundBody = () => `
   </ul>
 </main>`;
 
+const sizeText = (size) => `${size.width} × ${size.height} ${size.unit}`;
+const faqHtml = () => `<h2>Questions</h2><dl>${studioFaq.map((f) => `<dt>${esc(f.q)}</dt><dd>${rich(f.a)}</dd>`).join('')}</dl>`;
+const studioFooter = () => `<footer><p>${esc(studio.name)} is made by <a href="/">${esc(profile.name)}</a>.</p></footer>`;
+
+const studioHomeBody = () => `
+<nav><a href="${esc(studio.home)}">${esc(studio.name)}</a></nav>
+<main>
+  <h1>${esc(studio.title)}</h1>
+  <p>${rich(studio.lede)}</p>
+  <ul>${photoPurposes
+    .map((p) => `<li><a href="/studio/photo/${esc(p.slug)}/">${esc(p.name)}</a>${p.editable ? '' : `, ${esc(sizeText(p.size))}`}: ${esc(p.use)}</li>`)
+    .join('')}</ul>
+  ${faqHtml()}
+</main>
+${studioFooter()}`;
+
+const purposeBody = (p) => `
+<nav><a href="${esc(studio.home)}">${esc(studio.name)}</a></nav>
+<main>
+  <article>
+    <h1>${esc(p.name)}</h1>
+    <p>${esc(p.editable ? 'Any width and height in mm, inches or pixels, with an optional file size limit in KB.' : sizeText(p.size))}. ${esc(p.use)}</p>
+    <p>Take a photo with your camera or upload one, check and adjust it, and download it as JPG, PNG or WebP${p.printable ? `, or a ${esc(printSheet.label)} to print` : ''}. Free, no sign-up, and your photo never leaves your device.</p>
+    ${faqHtml()}
+  </article>
+</main>
+${studioFooter()}`;
+
 const tukBody = (meta) => `
 <nav><a href="/">${esc(profile.name)}</a></nav>
 <main>
@@ -353,6 +383,45 @@ const tukGraph = (meta) => {
   );
 };
 
+/**
+ * Pocket Studio pages: free web apps plus the FAQ. `isAccessibleForFree` and a
+ * zero-price offer are what search engines read to show them as free. No
+ * breadcrumb into the portfolio: the studio is its own thing on this domain.
+ */
+const faqNode = (url) => ({
+  '@type': 'FAQPage',
+  '@id': `${url}#faq`,
+  mainEntity: studioFaq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: plainText(f.a) } }))
+});
+
+const appNode = (url, name, description) => ({
+  '@type': 'WebApplication',
+  '@id': `${url}#app`,
+  name,
+  description,
+  url,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Any, in a web browser',
+  browserRequirements: 'Requires JavaScript',
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
+  creator: { '@id': ID.person }
+});
+
+const studioHomeGraph = (meta) => {
+  const url = `${SITE_URL}${meta.path}`;
+  return graph(appNode(url, studio.name, meta.description), faqNode(url), {
+    '@type': 'WebPage', '@id': url, url, name: meta.title, isPartOf: { '@id': ID.website }, mainEntity: { '@id': `${url}#app` }
+  });
+};
+
+const purposeGraph = (p, meta) => {
+  const url = `${SITE_URL}${meta.path}`;
+  return graph(appNode(url, `${p.name} · ${studio.name}`, meta.description), faqNode(url), {
+    '@type': 'WebPage', '@id': url, url, name: meta.title, isPartOf: { '@id': ID.website }, mainEntity: { '@id': `${url}#app` }
+  });
+};
+
 // ── Head rewriting ─────────────────────────────────────────────────────
 
 /** Replace the content of a meta tag, failing loudly if the template changed. */
@@ -458,13 +527,27 @@ const llmsTxt = () =>
       ...projectsData.map((p) => `- [${p.title}](${SITE_URL}/projects/${p.slug}/): ${p.subtitle}. ${p.tagline}`),
       `- [Tuk, at home](${SITE_URL}/tuk/): ${tukMeta(profile).description}`
     ].join('\n'),
+    `## ${studio.name}: free tools`,
+    [
+      `- [${studio.name}](${SITE_URL}${studio.home}): ${studio.metaDescription}`,
+      ...photoPurposes.map((p) => `- [${p.name}](${SITE_URL}${photoPurposeMeta(p).path}): ${photoPurposeMeta(p).description}`)
+    ].join('\n'),
     '## Full content',
     `- [llms-full.txt](${SITE_URL}/llms-full.txt): the whole site as Markdown`,
     '## Contact',
     [`- Email: ${profile.email}`, ...profile.socials.map((s) => `- [${s.label}](${s.url})`)].join('\n')
   ].join('\n\n') + '\n';
 
-const llmsFullTxt = () => [mdHome(), ...projectsData.map(mdProject)].join('\n\n') + '\n';
+const mdStudio = () =>
+  [
+    `# ${studio.name}`,
+    `${SITE_URL}${studio.home}`,
+    studio.lede,
+    photoPurposes.map((p) => `- [${p.name}](${SITE_URL}${photoPurposeMeta(p).path}): ${p.use}`).join('\n'),
+    studioFaq.map((f) => `**${f.q}** ${f.a}`).join('\n\n')
+  ].join('\n\n');
+
+const llmsFullTxt = () => [mdHome(), ...projectsData.map(mdProject), mdStudio()].join('\n\n') + '\n';
 
 // ── Write ──────────────────────────────────────────────────────────────
 
@@ -493,6 +576,13 @@ const template = await readFile(join(BUILD, 'index.html'), 'utf8');
 const pages = [
   { file: 'index.html', meta: homeMeta(profile), body: homeBody(), jsonLd: homeGraph(homeMeta(profile)) },
   { file: 'tuk/index.html', meta: tukMeta(profile), body: null, jsonLd: tukGraph(tukMeta(profile)) },
+  { file: 'studio/index.html', meta: studioHomeMeta(studio), body: studioHomeBody(), jsonLd: studioHomeGraph(studioHomeMeta(studio)) },
+  ...photoPurposes.map((p) => ({
+    file: `studio/photo/${p.slug}/index.html`,
+    meta: photoPurposeMeta(p),
+    body: purposeBody(p),
+    jsonLd: purposeGraph(p, photoPurposeMeta(p))
+  })),
   ...projectsData.map((p) => ({
     file: `projects/${p.slug}/index.html`,
     meta: projectMeta(p, profile),
