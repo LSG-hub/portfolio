@@ -1,6 +1,6 @@
-/* ---------------- Opening: the internet on "prompt engineering", the four questions, then the first live vote ----------------
+/* ---------------- Opening: the internet on "prompt engineering", the four questions, then the first live vote (a bet on the role myth) ----------------
    Every item is real and verified (research/pe-wall/*.json → deck/data/wall.js). They pop up in date order,
-   so the wall itself tells the story: hype (2023) → backlash (2024) → "context engineering" (2025–26). */
+   so the wall itself tells the story: hype (2023) → backlash (2024) → "context engineering" (2025 to 2026). */
 const WallCard = (function () {
   const esc = (s) => M5.esc(s);
   const HL = /(prompt[\s-]?engineer(?:ing|s)?|context engineering)/gi;
@@ -45,13 +45,9 @@ const WallCard = (function () {
       <div style="font-size:15px;font-weight:600;color:#e8eaed;line-height:1.3;margin-top:4px">${hl(cut(o.t, 150))}</div>
       <div style="font-size:12px;color:#9aa0a6;margin-top:4px">${esc(o.a || '')} · ${date(o.d)}</div></div>`;
   }
-  return { html };
-})();
-
-Deck.scene({
-  id: 'O.wall', chapter: '0', title: 'Four questions', steps: 5, noChrome: true,
-  mount(root, a) {
-    root.style.background = '#000';
+  // the wall itself: 42 of the 320 items, sampled across the dates, scattered with a fixed seed so later slides can rebuild
+  // exactly the same wall for a match cut (Q3.open, W.open, E.wall)
+  function scatter(root, a) {
     const W = (window.WALL || []);
     const wall = a.el('div', 'abs', '', root); wall.id = 'dwall';
     Object.assign(wall.style, { left: 0, top: 0, width: '1920px', height: '1080px', overflow: 'hidden' });
@@ -75,6 +71,19 @@ Deck.scene({
       gsap.set(d, { scale: sc, rotation: (rnd() - 0.5) * 8 });
       return d;
     });
+    return { wall, cards, pick, yr, N };
+  }
+  // the four questions the session answers
+  const QS = ['Why does the same AI answer differently every time?', 'How do you get the right answer <em>almost</em> every time?',
+    'When should you show it examples, or ask it to think first?', 'Is prompt engineering still worth learning in 2026?'];
+  return { html, scatter, QS };
+})();
+
+Deck.scene({
+  id: 'O.wall', chapter: '0', title: 'Four questions, then a bet', steps: 6, noChrome: true,
+  mount(root, a) {
+    root.style.background = '#000';
+    const { wall, cards, pick, yr, N } = WallCard.scatter(root, a);
     // pop in: slow start, then a flood (the year behind follows the newest card)
     a.fromTo(cards, { opacity: 0, scale: (k, e) => e.dataset.sc * 0.5 }, { opacity: (k) => 0.75 + ((k * 13) % 4) * 0.08, scale: (k, e) => +e.dataset.sc, duration: 0.45, ease: 'back.out(2)',
       stagger: { amount: 6, ease: 'power1.out' } });
@@ -83,26 +92,33 @@ Deck.scene({
     a.loop(() => { if (!a.instant) gsap.to(cards, { x: () => (Math.random() - .5) * 14, y: () => (Math.random() - .5) * 10, duration: 3.2, ease: 'sine.inOut' }); }, 3200);
 
     // Cut 3: the four questions the session answers (each maps to a part of the talk; all four come back answered at the end)
-    const QS = ['Why does the same AI give a different answer every time you ask?', 'What does a prompt that works every time look like?',
-      'When should you show it examples, or tell it to think first?', 'Is prompt engineering still worth learning in 2026?'];
+    const QS = WallCard.QS;
     // fixed colours, alternating white / gold; each question just appears on its click
-    const q = a.el('div', 'center', QS.map((t, k) => `<div id="oq${k + 1}" class="h-lg hide" style="color:${k % 2 ? 'var(--amber)' : 'var(--ink)'};max-width:1500px;font-size:62px;text-wrap:balance;margin:${k ? 40 : 0}px 0 0;text-shadow:0 0 40px #000">${t}</div>`).join(''), root);
+    const q = a.el('div', 'center', QS.map((t, k) => `<div id="oq${k + 1}" class="h-lg hide" style="color:${k % 2 ? 'var(--amber)' : 'var(--ink)'};max-width:1760px;font-size:62px;text-wrap:balance;margin:${k ? 40 : 0}px 0 0;text-shadow:0 0 40px #000">${t}</div>`).join(''), root);
     q.style.zIndex = 5; q.id = 'oqs';
 
-    // question 4 becomes the first live vote; the same vote returns at the end ('q4-after') to show whether minds moved
-    const v = Vote.mount(root, a, { id: 'q4-before', options: ['Yes, it’s a core skill', 'No, it’s a fad', 'Not sure yet'], url: 'vote.link/m5' });
-    const vq = a.at(a.el('div', 'abs hide', 'Is prompt engineering still worth learning in 2026?', root), 0, 150);
-    Object.assign(vq.style, { width: '1920px', textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '58px', color: 'var(--amber)', zIndex: 6 });
+    // the opening live vote is a bet on the role myth; the reveal comes in the role chapter (5.4) with the real 20 runs
+    const v = Vote.mount(root, a, { id: 'role-bet', options: ['Yes, clearly', 'A little', 'No difference'], url: 'vote.link/m5' });
+    const vq = a.at(a.el('div', 'abs hide', `<div class="kicker" style="margin-bottom:22px">Place your bets</div>
+      If I start with <span style="color:var(--ink)">“You are a world‑class expert”</span>,<br>will it get the answer right more often?`, root), 0, 96);
+    Object.assign(vq.style, { width: '1920px', textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '54px', lineHeight: 1.18, color: 'var(--amber)', zIndex: 6 });
     vq.id = 'vq';
+    const end = a.at(a.el('div', 'abs hide', 'Place your bets. <span class="amber">We’ll find out in 15 minutes.</span>', root), 0, 950);
+    Object.assign(end.style, { width: '1920px', textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '40px', color: 'var(--ink)', zIndex: 6 });
+    end.id = 'vend';
     Deck._wallVote = v;
   },
   step(i, a) {
     if (i === 0) a.to('#dwall', { opacity: 0.12, duration: 0.9 });
     if (i < 4) { a.reveal('#oq' + (i + 1), { delay: i === 0 ? 0.3 : 0.1 }); return; }
-    // vote: the questions clear, the wall dims further, question 4 moves to the top, QR + live bars come in
-    a.to('#oqs', { opacity: 0, duration: 0.5 });
-    a.to('#dwall', { opacity: 0.05, duration: 0.8 });
-    a.reveal('#vq', { delay: 0.3 });
-    Deck._wallVote.show(a);
+    if (i === 4) {
+      // vote: the questions clear, the wall dims further, the bet rises to the top, QR + live bars come in
+      a.to('#oqs', { opacity: 0, duration: 0.5 });
+      a.to('#dwall', { opacity: 0.05, duration: 0.8 });
+      a.reveal('#vq', { delay: 0.3 });
+      Deck._wallVote.show(a);
+      return;
+    }
+    a.reveal('#vend');
   },
 });

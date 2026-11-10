@@ -23,15 +23,15 @@ window.Vote = (function () {
       const r = a.at(a.el('div', 'abs', `
         <div style="display:flex;align-items:baseline;justify-content:space-between;width:${BW}px">
           <span style="font-family:var(--serif);font-size:42px;color:var(--ink)">${label}</span>
-          <span class="mono"><span class="vc" style="font-size:30px;color:var(--ink)">0</span><span class="vp" style="font-size:20px;color:var(--dim);margin-left:14px">0%</span></span></div>
+          <span class="mono"><span class="vote-count" style="font-size:30px;color:var(--ink)">0</span><span class="vote-pct" style="font-size:20px;color:var(--dim);margin-left:14px">0%</span></span></div>
         <div style="margin-top:16px;width:${BW}px;height:26px;border-radius:13px;background:rgba(236,232,223,.07);overflow:hidden">
-          <div class="vb" style="height:100%;width:0;border-radius:13px;background:${k === 0 ? 'var(--amber)' : k === 1 ? 'var(--ink-2)' : 'var(--dim)'}"></div></div>`, box), X, Y0 + k * GAP);
+          <div class="vote-bar" style="height:100%;width:0;border-radius:13px;background:${k === 0 ? 'var(--amber)' : k === 1 ? 'var(--ink-2)' : 'var(--dim)'}"></div></div>`, box), X, Y0 + k * GAP);
       return r;
     });
     const foot = a.at(a.el('div', 'abs mono', '', box), X, Y0 + o.options.length * GAP + 10);
     foot.style.cssText += 'font-size:17px;letter-spacing:.14em;color:var(--dim)';
     const tag = DEMO ? 'DEMO VOTES · SIMULATED' : 'LIVE VOTE · NOT CONNECTED YET';
-    foot.innerHTML = `<span class="vt">0</span> VOTES · <span style="color:${DEMO ? 'var(--amber)' : 'var(--faint)'}">${tag}</span>`;
+    foot.innerHTML = `<span class="vote-total">0</span> VOTES · <span style="color:${DEMO ? 'var(--amber)' : 'var(--faint)'}">${tag}</span>`;
 
     let counts = o.options.map(() => 0);
     function set(next, instant) {
@@ -39,11 +39,11 @@ window.Vote = (function () {
       const total = counts.reduce((s, v) => s + v, 0);
       rows.forEach((r, k) => {
         const p = total ? counts[k] / total : 0;
-        r.querySelector('.vc').textContent = counts[k];
-        r.querySelector('.vp').textContent = Math.round(p * 100) + '%';
-        gsap.to(r.querySelector('.vb'), { width: (p * 100) + '%', duration: instant ? 0 : 0.6, ease: 'power2.out' });
+        r.querySelector('.vote-count').textContent = counts[k];
+        r.querySelector('.vote-pct').textContent = Math.round(p * 100) + '%';
+        gsap.to(r.querySelector('.vote-bar'), { width: (p * 100) + '%', duration: instant ? 0 : 0.6, ease: 'power2.out' });
       });
-      foot.querySelector('.vt').textContent = total;
+      foot.querySelector('.vote-total').textContent = total;
     }
     function show(a) {
       a.reveal(box, { y: 0, d: 0.6 });

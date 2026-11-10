@@ -9,8 +9,8 @@
   // chapters are years ('2015'…'2026'), plus '0' opening, 'F' part 2, 'E' epilogue, 'DC' director's cut
   const ERA = (y) => '';
   // Cut 3: chapters get added here as the new running order takes shape
-  const CH_NAMES = { '0': 'Prompt Engineering', 'DC': "Director's cut" };
-  const ERA_NUM = {};
+  const CH_NAMES = { '0': 'Prompt Engineering', 'Q1': 'Why does the same AI answer differently?', 'Q2': 'How do you get the right answer almost every time?', 'Q3': 'When should you show it examples, or ask it to think first?', 'Q4': 'Is prompt engineering still worth learning?', 'RA': 'Prompts that use tools', 'DC': "Director's cut" };
+  const ERA_NUM = { Q1: 'QUESTION 1', Q2: 'QUESTION 2', Q3: 'QUESTION 3', Q4: 'QUESTION 4', RA: 'FOR BUILDERS' };
   function chLabel(ch) {
     if (/^\d{4}$/.test(ch)) return { num: ch, name: ERA(+ch) };
     if (ERA_NUM[ch]) return { num: ERA_NUM[ch], name: CH_NAMES[ch] };
@@ -86,7 +86,7 @@
   /* ---------------- stage scaling ---------------- */
   function fit() {
     const s = Math.min(innerWidth / W, innerHeight / H);
-    stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+    stage.style.zoom = s;  // see #stage in deck.css: zoom keeps text sharp where transform: scale() would blur it
   }
 
   /* ---------------- ordering ---------------- */
@@ -124,7 +124,9 @@
   function updateChrome(s) {
     const c = document.getElementById('chrome-chapter');
     const lb = chLabel(s.dc ? 'DC' : s.chapter);
-    c.innerHTML = (lb.num ? `<span class="num">${lb.num}</span>` : '') + `<span>${lb.name}</span>` + (s.optional ? '<span class="opt">optional</span>' : '');
+    // a scene inside a roadmap chapter shows that chapter (e.g. 5.4 Role & behaviour) in place of the question's wording
+    const name = s.section ? `<span class="num" style="color:var(--ink)">${s.section[0]}</span><span>${s.section[1]}</span>` : `<span>${lb.name}</span>`;
+    c.innerHTML = (lb.num ? `<span class="num">${lb.num}</span>` : '') + name + (s.optional ? '<span class="opt">optional</span>' : '');
     c.classList.toggle('hidden', !!s.noChrome);
     document.getElementById('dc-badge').classList.toggle('on', !!dcStack.length);
     const r = document.getElementById('ribbon');
@@ -200,7 +202,6 @@
 
   /* ---------------- sync with presenter ---------------- */
   function broadcast() {
-    if (subsLocal) subsLocal.sync(cur().id, beat);
     if (!chan || FOLLOWER) return;
     const s = cur();
     const nextScene = dcStack.length ? order[dcStack[dcStack.length - 1].ret.idx] : order[idx + 1];
@@ -219,8 +220,6 @@
       }
       return;
     }
-    if (m.type === 'subs') { lastPresenterSubs = Date.now(); if (subsView) subsView.show(m.words); return; }
-    if (m.type === 'subsOpt') { lastPresenterSubs = Date.now(); if (subsLocal) { subsLocal.stop(); subsLocal = null; } if (subsView) subsView.apply(m.opt); return; }
     if (m.type === 'cmd') {
       if (m.cmd === 'next') next(); else if (m.cmd === 'prev') prev();
       else if (m.cmd === 'goto') gotoId(m.id, m.beat || 0);
@@ -243,7 +242,7 @@
   function picker(show) {
     const p = document.getElementById('picker');
     if (!show) { p.classList.remove('on'); return; }
-    let html = '<div style="color:#7d828c;font-size:13px">Click a scene · Esc to close · 0 or ⌘← back to the start · O toggles optional scenes · D opens director\'s cut · B black screen · S subtitles · P presenter</div>';
+    let html = '<div style="color:#7d828c;font-size:13px">Click a scene · Esc to close · 0 or ⌘← back to the start · O toggles optional scenes · D opens director\'s cut · B black screen · P presenter</div>';
     let lastCh = null;
     registry.forEach(s => {
       const ch = s.dc ? 'DC' : s.chapter;
@@ -271,36 +270,6 @@
     else if (k === 'f' || k === 'F') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
     else if (k === 'n' || k === 'N') toggleGrain();
     else if (k === 'p' || k === 'P') window.open('presenter.html', 'm5-cut3-presenter', 'width=1400,height=900');
-    else if (k === 's' || k === 'S') toggleSubs();
-  }
-
-  /* ---------------- live subtitles ---------------- */
-  // The presenter window normally runs the mic and sends the words; the deck only draws them. S toggles them anywhere.
-  // With no presenter open, the deck runs its own mic + script follower (started by S or the first click, as Safari needs a gesture).
-  let subsView = null, subsLocal = null, lastPresenterSubs = 0;
-  const presenterAlive = () => Date.now() - lastPresenterSubs < 7000;
-  function toggleSubs() {
-    if (!subsView) return;
-    const vis = !subsView.opt.visible;
-    subsView.apply({ visible: vis }); toast(vis ? 'Subtitles: ON' : 'Subtitles: OFF');
-    if (chan) chan.postMessage({ type: 'subsCtl', visible: vis });
-    if (presenterAlive()) return;
-    if (vis) startLocalSubs(); else if (subsLocal) { subsLocal.stop(); subsLocal = null; subsView.show(null); }
-  }
-  function startLocalSubs() {
-    if (subsLocal || presenterAlive() || !window.Subs || !subsView || !subsView.opt.visible) return;
-    let F = null, sid = null, sb = 0;
-    let qT = null;
-    const show = () => { subsView.show(F.line()); clearTimeout(qT); if (F.chunkDone()) qT = setTimeout(() => subsView.show(F.line(true)), 1100); };
-    const mic = Subs.Mic((words) => { if (F && F.feed(words)) show(); }, (st, msg) => { if (st === 'blocked' || st === 'unsupported') toast('Subtitles: ' + msg); });
-    subsLocal = {
-      sync(id, b) {
-        if (id !== sid) { sid = id; sb = b; F = Subs.Follower(((Deck.notes || {})[id] || {}).say || ''); F.anchor(b, true); subsView.show(F.line(true)); }
-        else if (b !== sb) { F.anchor(b, b < sb); sb = b; subsView.show(F.line(true)); }
-      },
-      stop() { mic.stop(); },
-    };
-    subsLocal.sync(cur().id, beat); mic.start();
   }
 
   /* ---------------- grain ---------------- */
@@ -331,11 +300,6 @@
     sortRegistry();
     buildRibbon(); fit(); addEventListener('resize', fit);
     document.getElementById('grain').style.display = 'none';
-    if (!FOLLOWER && window.Subs && !STILL) {
-      subsView = Subs.View(stage);
-      const kick = () => setTimeout(startLocalSubs, 50); // after a presenter has had a chance to announce itself
-      addEventListener('keydown', kick, { once: true }); addEventListener('pointerdown', kick, { once: true });
-    }
     if (!FOLLOWER) addEventListener('keydown', onKey);
     stage.addEventListener('click', (e) => { if (!FOLLOWER && e.target.closest('#stage')) next(); });
     buildOrder();
