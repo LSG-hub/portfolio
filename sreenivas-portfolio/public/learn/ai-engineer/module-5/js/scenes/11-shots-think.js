@@ -255,7 +255,8 @@ Deck.scene({
     if (i < 2) {
       const b = document.getElementById(i ? 'zw-b' : 'zw-a');
       a.fromTo(b, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.7, delay: 0.5, ease: 'power3.out' });
-      a.after(150, () => Link.draw(a, lk, st, b, '#f2b84b', 0, b));
+      // draw once the card has landed (it slides in from x + 40 until 1.2s): the line stops at its final left edge
+      a.after(1250, () => Link.draw(a, lk, st, b, '#f2b84b', 0, b));
       return;
     }
     Link.clear(a, lk);
