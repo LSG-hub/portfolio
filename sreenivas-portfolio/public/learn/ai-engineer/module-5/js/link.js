@@ -35,7 +35,8 @@ window.Link = (function () {
       const len = path.getTotalLength();
       path.style.strokeDasharray = len;
       a.fromTo(path, { strokeDashoffset: len, opacity: 0.95 }, { strokeDashoffset: 0, duration: 0.7, delay: delay + k * 0.12, ease: 'power2.inOut' });
-      a.fromTo(dot, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.25, delay: delay + 0.6 + k * 0.12, svgOrigin: `${x2} ${y2}` });
+      // grow the radius rather than scale the circle: a transform under the stage's CSS zoom can shift the dot off the line's end
+      a.fromTo(dot, { opacity: 0, attr: { r: 0 } }, { opacity: 1, attr: { r: 5 }, duration: 0.25, delay: delay + 0.6 + k * 0.12 });
     });
   }
   function clear(a, s) {
