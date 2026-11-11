@@ -1,7 +1,7 @@
 /* Running order for Module 5 · Cut 3. Only listed scenes play; add ids here as scenes are built. */
 window.ORDER = [
   'T.title',
-  'O.wall',                                  // the internet on prompt engineering → four questions → live vote (a bet on the role myth)
+  'O.wall',                                  // the internet on prompt engineering → four questions → a bet on the role myth, asked as an open question
   // Question 1 · why does the same AI answer differently?
   'C.email',                                 // the case: Priya's email arrives, and what a good reply must do
   'C.plain',                                 // attempt 1: just ask, then the same ask 20 times (real Gemini runs)
@@ -15,6 +15,7 @@ window.ORDER = [
   'I.format',                                // the Reply Assistant needs a parseable shape: 0/60 vs 60/60 (real)
   'S.open',                                  // 5.3 system prompting: the definition
   'S.app',                                   // 5.3: the rules move into the Reply Assistant's system prompt (real: 60/60)
+  'S.yours',                                 // 5.3: the same idea in Claude, ChatGPT and Gemini (account-wide instructions)
   'S.stream',                                // for builders: system + user become one token sequence (sourced)
   'S.weight',                                // the slot gave a label; training gave weight (sourced timeline, balance scale)
   'R.open',                                  // 5.4 role & behaviour: the definition, split into a role and behaviour

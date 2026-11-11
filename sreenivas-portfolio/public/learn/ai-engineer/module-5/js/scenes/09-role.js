@@ -1,7 +1,7 @@
 /* ---------------- Question 2 · 5.4 Role & behaviour ----------------
    R.open   the chapter opens on the roadmap's 5.4 definition, split into its two halves: a role, and behaviour
    R.bet    the opening bet comes back; "world-class expert" is typed onto the plain prompt; 20 real runs × 3 models, plain vs expert;
-            the vote is settled; one real expert reply shows why (more confident, not more correct)
+            the bet is settled; one real expert reply shows why (more confident, not more correct)
    R.study  it's not just us: Zheng et al. 2023 (162 roles) and the Wharton report (Dec 2025), quoted, with a schematic
    R.tone   what a role is for: a role + "how you write" line goes into the Reply Assistant's system prompt; the draft rewrites
             itself (real); safe stays 60/60 while the style counts move (real)
@@ -44,14 +44,11 @@ Deck.scene({
   id: 'R.bet', chapter: 'Q2', section: ['5.4', 'Role & behaviour'], title: 'The bet', steps: 4,
   mount(root, a) {
     const R = window.ROLE;
-    // match cut: the bet exactly as O.wall left it (question on top, QR + bars below)
-    const v = Vote.mount(root, a, { id: 'role-bet', options: ['Yes, clearly', 'A little', 'No difference'], url: 'vote.link/m5' });
-    gsap.set(v.box, { opacity: 1 });
-    if (Vote.DEMO) v.set([22, 10, 8], true);
+    // the bet comes back where O.wall left it, in the middle of the screen
     const vq = a.at(a.el('div', 'abs', `<div class="kicker" style="margin-bottom:22px">The bet</div>
       If I start with <span style="color:var(--ink)">“You are a world‑class expert”</span>,<br>will it get the answer right more often?`, root), 0, 96);
     Object.assign(vq.style, { width: '1920px', textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '54px', lineHeight: 1.18, color: 'var(--amber)', zIndex: 6, transformOrigin: '50% 0' });
-    vq.id = 'rl-vq';
+    vq.id = 'rl-vq'; gsap.set(vq, { y: 380 });
     // click 1: the plain prompt from C.plain, and the expert line typed on top
     const card = a.at(a.el('div', 'abs hide', `<div class="mono" style="font-size:14px;letter-spacing:.16em;color:var(--dim);margin-bottom:16px">THE PLAIN PROMPT FROM ATTEMPT 1</div>
       <div class="mono" style="font-size:26px;line-height:1.6;color:var(--ink)"><span id="rl-exp" style="color:var(--amber)"></span><br>
@@ -89,13 +86,12 @@ Deck.scene({
     exn.id = 'rl-exn'; exn.style.zIndex = 8;
     const end = a.at(a.el('div', 'abs hide', 'It sounded more like an expert. <span class="amber">It didn’t know any more.</span>', root), 0, 960);
     Object.assign(end.style, { width: '1920px', textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '44px', color: 'var(--ink)', zIndex: 8 }); end.id = 'rl-end1';
-    Deck._rb = { v, R };
+    Deck._rb = { R };
   },
   step(i, a) {
-    const { v, R } = Deck._rb;
+    const { R } = Deck._rb;
     if (i === 0) {
-      // the vote steps back; the bet shrinks to a headline; the plain prompt comes in and the expert line types itself on top
-      a.to(v.box, { opacity: 0, y: 40, duration: 0.5, ease: 'power2.in' });
+      // the bet rises and shrinks to a headline; the plain prompt comes in and the expert line types itself on top
       a.to('#rl-vq', { scale: 0.62, y: -16, duration: 0.8, delay: 0.2, ease: 'power3.inOut' });
       a.reveal('#rl-card', { delay: 0.7 });
       a.type(document.getElementById('rl-exp'), R.expertLine, 30, 1.6);
