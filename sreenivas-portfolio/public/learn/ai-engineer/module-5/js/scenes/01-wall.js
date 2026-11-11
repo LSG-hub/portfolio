@@ -1,4 +1,4 @@
-/* ---------------- Opening: the internet on "prompt engineering", the four questions, then the first live vote (a bet on the role myth) ----------------
+/* ---------------- Opening: the internet on "prompt engineering", the four questions, then one more on the role myth, asked as an open question ----------------
    Every item is real and verified (research/pe-wall/*.json → deck/data/wall.js). They pop up in date order,
    so the wall itself tells the story: hype (2023) → backlash (2024) → "context engineering" (2025 to 2026). */
 const WallCard = (function () {
@@ -80,7 +80,7 @@ const WallCard = (function () {
 })();
 
 Deck.scene({
-  id: 'O.wall', chapter: '0', title: 'Four questions, then a bet', steps: 6, noChrome: true,
+  id: 'O.wall', chapter: '0', title: 'Four questions, and one to hold on to', steps: 6, noChrome: true,
   mount(root, a) {
     root.style.background = '#000';
     const { wall, cards, pick, yr, N } = WallCard.scatter(root, a);
@@ -97,26 +97,23 @@ Deck.scene({
     const q = a.el('div', 'center', QS.map((t, k) => `<div id="oq${k + 1}" class="h-lg hide" style="color:${k % 2 ? 'var(--amber)' : 'var(--ink)'};max-width:1760px;font-size:62px;text-wrap:balance;margin:${k ? 40 : 0}px 0 0;text-shadow:0 0 40px #000">${t}</div>`).join(''), root);
     q.style.zIndex = 5; q.id = 'oqs';
 
-    // the opening live vote is a bet on the role myth; the reveal comes in the role chapter (5.4) with the real 20 runs
-    const v = Vote.mount(root, a, { id: 'role-bet', options: ['Yes, clearly', 'A little', 'No difference'], url: 'vote.link/m5' });
-    const vq = a.at(a.el('div', 'abs hide', `<div class="kicker" style="margin-bottom:22px">Place your bets</div>
+    // the question on the role myth, asked as an open question (no live vote); the answer comes in the role chapter (5.4) with the real 20 runs
+    const vq = a.at(a.el('div', 'abs hide', `<div class="kicker" style="margin-bottom:22px">A question to hold on to</div>
       If I start with <span style="color:var(--ink)">“You are a world‑class expert”</span>,<br>will it get the answer right more often?`, root), 0, 96);
     Object.assign(vq.style, { width: '1920px', textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '54px', lineHeight: 1.18, color: 'var(--amber)', zIndex: 6 });
     vq.id = 'vq';
-    const end = a.at(a.el('div', 'abs hide', 'Place your bets. <span class="amber">We’ll find out in 15 minutes.</span>', root), 0, 950);
+    const end = a.at(a.el('div', 'abs hide', 'Hold on to your answer. <span class="amber">We’ll find out in 15 minutes.</span>', root), 0, 950);
     Object.assign(end.style, { width: '1920px', textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '40px', color: 'var(--ink)', zIndex: 6 });
     end.id = 'vend';
-    Deck._wallVote = v;
   },
   step(i, a) {
     if (i === 0) a.to('#dwall', { opacity: 0.12, duration: 0.9 });
     if (i < 4) { a.reveal('#oq' + (i + 1), { delay: i === 0 ? 0.3 : 0.1 }); return; }
     if (i === 4) {
-      // vote: the questions clear, the wall dims further, the bet rises to the top, QR + live bars come in
+      // the role question: the four questions clear, the wall dims further, the question settles in the middle of the screen
       a.to('#oqs', { opacity: 0, duration: 0.5 });
       a.to('#dwall', { opacity: 0.05, duration: 0.8 });
-      a.reveal('#vq', { delay: 0.3 });
-      Deck._wallVote.show(a);
+      a.fromTo('#vq', { opacity: 0, y: 404 }, { opacity: 1, y: 380, duration: 0.8, delay: 0.3, ease: 'power3.out' });
       return;
     }
     a.reveal('#vend');
