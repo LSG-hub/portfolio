@@ -1,5 +1,6 @@
 /* ---------------- Question 2 · 5.3 System prompting ----------------
    S.app    Arjun gets 50 of these a day: the rules move out of the chat into the Reply Assistant's system prompt (real: 60/60 safe)
+   S.yours  the same idea in the apps everyone uses: the Claude app's Instructions (cursor walk), then ChatGPT and Gemini
    S.stream for builders: system + user collapse into one token sequence (ChatML), every claim sourced
    S.weight the slot gave the rules a label; training gave them weight (a balance scale, era by era, every step quoted)
    History is told from sources, not tested: today's models can't show yesterday's weakness. Class names are prefixed sy-. */
@@ -70,6 +71,131 @@ Deck.scene({
       a.reveal(res, { delay: 2.0 });
     }
     if (i === 2) a.reveal('#sy-end');
+  },
+});
+
+/* ---------- S.yours ---------- */
+// the same idea in the apps everyone uses: the Claude desktop app's account-wide Instructions, reached the way the help centre says
+// (your initials, lower left → Settings → Your Claude → Instructions). Layout and copy around that path are an illustration.
+const cdSpark = (s) => `<svg width="${s}" height="${s}" viewBox="-12 -12 24 24" style="display:block">${Array.from({ length: 12 }, (_, k) => {
+  const t = k * Math.PI / 6 + 0.13, r = k % 3 === 0 ? 11 : k % 2 ? 8.6 : 9.8;
+  return `<line x1="${(Math.cos(t) * 2.2).toFixed(2)}" y1="${(Math.sin(t) * 2.2).toFixed(2)}" x2="${(Math.cos(t) * r).toFixed(2)}" y2="${(Math.sin(t) * r).toFixed(2)}" stroke="#d97757" stroke-width="2.6" stroke-linecap="round"/>`; }).join('')}</svg>`;
+Deck.scene({
+  id: 'S.yours', chapter: 'Q2', section: ['5.3', 'System prompting'], title: 'You have one too', steps: 4,
+  mount(root, a) {
+    const h = a.at(a.el('div', 'h-md hide', 'You can write one <span class="amber">in the apps you already use.</span>', root), 140, 92);
+    a.reveal(h, { delay: 0.1 });
+    const navI = (t, on) => `<div class="cd-nav${on ? ' cd-on' : ''}" style="padding:9px 12px;border-radius:8px;font-size:16px;color:#3d3d3a;${on ? 'background:#ebe9e0;' : ''}">${t}</div>`;
+    const rec = ['Polite reply to a late payment', 'Summarise the Q3 client notes', 'Excel formula for renewals', 'Explain API rate limits simply', 'Agenda for Monday’s sync'];
+    const win = a.at(a.el('div', 'abs hide', `
+      <div style="height:40px;background:#efede5;display:flex;align-items:center;gap:8px;padding-left:16px;border-bottom:1px solid #e3e1d8">
+        <i style="width:12px;height:12px;border-radius:50%;background:#ff5f57"></i><i style="width:12px;height:12px;border-radius:50%;background:#febc2e"></i><i style="width:12px;height:12px;border-radius:50%;background:#28c840"></i></div>
+      <div style="position:absolute;left:0;top:40px;bottom:0;width:270px;background:#f5f4ed;border-right:1px solid #e6e4da;padding:18px 14px;box-sizing:border-box">
+        <div style="font-family:var(--serif);font-size:26px;color:#1f1e1d;padding:0 8px 18px">Claude</div>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px;font-size:16px;color:#1f1e1d"><span style="width:26px;height:26px;border-radius:50%;background:#d97757;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;line-height:1">+</span>New chat</div>
+        ${['Chats', 'Projects', 'Artifacts'].map(t => `<div style="padding:8px 8px 8px 44px;font-size:16px;color:#3d3d3a">${t}</div>`).join('')}
+        <div style="margin:18px 8px 8px;font-size:13px;color:#8a8881">Recents</div>
+        ${rec.map(t => `<div style="padding:7px 8px;font-size:15px;color:#3d3d3a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t}</div>`).join('')}
+        <div id="cd-me" style="position:absolute;left:12px;right:12px;bottom:14px;display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px">
+          <span style="width:34px;height:34px;border-radius:50%;background:#3d3d3a;color:#faf9f5;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600">A</span>
+          <span style="line-height:1.2"><span style="display:block;font-size:15px;color:#1f1e1d">Arjun</span><span style="font-size:13px;color:#8a8881">Pro plan</span></span></div>
+        <div id="cd-menu" style="position:absolute;left:12px;right:12px;bottom:72px;background:#fff;border:1px solid #e3e1d8;border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.14);padding:8px;opacity:0">
+          <div style="padding:8px 10px;font-size:14px;color:#8a8881">arjun@brightline.io</div>
+          <div id="cd-mset" style="padding:9px 10px;border-radius:8px;font-size:16px;color:#1f1e1d">Settings</div>
+          ${['Language', 'Get help', 'Log out'].map(t => `<div style="padding:9px 10px;font-size:16px;color:#1f1e1d">${t}</div>`).join('')}</div>
+      </div>
+      <div id="cd-home" style="position:absolute;left:270px;right:0;top:40px;bottom:0">
+        <div style="position:absolute;left:0;right:0;top:190px;display:flex;align-items:center;justify-content:center;gap:16px">${cdSpark(44)}<span style="font-family:var(--serif);font-size:42px;color:#1f1e1d">Good morning, Arjun</span></div>
+        <div style="position:absolute;left:50%;top:290px;width:720px;margin-left:-360px;height:120px;background:#fff;border:1px solid #e3e1d8;border-radius:18px;box-shadow:0 4px 18px rgba(0,0,0,.05)">
+          <div style="padding:18px 20px;font-size:17px;color:#8a8881">How can I help you today?</div>
+          <div style="position:absolute;left:16px;bottom:12px;width:32px;height:32px;border-radius:8px;border:1px solid #e3e1d8;display:flex;align-items:center;justify-content:center;color:#5d5c58">+</div>
+          <div style="position:absolute;right:62px;bottom:18px;font-size:14px;color:#5d5c58">Opus 5.5</div>
+          <div style="position:absolute;right:14px;bottom:12px;width:34px;height:32px;border-radius:8px;background:#e6a48a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px">↑</div></div>
+      </div>
+      <div id="cd-set" style="position:absolute;left:270px;right:0;top:40px;bottom:0;background:#faf9f5;opacity:0">
+        <div style="position:absolute;left:56px;top:36px;font-family:var(--serif);font-size:34px;color:#1f1e1d">Settings</div>
+        <div style="position:absolute;left:44px;top:104px;width:200px">${navI('General', 1)}${navI('Your Claude')}${['Account', 'Privacy', 'Billing', 'Capabilities', 'Connectors'].map(t => navI(t)).join('')}</div>
+        <div id="cd-gen" style="position:absolute;left:300px;top:112px;width:760px">
+          <div style="font-size:19px;font-weight:600;color:#1f1e1d">Profile</div>
+          <div style="margin-top:18px;font-size:14px;color:#5d5c58">Full name</div>
+          <div style="margin-top:8px;height:42px;border:1px solid #dedcd2;border-radius:9px;background:#fff;padding:10px 14px;box-sizing:border-box;font-size:16px;color:#1f1e1d">Arjun</div>
+          <div style="margin-top:24px;font-size:19px;font-weight:600;color:#1f1e1d">Appearance</div>
+          <div style="margin-top:12px;font-size:15px;color:#5d5c58">Light · Dark · Match system</div></div>
+        <div id="cd-you" style="position:absolute;left:300px;top:112px;width:760px;opacity:0">
+          <div style="font-size:19px;font-weight:600;color:#1f1e1d">Instructions</div>
+          <div style="margin-top:8px;font-size:15px;color:#5d5c58">Applied to all of your conversations with Claude.</div>
+          <div id="cd-box" style="margin-top:16px;height:190px;border:1px solid #dedcd2;border-radius:10px;background:#fff;padding:14px 16px;box-sizing:border-box;font-size:18px;line-height:1.5;color:#1f1e1d"><span id="cd-txt"></span><span id="cd-ph" style="color:#a3a19a">Tell Claude how you’d like it to respond</span></div>
+          <div style="margin-top:14px;display:flex;justify-content:flex-end;align-items:center;gap:14px">
+            <span id="cd-saved" style="font-size:14px;color:#2e7d32;opacity:0">✓ Saved</span>
+            <span id="cd-save" style="padding:9px 18px;border-radius:9px;background:#1f1e1d;color:#faf9f5;font-size:15px">Save changes</span></div></div>
+      </div>`, root), 250, 200, 1420);
+    Object.assign(win.style, { height: '720px', borderRadius: '14px', overflow: 'hidden', background: '#faf9f5', boxShadow: '0 30px 90px rgba(0,0,0,.6)', fontFamily: 'var(--sans)', transformOrigin: '0 0' });
+    win.id = 'cd-win';
+    a.reveal(win, { y: 40, delay: 0.4, d: 0.8 });
+    const cap = a.at(a.el('div', 'abs mono hide', 'ILLUSTRATION · THE PATH IS FROM CLAUDE’S HELP CENTRE: YOUR INITIALS → SETTINGS → YOUR CLAUDE → INSTRUCTIONS', root), 250, 942);
+    Object.assign(cap.style, { fontSize: '14px', letterSpacing: '.12em', color: 'var(--dim)' }); cap.id = 'cd-cap';
+    a.reveal(cap, { delay: 1.0 });
+    // click 4: the same box in the other two apps
+    const other = (app, path, field) => `<div class="cd-oth" style="opacity:0;margin-bottom:26px;padding:22px 26px;border-radius:14px;border:1px solid var(--line-2);background:var(--panel)">
+      <div style="font-family:var(--serif);font-size:34px;color:var(--ink)">${app}</div>
+      <div class="mono" style="margin-top:8px;font-size:15px;letter-spacing:.06em;color:var(--dim)">${path}</div>
+      <div style="margin-top:6px;font-size:22px;color:var(--amber)">${field}</div></div>`;
+    const oth = a.at(a.el('div', 'abs', other('Claude', 'Settings → Your Claude', 'Instructions') + other('ChatGPT', 'Settings → Personalization', 'Custom instructions') + other('Gemini', 'Settings → Personal context', 'Your instructions for Gemini'), root), 1250, 210, 560);
+    oth.id = 'cd-oth';
+    const end = a.at(a.el('div', 'abs hide', 'Written once, used in every chat. <span class="amber">Your own system prompt.</span>', root), 0, 990);
+    Object.assign(end.style, { width: '1920px', textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '40px', color: 'var(--ink)' }); end.id = 'cd-end';
+    Deck._cd = { cur: UI.cursor(root, a, 1900, 1100), text: 'I work with clients. Keep replies short, in plain text. Never guess a fact, a date or a number: if you aren’t sure, say so.' };
+  },
+  step(i, a) {
+    const { cur } = Deck._cd, P = (id) => UI.pos(document.getElementById(id));
+    if (i === 0) {
+      // your initials, lower left → the menu → Settings
+      const me = P('cd-me');
+      cur.show(); cur.move(me.x + 26, me.cy, 1.0);
+      cur.press(1.1);
+      a.to('#cd-me', { backgroundColor: '#ebe9e0', duration: 0.2, delay: 1.1 });
+      a.fromTo('#cd-menu', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, delay: 1.25, ease: 'power2.out' });
+      const ms = P('cd-mset');
+      cur.move(ms.x + 60, ms.cy, 0.6, 1.7);
+      a.to('#cd-mset', { backgroundColor: '#f0eee6', duration: 0.15, delay: 2.2 });
+      cur.press(2.4);
+      a.to('#cd-menu', { opacity: 0, duration: 0.2, delay: 2.6 });
+      a.to('#cd-me', { backgroundColor: 'rgba(0,0,0,0)', duration: 0.2, delay: 2.6 });
+      a.fromTo('#cd-set', { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.4, delay: 2.65, ease: 'power2.out' });
+    }
+    if (i === 1) {
+      // Your Claude → Instructions
+      const nav = document.querySelectorAll('#cd-set .cd-nav'), yc = UI.pos(nav[1]);
+      cur.move(yc.x + 50, yc.cy, 0.8);
+      cur.press(0.9);
+      a.to(nav[0], { backgroundColor: 'rgba(235,233,224,0)', duration: 0.2, delay: 0.95 });
+      a.to(nav[1], { backgroundColor: '#ebe9e0', duration: 0.2, delay: 0.95 });
+      a.to('#cd-gen', { opacity: 0, duration: 0.2, delay: 1.0 });
+      a.fromTo('#cd-you', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.4, delay: 1.15, ease: 'power2.out' });
+      a.to('#cd-box', { borderColor: '#d97757', boxShadow: '0 0 0 3px rgba(217,119,87,.18)', duration: 0.4, delay: 1.6 });
+    }
+    if (i === 2) {
+      // type the instructions, then save
+      const bx = P('cd-box');
+      cur.move(bx.x + 120, bx.y + 40, 0.6);
+      cur.press(0.7);
+      a.to('#cd-ph', { display: 'none', duration: 0.01, delay: 0.8 });
+      a.type(document.getElementById('cd-txt'), Deck._cd.text, 34, 0.85);
+      const sv = P('cd-save');
+      const tEnd = 0.85 + Deck._cd.text.length / 34 + 0.3;
+      cur.move(sv.cx, sv.cy, 0.7, tEnd);
+      cur.press(tEnd + 0.8);
+      a.to('#cd-saved', { opacity: 1, duration: 0.3, delay: tEnd + 0.95 });
+      a.to('#cd-box', { borderColor: '#dedcd2', boxShadow: '0 0 0 0 rgba(0,0,0,0)', duration: 0.3, delay: tEnd + 0.95 });
+    }
+    if (i === 3) {
+      // pull back: Claude's window steps aside, and the same box appears in the other two apps
+      cur.hide();
+      a.to('#cd-cap', { opacity: 0, duration: 0.3 });
+      a.to('#cd-win', { x: -110, scale: 0.74, duration: 0.9, ease: 'power3.inOut' });
+      a.fromTo('#cd-oth .cd-oth', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.35, delay: 0.7, ease: 'power3.out' });
+      a.reveal('#cd-end', { delay: 2.1 });
+    }
   },
 });
 

@@ -1,11 +1,11 @@
 /* ---------------- Question 2 · 5.4 Role & behaviour ----------------
    R.open   the chapter opens on the roadmap's 5.4 definition, split into its two halves: a role, and behaviour
-   R.bet    the opening bet comes back; "world-class expert" is typed onto the plain prompt; 20 real runs × 3 models, plain vs expert;
-            the vote is settled; one real expert reply shows why (more confident, not more correct)
+   R.bet    the question from the start comes back; "world-class expert" is typed onto the plain prompt; 20 real runs × 3 models, plain vs expert;
+            the question is settled; one real expert reply shows why (more confident, not more correct)
    R.study  it's not just us: Zheng et al. 2023 (162 roles) and the Wharton report (Dec 2025), quoted, with a schematic
    R.tone   what a role is for: a role + "how you write" line goes into the Reply Assistant's system prompt; the draft rewrites
             itself (real); safe stays 60/60 while the style counts move (real)
-   R.def    the bet answered in one line, and the prompt strip with 5.4 Role & behaviour lit
+   R.def    the question answered in one line, and the prompt strip with 5.4 Role & behaviour lit
    Data: window.ROLE (data/role-runs.js). Class names are prefixed rl-. */
 
 const rlMono = (t, c = 'var(--dim)', s = 15) => `<span class="mono" style="font-size:${s}px;letter-spacing:.16em;color:${c}">${t}</span>`;
@@ -26,7 +26,7 @@ Deck.scene({
       <div class="mono" style="margin-top:10px;font-size:19px;color:var(--ink-2)">${ex}</div></div>`;
     const chips = a.at(a.el('div', 'abs', chip(1, 'A role', '“you are a senior support engineer”') + chip(2, 'Behaviour', '“be concise, cite policy numbers”'), root), 260, 640);
     chips.style.whiteSpace = 'nowrap';
-    const end = a.at(a.el('div', 'abs hide', 'First, the role. <span class="amber">Remember the bet?</span>', root), 260, 880);
+    const end = a.at(a.el('div', 'abs hide', 'First, the role. <span class="amber">Remember the question from the start?</span>', root), 260, 880);
     Object.assign(end.style, { fontFamily: 'var(--serif)', fontSize: '42px', color: 'var(--ink)' }); end.id = 'rl-end0';
   },
   step(i, a) {
@@ -41,17 +41,14 @@ Deck.scene({
 
 /* ---------- R.bet ---------- */
 Deck.scene({
-  id: 'R.bet', chapter: 'Q2', section: ['5.4', 'Role & behaviour'], title: 'The bet', steps: 4,
+  id: 'R.bet', chapter: 'Q2', section: ['5.4', 'Role & behaviour'], title: 'The question from the start', steps: 4,
   mount(root, a) {
     const R = window.ROLE;
-    // match cut: the bet exactly as O.wall left it (question on top, QR + bars below)
-    const v = Vote.mount(root, a, { id: 'role-bet', options: ['Yes, clearly', 'A little', 'No difference'], url: 'vote.link/m5' });
-    gsap.set(v.box, { opacity: 1 });
-    if (Vote.DEMO) v.set([22, 10, 8], true);
-    const vq = a.at(a.el('div', 'abs', `<div class="kicker" style="margin-bottom:22px">The bet</div>
+    // the question comes back where O.wall left it, in the middle of the screen
+    const vq = a.at(a.el('div', 'abs', `<div class="kicker" style="margin-bottom:22px">The question from the start</div>
       If I start with <span style="color:var(--ink)">“You are a world‑class expert”</span>,<br>will it get the answer right more often?`, root), 0, 96);
     Object.assign(vq.style, { width: '1920px', textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '54px', lineHeight: 1.18, color: 'var(--amber)', zIndex: 6, transformOrigin: '50% 0' });
-    vq.id = 'rl-vq';
+    vq.id = 'rl-vq'; gsap.set(vq, { y: 380 });
     // click 1: the plain prompt from C.plain, and the expert line typed on top
     const card = a.at(a.el('div', 'abs hide', `<div class="mono" style="font-size:14px;letter-spacing:.16em;color:var(--dim);margin-bottom:16px">THE PLAIN PROMPT FROM ATTEMPT 1</div>
       <div class="mono" style="font-size:26px;line-height:1.6;color:var(--ink)"><span id="rl-exp" style="color:var(--amber)"></span><br>
@@ -71,7 +68,7 @@ Deck.scene({
     const sum = (k) => R.rows.reduce((s, r) => s + r[k].filter(Boolean).length, 0);
     const tot = a.at(a.el('div', 'abs hide', `All three models: <span style="color:var(--ink-2)">${sum('plain')} / 60</span> safe → <span class="amber">${sum('expert')} / 60</span> with the expert line.`, root), 200, 790, 1500);
     Object.assign(tot.style, { fontFamily: 'var(--serif)', fontSize: '38px', color: 'var(--ink)' }); tot.id = 'rl-tot';
-    // click 3: the bet, settled
+    // click 3: the question, settled
     const opts = a.at(a.el('div', 'abs hide', ['Yes, clearly', 'A little', 'No difference'].map((t, k) =>
       `<span class="rl-opt" style="position:relative;display:inline-block;margin-right:26px;padding:14px 26px;border-radius:14px;border:1px solid var(--line-2);font-family:var(--serif);font-size:36px;color:var(--ink-2)">${t}${k < 2 ? '<span class="rl-x" style="position:absolute;left:-4%;top:50%;height:3px;width:0;background:var(--red)"></span>' : ''}</span>`).join(''), root), 200, 880);
     opts.style.whiteSpace = 'nowrap'; opts.id = 'rl-opts';
@@ -89,13 +86,12 @@ Deck.scene({
     exn.id = 'rl-exn'; exn.style.zIndex = 8;
     const end = a.at(a.el('div', 'abs hide', 'It sounded more like an expert. <span class="amber">It didn’t know any more.</span>', root), 0, 960);
     Object.assign(end.style, { width: '1920px', textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '44px', color: 'var(--ink)', zIndex: 8 }); end.id = 'rl-end1';
-    Deck._rb = { v, R };
+    Deck._rb = { R };
   },
   step(i, a) {
-    const { v, R } = Deck._rb;
+    const { R } = Deck._rb;
     if (i === 0) {
-      // the vote steps back; the bet shrinks to a headline; the plain prompt comes in and the expert line types itself on top
-      a.to(v.box, { opacity: 0, y: 40, duration: 0.5, ease: 'power2.in' });
+      // the question rises and shrinks to a headline; the plain prompt comes in and the expert line types itself on top
       a.to('#rl-vq', { scale: 0.62, y: -16, duration: 0.8, delay: 0.2, ease: 'power3.inOut' });
       a.reveal('#rl-card', { delay: 0.7 });
       a.type(document.getElementById('rl-exp'), R.expertLine, 30, 1.6);
@@ -110,7 +106,7 @@ Deck.scene({
       a.reveal('#rl-tot', { delay: 3.4 });
     }
     if (i === 2) {
-      // the bet, settled: the first two answers are struck through, "No difference" lights up
+      // the question, settled: the first two answers are struck through, "No difference" lights up
       a.reveal('#rl-opts');
       a.to('#rl-opts .rl-x', { width: '108%', duration: 0.5, stagger: 0.25, delay: 0.7, ease: 'power3.inOut' });
       a.to('#rl-opts .rl-opt:not(:last-child)', { opacity: 0.45, duration: 0.4, delay: 1.0 });
@@ -251,9 +247,9 @@ Deck.scene({
 
 /* ---------- R.def ---------- */
 Deck.scene({
-  id: 'R.def', chapter: 'Q2', section: ['5.4', 'Role & behaviour'], title: 'The bet, answered', steps: 1,
+  id: 'R.def', chapter: 'Q2', section: ['5.4', 'Role & behaviour'], title: 'The question, answered', steps: 1,
   mount(root, a) {
-    const ans = a.at(a.el('div', 'abs hide', `<div class="kicker" style="margin-bottom:22px">The bet, answered</div>
+    const ans = a.at(a.el('div', 'abs hide', `<div class="kicker" style="margin-bottom:22px">The question, answered</div>
       <div style="font-family:var(--serif);font-size:56px;line-height:1.18;color:var(--ink)">“World-class expert” doesn’t make it right more often. <span class="amber">Facts and rules do that.</span></div>
       <div style="margin-top:26px;font-size:30px;line-height:1.45;color:var(--ink-2);font-weight:300">A role sets the voice: who is writing, and to whom. Behaviour sets the how: plain words, short sentences, the plan first.</div>`, root), 160, 280, 1500);
     a.reveal(ans, { delay: 0.2 });
